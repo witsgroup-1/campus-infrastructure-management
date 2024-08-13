@@ -1,0 +1,23 @@
+{
+    "name": "campus-infrastructure-management",
+    "version": "1.0.0",
+    "description": "Venue Management",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus.git"
+    },
+    "keywords": [],
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.19.2"
+    },
+    "scripts": {
+        "test": "echo tests complete"
+    },
+    "author": "",
+    "bugs": {
+        "url": "https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus/issues"
+    },
+    "homepage": "https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus#readme"
+}
