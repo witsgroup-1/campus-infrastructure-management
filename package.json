@@ -14,7 +14,7 @@
         "express": "^4.19.2"
     },
     "scripts": {
-        "test": "sh node_modules/.bin/jest _tests_",
+        "test": "sh node_modules/.bin/jest ./_tests_",
         "start": "node app"
     },
     "author": "",
