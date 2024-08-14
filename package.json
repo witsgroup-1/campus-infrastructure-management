@@ -20,5 +20,8 @@
     "bugs": {
         "url": "https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus/issues"
     },
-    "homepage": "https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus#readme"
+    "homepage": "https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus#readme",
+    "devDependencies": {
+        "jest": "^29.7.0"
+    }
 }
