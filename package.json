@@ -17,6 +17,13 @@
         "test": "sh node_modules/.bin/jest ./_tests_",
         "start": "node app"
     },
+    "jest": {
+    "collectCoverage": true,
+    "coverageReporters": [
+      "text",
+      "cobertura"
+    ]
+  },
     "author": "",
     "bugs": {
         "url": "https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus/issues"
