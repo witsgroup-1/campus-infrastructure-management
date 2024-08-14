@@ -11,7 +11,8 @@
     "keywords": [],
     "license": "ISC",
     "dependencies": {
-        "express": "^4.19.2"
+        "express": "^4.19.2",
+        "jest": "^29.7.0"
     },
     "scripts": {
         "test": "sh node_modules/.bin/jest ./_tests_",
