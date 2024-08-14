@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "Venue Management",
     "main": "index.js",
+    "//": "to test locally: jest ./_tests_ else: sh node_modules/.bin/jest ./_tests_ ",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/LunarrPhase/Infrastructure-Classroom-Venue-Management---Smart-Campus.git"
@@ -13,7 +14,7 @@
         "express": "^4.19.2"
     },
     "scripts": {
-        "test": "echo tests complete",
+        "test": "sh node_modules/.bin/jest _tests_",
         "start": "node app"
     },
     "author": "",
