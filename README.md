@@ -3,4 +3,4 @@
 
 *remember to pull before you push*
 
-This is the code repository for campus-infrastructure-management
+This is the code repository for campus-infrastructure-management.
