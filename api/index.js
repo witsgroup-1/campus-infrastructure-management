@@ -4,7 +4,10 @@ const cors = require('cors'); // Import the cors package
 const app = express();
 const port = 3000;
 
-app.use(cors()); // Enable CORS for all routes
+// Apply CORS middleware
+app.use(cors({
+    origin: 'https://campus-infrastructure-management.azurewebsites.net', // Replace with your frontend URL
+}));
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));

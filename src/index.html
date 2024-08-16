@@ -19,7 +19,7 @@
 
     <script>
         document.getElementById('fetchButton').addEventListener('click', () => {
-            fetch('http://localhost:3000/api')
+            fetch('https://campus-infrastructure-management.azurewebsites.net/api')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('message').textContent = data;
