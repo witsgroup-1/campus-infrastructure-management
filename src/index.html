@@ -1,17 +1,34 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #message {
+            margin-top: 20px;
+        }
+    </style>
 </head>
-
 <body>
-<h1>Hello World!</h1>
+    <button id="fetchButton">Fetch Message</button>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', () => {
+            fetch('http://localhost:3000/api')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('message').textContent = data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+    
 </body>
-
-<footer>
-
-</footer>
-
-
 </html>
