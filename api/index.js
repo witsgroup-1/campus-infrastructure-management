@@ -1,5 +1,5 @@
 const express = require('express');
-const path = require('path');
+const path = require('https://campus-infrastructure-management.azurewebsites.net');
 const cors = require('cors'); // Import the cors package
 const app = express();
 const port = 3000;
