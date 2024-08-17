@@ -18,15 +18,18 @@
     <div id="message"></div>
 
     <script>
-        document.getElementById('fetchButton').addEventListener('click', () => {
-            fetch('https://campus-infrastructure-management.azurewebsites.net/api')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('message').textContent = data;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+        const fetchButton = document.getElementById('fetchButton');
+        const message = document.getElementById('message');
+
+        fetchButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api');
+                const data = await response.json();
+                message.innerHTML = data.message;
+            } catch (error) {
+                console.error(error);
+                message.innerHTML = 'An error occurred';
+            }
         });
     </script>
     
