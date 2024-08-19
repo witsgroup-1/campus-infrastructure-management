@@ -15,4 +15,6 @@ This is the code repository for campus-infrastructure-management.
 ## Repository Etiquette 
 - Make sure your folder/file names are meaningul but also not too complex.
 
-
+## File Structure
+- The src folder houses the frontend html and js.
+- The api folder houses the api calls.
