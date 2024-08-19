@@ -16,5 +16,6 @@ This is the code repository for campus-infrastructure-management.
 - Make sure your folder/file names are meaningul but also not too complex.
 
 ## File Structure
-- The src folder houses the frontend html and js.
-- The api folder houses the api calls.
+- The "src" folder houses the frontend html and Js.
+- The "api" folder houses the api calls.
+- The "_tests_" folder houses the tests on functions.
