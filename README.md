@@ -6,7 +6,7 @@
 
 This is the code repository for campus-infrastructure-management.
 
-The documentation can be found at: https://witsgroup-1.github.io/campus-infrastructure-management-docs/#/?id=schedule-api-watch
+The documentation can be found at: https://witsgroup-1.github.io/campus-infrastructure-management-docs/#/?id=welcome-to-campus-infrastructure-management-docs-paperclips
 
 ## Branch Managment Guidlines
 - It is better to create your own branch to use for implementing big features.
