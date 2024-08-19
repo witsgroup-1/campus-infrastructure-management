@@ -10,6 +10,7 @@ This is the code repository for campus-infrastructure-management.
 - It is better to create your own branch to use for implementing big features.
 - If you want\need to commit broken code then commit to a branch.
 - Always pull new updates before you push your new updates.
+- Make sure your tests pass before deployment.
 - Give your commits meaningful names including: What you did and who you are - Github actions will reflect the date and time so you do not need to worry about that.
 
 ## Repository Etiquette 
