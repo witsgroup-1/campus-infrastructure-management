@@ -12,4 +12,7 @@ This is the code repository for campus-infrastructure-management.
 - Always pull new updates before you push your new updates.
 - Give your commits meaningful names including: What you did and who you are - Github actions will reflect the date and time so you do not need to worry about that.
 
+## Repository Etiquette 
+- Make sure your folder/file names are meaningul but also not too complex.
+
 
