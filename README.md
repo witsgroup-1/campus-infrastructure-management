@@ -6,7 +6,15 @@
 
 This is the code repository for campus-infrastructure-management.
 
+For more information consult our documentation.
+
 The documentation can be found at: https://witsgroup-1.github.io/campus-infrastructure-management-docs/#/?id=welcome-to-campus-infrastructure-management-docs-paperclips
+
+When it comes to version control we need to define some things first:
+
+- Product: A product is what we can offer to the user to fufill their requirments.
+- Product feature: A products specific characteristics or functions that are important to the customer - so desin and functionality are included.
+
 
 ## Branch Managment Guidlines
 - Each collaborator must commit to their own respective branch (labled by their username) or the "Bugs-and-Problems" branch for any problematic code.
@@ -29,7 +37,7 @@ The documentation can be found at: https://witsgroup-1.github.io/campus-infrastr
 - Menzi
 
 ## The types of Branches
-- "main" is the branch where the code is kept in a working state - this is where the release build of our app is stored.
+- "main" is the branch where the code is kept in a working state - this is where the release build of our app is stored with working features.
 - The named branches are for developing different features assigned to that particular user.
 - The "Bugs-and-Problems" is for when you need to commit problematic code with non-working and buggy functionality.
   
