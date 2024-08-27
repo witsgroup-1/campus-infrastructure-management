@@ -37,3 +37,7 @@ service cloud.firestore {
     }
   }
 }
+
+
+//testing api thru terminal
+Invoke-RestMethod -Uri http://localhost:3000/api/signup -Method Post -Headers @{ "Content-Type" = "application/json" } -Body '{"name": "John Doe", "email": "john.doe@example.com", "password": "yourpassword"}'
