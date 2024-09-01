@@ -4,8 +4,10 @@ const { initializeApp } = require("firebase/app");
 const { getFirestore } = require("firebase/firestore");
 const { getAuth } = require("firebase/auth");
 
+
 // Initialize Firebase
 const firebaseConfig = {
+
     apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
     authDomain: "campusinfrastructuremanagement.firebaseapp.com",
     projectId: "campusinfrastructuremanagement",
