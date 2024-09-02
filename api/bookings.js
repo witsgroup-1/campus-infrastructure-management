@@ -1,6 +1,6 @@
 const express = require('express');
 const { db } = require("../src/firebaseInit.js");
-const { collection,query,where, addDoc, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } = require("firebase/firestore"); 
+const { collection, addDoc, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } = require("firebase/firestore"); 
 
 const bookingsRouter = express.Router();
 
@@ -14,16 +14,16 @@ bookingsRouter.put('/bookings/:bookingId', async (req, res) => {
             return res.status(400).json({ error: 'No fields to update' });
         }
 
-        const findDocu= query(collection(db, 'Bookings'), where('bookingId','==',bookingId));
-        const bookingDoc = await getDocs(findDocu);
+        const bookingDocRef= doc(db, 'Bookings',bookingId);
+        const bookingDoc= await getDoc(bookingDocRef);
         
 
-        if (bookingDoc.empty) {
+        if (!(bookingDoc.exists())) {
             return res.status(404).send('Booking not found');
         }
 
-        const bookingDocRef=bookingDoc.docs[0].ref;
         
+
         await updateDoc(bookingDocRef, updates);
         res.status(200).json({ bookingId: bookingId, message: 'Booking updated successfully.' });
     } catch (error) {
@@ -38,9 +38,8 @@ bookingsRouter.delete('/bookings/:bookingId', async (req, res) => {
 
     try {
 
-        const findDocu= query(collection(db, 'Bookings'), where('bookingId','==',bookingId));
-        const bookingDoc = await getDocs(findDocu);
-        const bookingDocRef=bookingDoc.docs[0].ref;
+        const bookingDocRef= doc(db, 'Bookings',bookingId);
+        const bookingDoc= await getDoc(bookingDocRef);
 
         await deleteDoc(bookingDocRef);
         res.status(200).json({ message: 'Booking deleted successfully.' });
