@@ -2,7 +2,7 @@ require('dotenv').config(); // Load environment variables from .env file
 
 const { initializeApp } = require("firebase/app");
 const { getFirestore } = require("firebase/firestore");
-const { getAuth } = require("firebase/auth");
+const { getAuth, createUserWithEmailAndPassword } = require('firebase/auth');
 
 
 // Initialize Firebase
@@ -16,6 +16,16 @@ const firebaseConfig = {
     appId: "1:981921503275:web:78ce66a89f233a5c14f26e",
     measurementId: "G-Y95YE5ZDRY"
   };
+
+/*const firebaseConfig = {
+  apiKey: process.env.APP_API_KEY,
+  authDomain: process.env.APP_AUTH_DOMAIN,
+  projectId: process.env.APP_PROJECT_ID,
+  storageBucket: process.env.APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.APP_MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.APP_MEASUREMENT_ID
+};*/
 
 const app = initializeApp(firebaseConfig);
 
@@ -37,4 +47,5 @@ if (typeof window !== "undefined") { // Ensure this is a browser environment
     }).catch(console.error);
 }
 
-module.exports = { app, db, auth };
+
+module.exports = { app, db, auth,createUserWithEmailAndPassword };
