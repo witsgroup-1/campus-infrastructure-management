@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const { app, db, auth,createUserWithEmailAndPassword } = require("../src/firebaseInit.js");
-const { collection, addDoc, doc, getDoc, getDocs, setDoc, deleteDoc } = require("firebase/firestore");
+const { collection, addDoc, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc } = require("firebase/firestore");
 const usersRouter = express.Router();
 
 // get all users.
@@ -57,17 +57,28 @@ usersRouter.get('/users/:userId', async (req, res) => {
 // Update a user by userId
 usersRouter.put('/users/:userId', async (req, res) => {
     const { userId } = req.params;
-    const updates = req.body;
+    const { name, surname, email, role, faculty, is_tutor, is_lecturer, password } = req.body;
+
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (surname !== undefined) updateData.surname = surname;
+    if (email !== undefined) updateData.email = email;
+    if (role !== undefined) updateData.role = role;
+    if (faculty !== undefined) updateData.faculty = faculty;
+    if (is_tutor !== undefined) updateData.is_tutor = is_tutor;
+    if (is_lecturer !== undefined) updateData.is_lecturer = is_lecturer;
+    if (password !== undefined) updateData.password = password;
 
     try {
         const userRef = doc(db, 'users', userId);
-        await updateDoc(userRef, updates);
+        await updateDoc(userRef, updateData);
         res.status(200).json({ message: 'User updated successfully' });
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).send('Error updating user');
     }
 });
+
 
 // Delete a user by userId
 usersRouter.delete('/users/:userId', async (req, res) => {
