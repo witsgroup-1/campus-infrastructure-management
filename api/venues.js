@@ -69,18 +69,17 @@ venuesRouter.put('/venues/:venueId', async (req, res) => {
     const updates = req.body;
 
     try {
-        if (Object.keys(updates).length === 0) {
-            return res.status(400).json({ error: 'No fields to update' });
-        }
 
         const venueDocRef= doc(db, 'venues',venueId);
         const venueDoc= await getDoc(venueDocRef);
-        
 
         if (!(venueDoc.exists())) {
             return res.status(404).send('Venue not found');
         }
 
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
         
 
         await updateDoc(venueDocRef, updates);
