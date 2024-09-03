@@ -6,7 +6,8 @@ const maintenanceRouter = require('./api/maintenance'); //import maintenance rou
 const scheduleRouter = require("./api/schedule"); // Import the scheduleRouter
 const usersRouter = require('./api/users');
 const notificationsRouter = require('./api/notification');
-  
+const bookingsRouter = require("./api/bookings");
+const venuesRouter = require("./api/venues");
 
 app.set("port", process.env.PORT || 3000);
 
@@ -19,7 +20,8 @@ app.use("/api", maintenanceRouter); //use the maintenance router
 app.use("/api", scheduleRouter); // Use the scheduleRouter
 app.use("/api", usersRouter);
 app.use("/api", notificationsRouter);
-
+app.use("/api", bookingsRouter);
+app.use("/api", venuesRouter);
 
 app.set("port", process.env.PORT || 3000);
 
