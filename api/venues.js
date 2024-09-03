@@ -37,6 +37,10 @@ venuesRouter.get('/venues/:Category', async (req, res) => {
             }
         });
 
+        if(category.length==0){
+            res.status(200).send("No venues found for this filter");
+        }
+
         res.status(200).json(category);
     } catch (error) {
         res.status(500).send('Cannot get venues');
@@ -54,7 +58,7 @@ venuesRouter.post('/venues', async(req,res)=>{
             Name:req.body.Name,
         };
         const docRef = await addDoc(collection(db, 'venues'), venue);
-        res.status(201).json({id:docRef.id});
+        res.status(201).send("Venue created successfully");
     }
 
     catch(error){
