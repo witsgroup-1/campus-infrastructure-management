@@ -5,7 +5,8 @@ const indexRouter = require("./api/index");
 const maintenanceRouter = require('./api/maintenance'); //import maintenance router
 const scheduleRouter = require("./api/schedule"); // Import the scheduleRouter
 const usersRouter = require('./api/users');
-
+const notificationsRouter = require('./api/notification');
+  
 
 app.set("port", process.env.PORT || 3000);
 
@@ -17,6 +18,7 @@ app.use("/api", indexRouter);
 app.use("/api", maintenanceRouter); //use the maintenance router
 app.use("/api", scheduleRouter); // Use the scheduleRouter
 app.use("/api", usersRouter);
+app.use("/api", notificationsRouter);
 
 
 app.set("port", process.env.PORT || 3000);
