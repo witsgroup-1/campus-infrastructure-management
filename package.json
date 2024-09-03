@@ -17,7 +17,7 @@
         "firebase": "^10.13.0"
     },
     "scripts": {
-        "test": "jest",
+        "test": "sh node_modules/.bin/jest ./_tests_",
         "start": "node app",
         "build:css": "npx postcss src/styles.css -o src/output.css"
     },
