@@ -2,11 +2,14 @@ var express = require("express");
 var app = express();
 const cors = require('cors');
 const indexRouter = require("./api/index");
-
-const signupRouter = require("./api/signup"); // Import the signup routes
 const maintenanceRouter = require('./api/maintenance'); //import maintenance router
 const scheduleRouter = require("./api/schedule"); // Import the scheduleRouter
+const usersRouter = require('./api/users');
+const bookingsRouter = require('./api/bookings');
+const venuesRouter = require('./api/venues');
 
+const notificationsRouter = require('./api/notification');
+  
 
 app.set("port", process.env.PORT || 3000);
 
@@ -15,10 +18,16 @@ app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-enco
 app.use(express.static("src"));
 app.use(cors());
 app.use("/api", indexRouter);
-
-app.use("/api", signupRouter); // Use the signup routes
 app.use("/api", maintenanceRouter); //use the maintenance router
 app.use("/api", scheduleRouter); // Use the scheduleRouter
+app.use("/api", usersRouter);
+app.use("/api", bookingsRouter);
+app.use("/api", venuesRouter);
+app.use("/api", notificationsRouter);
+
+
+app.set("port", process.env.PORT || 3000);
+
 
 
 app.listen(app.get("port"), function(){
