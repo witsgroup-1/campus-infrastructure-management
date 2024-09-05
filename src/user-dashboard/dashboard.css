@@ -51,14 +51,15 @@ nav {
 }
 
 a {
-    color: white; /* Link color */
-    text-decoration: none; /* Remove underline */
-    font-size: 1.25rem; /* Font size for links */
+    color: white;
+    text-decoration: none; 
+    font-size: 1.25rem; 
 }
 
 a:hover {
-    color: var(--witsGold); /* Change color on hover */
+    color: var(--witsGold); 
 }
+
 
 
 
