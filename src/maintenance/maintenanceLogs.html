@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Logs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /*Back to Top Button Styling */
+    #back-to-top {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 50;
+      background-color: #917248;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
+    <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button>
+    <h1 class="text-2xl font-semibold text-center text-white flex-grow drop-shadow-lg">Maintenance Logs</h1>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow px-4 ">
+    <!-- Desktop View -->
+    <div class="hidden lg:flex flex-grow justify-between space-x-4 relative h-full">
+      <!-- Scheduled Column -->
+      <div class="flex-1 flex flex-col">
+        <div class="bg-[#917248] text-white text-left p-4 rounded-md">Scheduled</div>
+        <div class="bg-white p-4 rounded-md shadow-sm flex-grow mt-2" id="scheduled-content">
+          <!-- Content populated via JS -->
+        </div>
+      </div>
+      
+    <!-- Grey Line between columns -->
+    <div class="w-px bg-gray-300"></div>
+
+
+      <!-- In Progress Column -->
+      <div class="flex-1 flex flex-col">
+        <div class="bg-[#917248] text-white text-left p-4 rounded-md">In Progress</div>
+        <div class="bg-white p-4 rounded-md shadow-sm flex-grow mt-2" id="in-progress-content">
+          <!-- Content populated via JS -->
+        </div>
+      </div>
+      
+    <!-- Grey Line between columns -->
+    <div class="w-px bg-gray-300"></div>
+
+
+      <!-- Completed Column -->
+      <div class="flex-1 flex flex-col">
+        <div class="bg-[#917248] text-white text-left p-4 rounded-md">Completed</div>
+        <div class="bg-white p-4 rounded-md shadow-sm flex-grow mt-2" id="completed-content">
+          <!-- Content populated via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile View -->
+    <div class="lg:hidden space-y-4">
+      <!-- Scheduled Section -->
+      <div class="bg-[#917248] text-white text-left p-4 rounded-md">Scheduled</div>
+      <div class="bg-white p-4 rounded-md shadow-sm" id="mobile-scheduled-content">
+        <!-- One item displayed from Scheduled -->
+      </div>
+      <button class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2" onclick="toggleExpand('mobile-scheduled-content')">Show More</button>
+
+      <!-- In Progress Section -->
+      <div class="bg-[#917248] text-white text-left p-4 rounded-md">In Progress</div>
+      <div class="bg-white p-4 rounded-md shadow-sm" id="mobile-in-progress-content">
+        <!-- One item displayed from In Progress -->
+      </div>
+      <button class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2" onclick="toggleExpand('mobile-scheduled-content')">Show More</button>
+      <!-- Completed Section -->
+      <div class="bg-[#917248] text-white text-left p-4 rounded-md">Completed</div>
+      <div class="bg-white p-4 rounded-md shadow-sm" id="mobile-completed-content">
+        <!-- One item displayed from Completed -->
+      </div>
+      <button class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2" onclick="toggleExpand('mobile-scheduled-content')">Show More</button>
+    </div>
+  </main>
+
+<!--Footer -->
+<footer class="mt-8 p-4 bg-[#003B5C] text-white text-center p-4">
+    <p>&copy; 2024 Group -1. All rights reserved.</p>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" onclick="scrollToTop()">↑</button>
+
+
+
+  <!-- JS to handle toggle expand -->
+  <script>
+    function toggleExpand(id) {
+      var content = document.getElementById(id);
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    }
+
+
+        // Scroll to Top Function
+        function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Show Back to Top Button on Scroll
+    window.onscroll = function() {
+      var backToTopButton = document.getElementById("back-to-top");
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        backToTopButton.style.display = "block";
+      } else {
+        backToTopButton.style.display = "none";
+      }
+    };
+
+
+
+  </script>
+
+</body>
+</html>

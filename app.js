@@ -5,6 +5,9 @@ const indexRouter = require("./api/index");
 const maintenanceRouter = require('./api/maintenance'); //import maintenance router
 const scheduleRouter = require("./api/schedule"); // Import the scheduleRouter
 const usersRouter = require('./api/users');
+const bookingsRouter = require('./api/bookings');
+const venuesRouter = require('./api/venues');
+
 const notificationsRouter = require('./api/notification');
 const bookingsRouter = require("./api/bookings");
 const venuesRouter = require("./api/venues");
@@ -19,6 +22,8 @@ app.use("/api", indexRouter);
 app.use("/api", maintenanceRouter); //use the maintenance router
 app.use("/api", scheduleRouter); // Use the scheduleRouter
 app.use("/api", usersRouter);
+app.use("/api", bookingsRouter);
+app.use("/api", venuesRouter);
 app.use("/api", notificationsRouter);
 app.use("/api", bookingsRouter);
 app.use("/api", venuesRouter);

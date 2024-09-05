@@ -37,10 +37,6 @@ venuesRouter.get('/venues/:Category', async (req, res) => {
             }
         });
 
-        if(category.length==0){
-            res.status(200).send("No venues found for this filter");
-        }
-
         res.status(200).json(category);
     } catch (error) {
         res.status(500).send('Cannot get venues');
@@ -58,7 +54,7 @@ venuesRouter.post('/venues', async(req,res)=>{
             Name:req.body.Name,
         };
         const docRef = await addDoc(collection(db, 'venues'), venue);
-        res.status(201).send("Venue created successfully");
+        res.status(201).json({id:docRef.id});
     }
 
     catch(error){
@@ -67,49 +63,4 @@ venuesRouter.post('/venues', async(req,res)=>{
     }
 });
 
-
-venuesRouter.put('/venues/:venueId', async (req, res) => {
-    const { venueId } = req.params;
-    const updates = req.body;
-
-    try {
-
-        const venueDocRef= doc(db, 'venues',venueId);
-        const venueDoc= await getDoc(venueDocRef);
-
-        if (!(venueDoc.exists())) {
-            return res.status(404).send('Venue not found');
-        }
-
-        if (Object.keys(updates).length === 0) {
-            return res.status(400).json({ error: 'No fields to update' });
-        }
-        
-
-        await updateDoc(venueDocRef, updates);
-        res.status(200).json({ venueId: venueId, message: 'Venue updated successfully.' });
-    } catch (error) {
-        console.error('Error updating your venue:', error);
-        res.status(500).send('Error updating venue');
-    }
-});
-
-
-venuesRouter.delete('/venues/:venueId', async (req, res) => {
-    const { venueId } = req.params;
-
-    try {
-
-        const venueDocRef= doc(db, 'venues',venueId);
-        const venueDoc= await getDoc(venueDocRef);
-
-        await deleteDoc(venueDocRef);
-        res.status(200).json({ message: 'Venue deleted successfully.' });
-    } catch (error) {
-        console.error('Error deleting venue:', error);
-        res.status(500).send('Error deleting venue');
-    }
-});
-
-
-module.exports=venuesRouter;
+module.exports = venuesRouter;
