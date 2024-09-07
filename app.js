@@ -9,8 +9,6 @@ const bookingsRouter = require('./api/bookings');
 const venuesRouter = require('./api/venues');
 
 const notificationsRouter = require('./api/notification');
-const bookingsRouter = require("./api/bookings");
-const venuesRouter = require("./api/venues");
 
 app.set("port", process.env.PORT || 3000);
 
@@ -25,8 +23,7 @@ app.use("/api", usersRouter);
 app.use("/api", bookingsRouter);
 app.use("/api", venuesRouter);
 app.use("/api", notificationsRouter);
-app.use("/api", bookingsRouter);
-app.use("/api", venuesRouter);
+
 
 app.set("port", process.env.PORT || 3000);
 
