@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Report Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+  
+  <!-- Page Header -->
+  <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
+    <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button>
+    <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Report</h1>
+  </header>
+
+  <!--Main Content -->
+  <main class="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8 items-start relative px-8">
+    <form class="space-y-6 lg:w-3/4">
+      
+      <!--Name and Surname -->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Name and Surname
+        <input type="text" placeholder="Name and Surname" class="block w-full mt-1 p-2 border rounded-md"  required>
+      </label>
+      
+      <!--Report Type -->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Report Type
+        <select class="block w-full mt-1 p-2 border rounded-md"  required>
+            <option> </option>
+            <option>Electrical</option>
+          <option>Ventilation</option>
+          <option>Pests and Rodents</option>
+          <option>Roofing and Ceiling</option>
+          <option>Other</option>
+        </select>
+      </label>
+
+      <!--Venue -->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Venue
+        <input type="text" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md"  required>
+      </label>
+
+      <!--Description -->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Description
+        <textarea placeholder="Enter description" class="block w-full mt-1 p-2 border rounded-md"  required></textarea>
+      </label>
+
+      <!--Submit Button -->
+      <button type="submit" class="block w-full bg-[#917248] text-white p-3 rounded-md font-semibold">Submit</button>
+    </form>
+
+    <!--Image for Desktop Version -->
+    <img src="../images/undraw_maintenance.svg" alt="Image" class="hidden lg:block lg:w-full lg:max-w-lg rounded-md  absolute bottom-0 right-0 mb-1 mr-16">
+  </main>
+
+ <!--Footer -->
+ <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center p-4">
+    <p>&copy; 2024 Group -1. All rights reserved.</p>
+  </footer>
+
+
+</body>
+</html>

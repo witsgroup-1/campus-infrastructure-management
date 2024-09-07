@@ -3,35 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Test</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        #message {
-            margin-top: 20px;
-        }
-    </style>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button id="fetchButton">Fetch Message</button>
-    <div id="message"></div>
-
-    <script>
-        const fetchButton = document.getElementById('fetchButton');
-        const message = document.getElementById('message');
-
-        fetchButton.addEventListener('click', async () => {
-            try {
-                const response = await fetch('/api');
-                const data = await response.json();
-                message.innerHTML = data.message;
-            } catch (error) {
-                console.error(error);
-                message.innerHTML = 'An error occurred';
-            }
-        });
-    </script>
-    
+    <img src="wss.jpg" class="background_image" alt="Background Image">
+    <div class="login_container">
+        <img src="wits_logo.png" alt="Wits Logo" class="logo">
+        <form>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Sign in</button>
+        </form>
+        <div class="social-login">
+            <img src="google_logo.png" alt="Google Login" class="social_icon">
+            <img src="apple_logo.png" alt="Apple Login" class="social_icon">
+            <img src="facebook_logo.png" alt="Facebook Login" class="social_icon">
+        </div>
+        <div class="additional-options">
+            <p><a href="#">New Account? Sign Up</a></p>
+            <p><a href="#">Forgot Password?</a></p>
+        </div>
+    </div>
 </body>
 </html>
