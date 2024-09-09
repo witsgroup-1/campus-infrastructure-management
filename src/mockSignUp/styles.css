@@ -52,7 +52,13 @@ form {
 }
 
 input[type="email"],
-input[type="password"] {
+input[type="password"], input[type = "text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+select{
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -101,9 +107,14 @@ button:hover {
 }
 
 .additional-options a:hover {
-    color: var(--witsGold);
+    color:var(--witsGold);
 }
 
 label {
     color: var(--witsBlue);
+}
+
+#logo{
+    width: 30px;
+    height: 50px;
 }

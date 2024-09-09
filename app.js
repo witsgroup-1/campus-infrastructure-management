@@ -25,7 +25,7 @@ app.use(express.static("src"));
 app.use(cors());
 
 //API key verification middleware to /api routes
-app.use('/api', verifyApiKey);
+//app.use('/api', verifyApiKey);
 
 app.use("/api", indexRouter);
 app.use("/api", maintenanceRouter); //use the maintenance router
