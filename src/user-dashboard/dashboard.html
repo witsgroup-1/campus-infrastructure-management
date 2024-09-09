@@ -70,10 +70,14 @@
         <!-- Upcoming Bookings Section -->
         <section class="mt-8">
             <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Your upcoming bookings...</h2>
-            <div class="space-y-4">
-                <div class="w-11/12 h-16 bg-gray-200 rounded-lg"></div>
-                <div class="w-11/12 h-16 bg-gray-200 rounded-lg"></div>
-                <div class="w-11/12 h-16 bg-gray-200 rounded-lg"></div>
+            <div id="bookings-container" class="space-y-4">
+              <!-- Bookings will be dynamically inserted here -->
+            </div>
+          
+            <!-- This section will be shown when there are no bookings -->
+            <div id="no-bookings-message" class="hidden text-center">
+              <img id="no-bookings-image" src="img/noBookings.png" alt="No bookings" class="mx-auto w-48 h-48">
+              <p class="text-lg font-semibold text-[#003B5C] mt-4">No upcoming bookings</p>
             </div>
         </section>
     </main>
