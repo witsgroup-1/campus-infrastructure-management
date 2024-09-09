@@ -42,7 +42,7 @@
             <a href="#" >Maintenance</a>
             <a href="../maintenance/maintenanceReports.html" >Report</a>
             <a href="#" >Venues</a>
-            <a href="#" >Log out</a>
+            <a href="#" id = "logout">Log out</a>
         </nav>
     </div>
     
@@ -76,7 +76,7 @@
           
             <!-- This section will be shown when there are no bookings -->
             <div id="no-bookings-message" class="hidden text-center">
-              <img id="no-bookings-image" src="img/noBookings.png" alt="No bookings" class="mx-auto w-48 h-48">
+              <!--<img id="no-bookings-image" src="img/noBookings.png" alt="No bookings" class="mx-auto w-48 h-48">-->
               <p class="text-lg font-semibold text-[#003B5C] mt-4">No upcoming bookings</p>
             </div>
         </section>
@@ -100,6 +100,8 @@
         <p>&copy; 2024 Infrastructure Management</p>
     </footer>
     <script src = "dashboard.js"></script>
+    <script type = "module" src = "viewBookings.js"></script>
+    <script type = "module" src = "../login/login.js"></script>
 </body>
 </html>
 

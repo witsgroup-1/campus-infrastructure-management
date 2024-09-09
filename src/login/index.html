@@ -10,12 +10,12 @@
     <img src="wss.jpg" class="background_image" alt="Background Image">
     <div class="login_container">
         <img src="wits_logo.png" alt="Wits Logo" class="logo">
-        <form>
+        <form id = "login-form">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required>
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
-            <button type="submit">Sign in</button>
+            <button id = "login" type="submit">Sign in</button>
         </form>
         <div class="social-login">
             <img src="google_logo.png" alt="Google Login" class="social_icon">
@@ -27,5 +27,7 @@
             <p><a href="#">Forgot Password?</a></p>
         </div>
     </div>
+
+    <script type = "module" src = "login.js" ></script>
 </body>
 </html>

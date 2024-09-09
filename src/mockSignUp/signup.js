@@ -8,12 +8,11 @@ document.getElementById('signup-form').addEventListener('submit', async function
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const role = document.getElementById('role').value;
-  
-    // Additional fields (if needed)
-    const faculty = ''; // If you have more fields like faculty, add them here
-    const is_tutor = false; // Example default values
-    const is_lecturer = false; // Example default values
-  
+    const faculty = document.getElementById('faculty').value; // If you have more fields like faculty, add them here
+    const is_tutor = false;
+    const is_lecturer = false;
+
+    //check for lecturer.
     // Create the user object
     const userData = {
       name,
@@ -25,12 +24,14 @@ document.getElementById('signup-form').addEventListener('submit', async function
       is_tutor,
       is_lecturer
     };
-  
+
+    const url = 'https://campus-infrastructure-management.azurewebsites.net/api/users/signup'
     try {
       // Send user data to the server
-      const response = await fetch('http://localhost:3000/api/users/signup', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
+          'x-api-key': process.env.API_KEY_1,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData)

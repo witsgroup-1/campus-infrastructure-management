@@ -61,6 +61,22 @@ a:hover {
 }
 
 
+.booking-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Align items vertically centered */
+    width: 100%; /* Make sure the container takes full width */
+  }
+  
+  .booking-info {
+    flex: 1;
+  }
+  
+  .booking-times {
+    text-align: right;
+  }
+  
+
 
 
   

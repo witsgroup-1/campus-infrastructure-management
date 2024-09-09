@@ -1,59 +1,122 @@
-require('dotenv').config();
-const express = require('express');
-const { app, db, auth,createUserWithEmailAndPassword } = require("../src/firebaseInit.js");
-const { collection, addDoc, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc } = require("firebase/firestore");
-const usersRouter = express.Router();
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
+  authDomain: "campusinfrastructuremanagement.firebaseapp.com",
+  projectId: "campusinfrastructuremanagement",
+  storageBucket: "campusinfrastructuremanagement.appspot.com",
+  messagingSenderId: "981921503275",
+  appId: "1:981921503275:web:78ce66a89f233a5c14f26e",
+  measurementId: "G-Y95YE5ZDRY"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Function to show a loading state
+function showLoading() {
+  const bookingsContainer = document.getElementById('bookings-container');
+  bookingsContainer.innerHTML = '<p>Loading bookings...</p>';
+}
 
 async function fetchUserBookings(userId) {
-    try {
-      const response = await fetch(`/Bookings/user/${userId}`);
-      if (!response.ok) {
-        throw new Error('Error fetching bookings');
+  try {
+    const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+        'Content-Type': 'application/json'
       }
-      const bookings = await response.json();
-      return bookings;
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-      return [];
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch bookings, please try again.');
     }
+
+    const bookings = await response.json();
+    console.log('Bookings fetched:', bookings); // Log the response to inspect it
+    return bookings;
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    return []; // Return an empty array in case of an error
   }
+}
 
-  // Function to display bookings or "no upcoming bookings" message
-  function displayBookings(bookings) {
-    const bookingsContainer = document.getElementById('bookings-container');
-    const noBookingsMessage = document.getElementById('no-bookings-message');
+function displayBookings(bookings) {
+  const bookingsContainer = document.getElementById('bookings-container');
+  const noBookingsMessage = document.getElementById('no-bookings-message');
 
-    // Clear any existing bookings
-    bookingsContainer.innerHTML = '';
+  // Clear any existing bookings
+  bookingsContainer.innerHTML = '';
 
-    if (bookings.length === 0) {
-      // No bookings, show the "no upcoming bookings" message and image
-      bookingsContainer.classList.add('hidden');
-      noBookingsMessage.classList.remove('hidden');
-    } else {
-      // Limit to 3 bookings
-      const bookingsToDisplay = bookings.slice(0, 3);
+  if (!bookings || bookings.length === 0) {
+    // No bookings, show the "no upcoming bookings" message and image
+    bookingsContainer.classList.add('hidden');
+    noBookingsMessage.classList.remove('hidden');
+  } else {
+    // Limit to 3 bookings
+    const bookingsToDisplay = bookings.slice(0, 3);
 
-      // Hide "no upcoming bookings" message
-      bookingsContainer.classList.remove('hidden');
-      noBookingsMessage.classList.add('hidden');
+    // Hide "no upcoming bookings" message
+    bookingsContainer.classList.remove('hidden');
+    noBookingsMessage.classList.add('hidden');
 
-      // Populate HTML structure
-      bookingsToDisplay.forEach(booking => {
-        const bookingElement = document.createElement('div');
-        bookingElement.classList.add('w-11/12', 'h-16', 'bg-gray-200', 'rounded-lg');
-        bookingElement.textContent = `Booking ID: ${booking.id} - Date: ${booking.date}`; // Customize with actual booking details
-        bookingsContainer.appendChild(bookingElement);
-      });
-    }
+    // Populate HTML structure with the first 3 bookings
+    bookingsToDisplay.forEach(booking => {
+      const bookingElement = document.createElement('div');
+      bookingElement.classList.add('w-11/12', 'h-16', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-2');
+
+      // Customize booking details
+      bookingElement.innerHTML = `
+  <div class="booking-container flex items-center">
+    <div class="booking-info flex-1">
+      <div><strong>Name:</strong> ${booking.name}</div>
+      <div><strong>Venue name:</strong> ${booking.venue_name}</div>
+    </div>
+    <div class="separator w-px bg-gray-400 h-12 mx-4"></div> <!-- Fixed height -->
+    <div class="booking-times flex-1">
+      <div><strong>Start Time:</strong> ${new Date(booking.start_time).toLocaleString()}</div>
+      <div><strong>End Time:</strong> ${new Date(booking.end_time).toLocaleString()}</div>
+    </div>
+  </div>
+`;
+
+    
+    
+
+      bookingsContainer.appendChild(bookingElement);
+    });
   }
+}
 
-  // Get bookings and display them
-  async function loadUserBookings(userId) {
-    const bookings = await fetchUserBookings(userId);
-    displayBookings(bookings);
+// Function to load user bookings once the user is authenticated
+/*async function loadUserBookings(userId) {
+  const bookings = await fetchUserBookings(userId);
+  displayBookings(bookings);
+}*/
+
+
+// Function to load user bookings once the user is authenticated
+async function loadUserBookings(userId) {
+  showLoading(); // Display loading state while fetching
+  const bookings = await fetchUserBookings(userId);
+  displayBookings(bookings);
+}
+
+// Listen to the user's authentication state and load bookings if signed in
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is signed in:", user.uid);
+    loadUserBookings(user.uid); // Load bookings for the signed-in user
+  } else {
+    console.log("No user is signed in.");
+    // Optionally redirect to login page or display message
   }
+});
 
-  // Example userId (replace with actual userId)
-  const userId = 'exampleUserId';
-  loadUserBookings(userId);
+
