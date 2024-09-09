@@ -1,8 +1,10 @@
+// Declare a variable to hold venue data
+let venueData = {};
+
 // Extract booking ID from the URL
 const params = new URLSearchParams(window.location.search);
 const bookingId = params.get('bookingId');
 console.log('Booking ID:', bookingId);
-
 
 // API URL to fetch venue details
 const url = `https://campus-infrastructure-management.azurewebsites.net/api/venues/${bookingId}`; // Modify endpoint as needed
@@ -23,14 +25,18 @@ fetch(url, {
 })
 .then(data => {
     console.log('API Response:', data); // Log the response to check its content
+    // Store the data in the global variable
+    venueData = data;
+    // Update the DOM with venue details
+    document.getElementById("venueName").textContent = `${data.Name} (${data.Category})`;
+    // Optionally update other elements (like date) if available
+    if (data.date) {
+        document.getElementById('date').textContent = data.date;
+    }
 })
 .catch(error => {
     console.error('Error fetching venue details:', error);
 });
-
-
-
-
 
 // Handle the booking submission
 document.getElementById('bookNowBtn').addEventListener('click', () => {
@@ -43,5 +49,5 @@ document.getElementById('bookNowBtn').addEventListener('click', () => {
     }
 
     // Simulate booking confirmation (replace with real backend call)
-    alert(`Booking confirmed for ${document.getElementById('venueName').textContent} at ${timeSlot}.\nPurpose: ${bookingPurpose}`);
+    alert(`Booking confirmed for ${venueData.Name || 'the selected venue'} at ${timeSlot}.\nPurpose: ${bookingPurpose}`);
 });
