@@ -12,7 +12,7 @@ The documentation can be found at: https://witsgroup-1.github.io/campus-infrastr
 
 When it comes to version control we need to define some things first:
 
-- Product: A product is what we can offer to the user to fufill their requirments.
+- Product: A product is what we can offer to the user to fufill their requirements.
 - Product feature: A products specific characteristics or functions that are important to the customer - so desin and functionality are included.
 
 
