@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile-First Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1;
+        }
+    </style>
+
+</head>
+
+
+<body class="bg-white text-gray-800">
+
+
+    <header class="p-4 bg-[#003B5C] text-white text-center">
+        <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button>
+        <h1 class="text-xl">Manage</h1>
+    </header>
+    
+
+    <main class="wrapper content">
+    <section class="p-4 flex flex-col items-center space-y-4 lg:flex-col lg:items-center  lg:space-y-6">
+ 
+        <button id="bookingsPage" class="w-1/2 aspect-square sm:w-1/3 lg:w-1/3 lg:h-10 bg-[#917248] text-white rounded" >Bookings</button>
+        <button class="w-1/2 aspect-square sm:w-1/3 lg:w-1/3 lg:h-10 bg-[#917248] text-white rounded">Schedules</button>
+        <button class="w-1/2 aspect-square sm:w-1/3 lg:w-1/3 lg:h-10 bg-[#917248] text-white rounded">Maintenance</button>
+    </section>
+
+    <img src="../images/undraw_file_manager_re_ms29.svg" alt="Image" class="hidden lg:block lg:w-full lg:max-w-lg rounded-md  absolute bottom-0 right-0 mb-1 mr-16">
+    
+</main>
+
+    <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center p-4">
+        <p>&copy; 2024 Group -1. All rights reserved.</p>
+      </footer>
+
+      <script src="manage.js"></script>
+</body>
+</html>

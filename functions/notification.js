@@ -26,26 +26,20 @@ notificationsRouter.post('/users/:userId/notifications', async (req, res) => {
     const { userId } = req.params;
     const { type, message, sendAt } = req.body;
 
-    const notificationData = {
-        type,
-        message,
-        sendAt,
-        createdAt: new Date().toISOString(),
-        read: false
-    };
-
     try {
-        const notificationRef = await addDoc(collection(db, 'users', userId, 'notifications'), notificationData);
+        const notificationRef = await addDoc(collection(db, 'users', userId, 'notifications'), {
+            type,
+            message,
+            sendAt,
+            createdAt: new Date().toISOString(),
+            status: 'pending'
+        });
         res.status(201).json({ notificationId: notificationRef.id, message: 'Notification created successfully.' });
     } catch (error) {
-        console.error('Error creating notification:', error.message); // Log the error message
-        console.error('Error details:', error); // Log the full error object for more details
+        console.error('Error creating notification:', error);
         res.status(500).send('Error creating notification');
     }
 });
-
-
-
 
 // Get a notification by notificationId
 notificationsRouter.get('/users/:userId/notifications/:notificationId', async (req, res) => {
@@ -67,13 +61,13 @@ notificationsRouter.get('/users/:userId/notifications/:notificationId', async (r
 // Update a notification by notificationId
 notificationsRouter.put('/users/:userId/notifications/:notificationId', async (req, res) => {
     const { userId, notificationId } = req.params;
-    const { type, message, sendAt, read } = req.body;
+    const { type, message, sendAt, status } = req.body;
 
     const updateData = {};
     if (type !== undefined) updateData.type = type;
     if (message !== undefined) updateData.message = message;
     if (sendAt !== undefined) updateData.sendAt = sendAt;
-    if (read !== undefined) updateData.read = read;
+    if (status !== undefined) updateData.status = status;
 
     try {
         const notificationRef = doc(db, 'users', userId, 'notifications', notificationId);
