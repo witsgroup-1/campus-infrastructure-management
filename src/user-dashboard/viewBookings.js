@@ -87,7 +87,6 @@ function displayBookings(bookings) {
 `;
 
     
-    
 
       bookingsContainer.appendChild(bookingElement);
     });

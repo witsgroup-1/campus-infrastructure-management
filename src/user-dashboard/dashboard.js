@@ -61,4 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     reportButton.addEventListener('click', ()=>{
         window.location.href = '../maintenance/maintenanceReports.html'
     })
+
+    bookButton.addEventListener('click', ()=>{
+        window.location.href = '../bookings/book-venue.html'
+    })
 });
