@@ -63,6 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     bookButton.addEventListener('click', ()=>{
-        window.location.href = '../bookings/book-venue.html'
+        window.location.href = '../make-booking/book-venue.html'
     })
 });
