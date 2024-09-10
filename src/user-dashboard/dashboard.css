@@ -60,6 +60,10 @@ a:hover {
     color: var(--witsGold); 
 }
 
+h2:hover {
+  color: var(--witsGold); 
+}
+
 
 .booking-container {
     display: flex;
