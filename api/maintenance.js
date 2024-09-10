@@ -4,6 +4,30 @@ const { collection, addDoc ,doc, getDoc, getDocs, setDoc, updateDoc, Timestamp, 
 const maintenanceRouter = express.Router();
 
 
+maintenanceRouter.use((req, res, next) => {
+    const validApiKeys = [
+        process.env.API_KEY_1,
+        process.env.API_KEY_2,
+        process.env.API_KEY_3,
+        process.env.API_KEY_4,
+        process.env.API_KEY_5
+    ];
+
+    // Get the API key from an incoming request or environment
+    const apiKey = req.headers['x-api-key'] || validApiKeys[0]; // Use header key if provided, else default to the first key
+
+    if (validApiKeys.includes(apiKey)) {
+        next();
+        //res.setHeader('x-api-key', apiKey);  // Add the header to all responses
+    } else {
+        return res.status(403).json({ message: 'Invalid API Key' });
+    }
+    
+    next();
+});
+
+
+
 //get the maintenance requests 
 maintenanceRouter.get('/maintenanceRequests', async(req,res)=>{
     try{
