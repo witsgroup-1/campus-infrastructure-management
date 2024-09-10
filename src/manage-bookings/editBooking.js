@@ -1,5 +1,9 @@
-let bookings = [];
-let venues = [];
+let bookings=[];
+let venues=[];
+
+const params = new URLSearchParams(window.location.search);
+const bookingId = params.get('bookingId');
+console.log('Booking ID:', bookingId);
 
 // API URLs
 const bookingsUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/bookings';  
@@ -45,17 +49,17 @@ function fetchBookings() {
   });
 }
 
-// Function to get the venue info based on venueId
-function getRoomInfo(venueId) {
+// // Function to get the venue info based on venueId
+// function getRoomInfo(venueId) {
 
-  for(let i=0;i<venues.length;i++){
-    if(venueId==venues[i].id){
-      console.log(venues[i]);
-      return venues[i];
-    }
+//   for(let i=0;i<venues.length;i++){
+//     if(venueId==venues[i].id){
+//       console.log(venues[i]);
+//       return venues[i];
+//     }
     
-  }
-}
+//   }
+// }
 
 function populateVenues(data) {
             const venueSelector = document.getElementById('venueSelector');
@@ -71,4 +75,6 @@ function populateVenues(data) {
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchVenues().then(fetchBookings);  // Fetch venues first, then fetch bookings
-});
+  });
+  
+

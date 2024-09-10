@@ -1,6 +1,5 @@
-let bookings = [];
-let venues = [];
-
+let bookings=[];
+let venues=[];
 // API URLs
 const bookingsUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/bookings';  
 const venuesUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';  
@@ -95,6 +94,7 @@ function renderBookings() {
                 <p class="text-sm text-gray-600">Type: ${roomInfo.Category}</p>
                 <p class="text-sm text-gray-600">Date: ${booking.date}</p>
                 <p class="text-sm text-gray-600">Time: ${booking.start_time} - ${booking.end_time}</p>
+                <p class="text-sm text-gray-600">Status: ${booking.status}</p>
             `;
             bookingBox.appendChild(roomDetails);
 
@@ -138,8 +138,8 @@ function renderBookings() {
 
     // Placeholder functions for button actions
   function editBooking(id) {
-    window.location.href = `editBooking.html?bookingId`;
-    alert(`Edit booking `);
+    window.location.href = `editBooking.html?bookingId=${id}`;
+
       
   }
 
@@ -170,7 +170,7 @@ fetch(url, {
   function acceptBooking(id) {
 
     const bookingId = id;  
-    const url = 'https://campus-infrastructure-management.azurewebsites.net/api/bookings/${bookingId}'; 
+    const url = `https://campus-infrastructure-management.azurewebsites.net/api/bookings/${bookingId}`; 
   
   fetch(url, {
     method: 'PUT',
@@ -192,7 +192,7 @@ fetch(url, {
   function rejectBooking(id) {
 
     const bookingId = id;  
-    const url = 'https://campus-infrastructure-management.azurewebsites.net/api/bookings/${bookingId}'; 
+    const url = `https://campus-infrastructure-management.azurewebsites.net/api/bookings/${bookingId}`; 
   
   fetch(url, {
     method: 'PUT',
@@ -214,8 +214,9 @@ fetch(url, {
 
 // Initial fetch for venues and bookings
 document.addEventListener('DOMContentLoaded', () => {
-    fetchVenues().then(fetchBookings);  // Fetch venues first, then fetch bookings
+  fetchVenues().then(fetchBookings);  // Fetch venues first, then fetch bookings
 });
+
 
 document.getElementById('statusFilter').addEventListener('change', renderBookings);
 document.getElementById('roomFilter').addEventListener('change', renderBookings);
