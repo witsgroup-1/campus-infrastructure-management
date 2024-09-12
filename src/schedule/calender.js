@@ -30,7 +30,7 @@ let schedules = [];
     const prevMonth = document.getElementById('prev-month');
     const nextMonth = document.getElementById('next-month');
     const modal = document.getElementById('date-modal');
-    const date = document.getElementById('modal-date');
+   // const date = document.getElementById('modal-date');
     const venue = document.getElementById('venue');
     const course = document.getElementById('course');
     const time = document.getElementById('time');
@@ -80,13 +80,11 @@ let schedules = [];
             if (schedule) {
                 venue.textContent = `Venue: ${schedule.roomId}`;
                 course.textContent = `Course: ${schedule.courseId}`;
-                time.textContent = `Time: ${new Date(schedule.start_time).toLocaleTimeString()} - ${new Date(schedule.end_time).toLocaleTimeString()}`;
-                status.textContent = `Status: ${schedule.status}`;
+                time.textContent = `Time: ${schedule.startTime} - ${schedule.endTime}`;
             } else {
                 venue.textContent = "Venue: N/A";
                 course.textContent = "Course: N/A";
                 time.textContent = "Time: N/A";
-                status.textContent = "Status: N/A";
             }
 
             modal.classList.remove('hidden');

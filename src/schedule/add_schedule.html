@@ -20,25 +20,19 @@
     <form class="space-y-6 lg:w-3/4">
       
       <!--Name and Surname -->
-      <label class="block text-lg text-[#003B5C] font-medium">
+      <label id="name" class="block text-lg text-[#003B5C] font-medium">
         Name and Surname:
         <input type="text" placeholder="Name and Surname" class="block w-full mt-1 p-2 border rounded-md"  required>
       </label>
 
-        <!--Course-->
-      <label class="block text-lg text-[#003B5C] font-medium">
+      <!--Course -->
+      <label id="course" class="block text-lg text-[#003B5C] font-medium">
         Course:
-        <select class="block w-full mt-1 p-2 border rounded-md" required>
-          <option value="">Select Course</option>
-          <option>COMS3018</option>
-          <option>COMS1009</option>
-          <option>APPM2036</option>
-          <option>PSYC1008</option>
-        </select>
+        <input type="text" placeholder="Course" class="block w-full mt-1 p-2 border rounded-md"  required>
       </label>
 
       <!--Venue -->
-      <label class="block text-lg text-[#003B5C] font-medium">
+      <label id="venue" class="block text-lg text-[#003B5C] font-medium">
         Venue:
         <select class="block w-full mt-1 p-2 border rounded-md" required>
           <option value="">Select Venue</option>
@@ -51,7 +45,7 @@
       </label>
 
         <!--Day of the week-->
-      <label class="block text-lg text-[#003B5C] font-medium">
+      <label id="day" class="block text-lg text-[#003B5C] font-medium">
         Day of the Week:
         <select class="block w-full mt-1 p-2 border rounded-md" required>
           <option value="">Select Day</option>
@@ -64,7 +58,7 @@
       </label>
 
         <!-- Time Slot -->
-        <div class="flex items-center space-x-4">
+        <div id="time" class="flex items-center space-x-4">
             <label class="text-lg text-[#003B5C] font-medium">
             From:
             <input type="time" class="block mt-1 p-2 border rounded-md" required>
@@ -74,6 +68,13 @@
             To:
             <input type="time" class="block mt-1 p-2 border rounded-md" required>
             </label>
+        </div>
+
+        <div id="date" class="mt-1">
+          <label class="text-lg text-[#003B5C] font-medium">
+            Date:
+            <input type="date" class="block w-full mt-2 p-2 border rounded-md">
+          </label>
         </div>
 
         <!-- Recurring -->
@@ -87,12 +88,7 @@
         </label>
         
         <!-- Dates (Initially Hidden) -->
-        <div id="dates-select" class="flex items-center space-x-4 mt-4" style="display: none;">
-            <label class="text-lg text-[#003B5C] font-medium">
-            First Schedule:
-            <input type="date" class="block mt-1 p-2 border rounded-md">
-            </label>
-        
+        <div id="last-date" class="flex items-center space-x-4 mt-4" style="display: none;">
             <label class="text-lg text-[#003B5C] font-medium">
             Last Schedule:
             <input type="date" class="block mt-1 p-2 border rounded-md">
@@ -106,7 +102,7 @@
     </form>
 
     <!--Image for Desktop Version -->
-    <img src="../images/schedule_image.svg" alt="Image" class="hidden lg:block lg:w-full lg:max-w-lg rounded-md absolute right-0 mb-1 mr-16">
+    <img src="../images/schedule_image.svg" alt="Image" class="hidden lg:block lg:w-full lg:max-w-lg rounded-md bottom-20 absolute right-0 mb-1 mr-16">
   </main>
 
  <!--Footer -->
@@ -118,7 +114,7 @@
 
 <script>
     const recurringSelect = document.getElementById('recurring-select');
-    const datesSelect = document.getElementById('dates-select');
+    const datesSelect = document.getElementById('last-date');
   
     // Add an event listener to the select element
     recurringSelect.addEventListener('change', function() {
