@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="origin">
     <title>Login Page</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Firebase Compatibility SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 </head>
 <body>
     <img src="wss.jpg" class="background_image" alt="Background Image">
@@ -18,7 +23,7 @@
             <button id = "login" type="submit">Sign in</button>
         </form>
         <div class="social-login">
-            <img src="google_logo.png" alt="Google Login" class="social_icon">
+            <img src="google_logo.png" alt="Google Login" class="social_icon" id="googleLogin">
             <img src="apple_logo.png" alt="Apple Login" class="social_icon">
             <img src="facebook_logo.png" alt="Facebook Login" class="social_icon">
         </div>
@@ -27,6 +32,41 @@
             <p><a href="#">Forgot Password?</a></p>
         </div>
     </div>
+
+    <!-- Firebase Config -->
+    <script>
+        // Your Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
+            authDomain: "campusinfrastructuremanagement.firebaseapp.com",
+            projectId: "campusinfrastructuremanagement",
+            storageBucket: "campusinfrastructuremanagement.appspot.com",
+            messagingSenderId: "981921503275",
+            appId: "1:981921503275:web:78ce66a89f233a5c14f26e",
+            measurementId: "G-Y95YE5ZDR"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Google Sign-In function
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+        document.getElementById('googleLogin').addEventListener('click', function (e) {
+            e.preventDefault();
+            firebase.auth().signInWithPopup(googleProvider)
+                .then((result) => {
+                    const credential = result.credential;
+                    const token = credential.accessToken;
+                    const user = result.user;
+                    console.log("User signed in: ", user);
+                    // You can now redirect the user or perform other actions
+                })
+                .catch((error) => {
+                    console.error("Error signing in: ", error);
+                });
+        });
+    </script>
 
     <script type = "module" src = "login.js" ></script>
 </body>
