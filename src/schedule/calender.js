@@ -34,7 +34,6 @@ let schedules = [];
     const venue = document.getElementById('venue');
     const course = document.getElementById('course');
     const time = document.getElementById('time');
-    const status = document.getElementById('status');
     const closeModal = document.getElementById('close-modal');
 
     let currentDate = new Date();
