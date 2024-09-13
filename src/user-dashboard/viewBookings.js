@@ -54,51 +54,48 @@ function displayBookings(bookings) {
   // Clear any existing bookings
   bookingsContainer.innerHTML = '';
 
-  if (!bookings || bookings.length === 0) {
-    // No bookings, show the "no upcoming bookings" message and image
+  // Get current time
+  const now = new Date();
+
+  // Filter only upcoming bookings (where start_time is in the future)
+  const upcomingBookings = bookings.filter(booking => new Date(booking.start_time) > now);
+
+  if (!upcomingBookings || upcomingBookings.length === 0) {
+    // No upcoming bookings, show the "no upcoming bookings" message and image
     bookingsContainer.classList.add('hidden');
     noBookingsMessage.classList.remove('hidden');
   } else {
     // Limit to 3 bookings
-    const bookingsToDisplay = bookings.slice(0, 3);
+    const bookingsToDisplay = upcomingBookings.slice(0, 3);
 
     // Hide "no upcoming bookings" message
     bookingsContainer.classList.remove('hidden');
     noBookingsMessage.classList.add('hidden');
 
-    // Populate HTML structure with the first 3 bookings
+    // Populate HTML structure with the first 3 upcoming bookings
     bookingsToDisplay.forEach(booking => {
       const bookingElement = document.createElement('div');
       bookingElement.classList.add('w-11/12', 'h-16', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-2');
 
       // Customize booking details
       bookingElement.innerHTML = `
-  <div class="booking-container flex items-center">
-    <div class="booking-info flex-1">
-      <div><strong>Name:</strong> ${booking.name}</div>
-      <div><strong>Venue name:</strong> ${booking.venue_name}</div>
-    </div>
-    <div class="separator w-px bg-gray-400 h-12 mx-4"></div> <!-- Fixed height -->
-    <div class="booking-times flex-1">
-      <div><strong>Start Time:</strong> ${new Date(booking.start_time).toLocaleString()}</div>
-      <div><strong>End Time:</strong> ${new Date(booking.end_time).toLocaleString()}</div>
-    </div>
-  </div>
-`;
-
-    
+        <div class="booking-container flex items-center">
+          <div class="booking-info flex-1">
+            <div><strong>Name:</strong> ${booking.name}</div>
+            <div><strong>Venue name:</strong> ${booking.venue_name}</div>
+          </div>
+          <div class="separator w-px bg-[#003B5C] h-12  mx-4"></div> 
+          <div class="booking-times flex-1">
+            <div><strong>Start Time:</strong> ${new Date(booking.start_time).toLocaleString()}</div>
+            <div><strong>End Time:</strong> ${new Date(booking.end_time).toLocaleString()}</div>
+          </div>
+        </div>
+      `;
 
       bookingsContainer.appendChild(bookingElement);
     });
   }
 }
-
-// Function to load user bookings once the user is authenticated
-/*async function loadUserBookings(userId) {
-  const bookings = await fetchUserBookings(userId);
-  displayBookings(bookings);
-}*/
-
 
 // Function to load user bookings once the user is authenticated
 async function loadUserBookings(userId) {
@@ -107,7 +104,7 @@ async function loadUserBookings(userId) {
   displayBookings(bookings);
 }
 
-// Listen to the user's authentication state and load bookings if signed in
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("User is signed in:", user.uid);

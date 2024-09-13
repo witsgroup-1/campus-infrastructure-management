@@ -37,7 +37,7 @@
     <div id="sidebar" class="fixed top-0 right-0 h-full bg-[#003B5C] text-white w-0 overflow-hidden transition-all duration-300 lg:w-1/4 md:w-1/3 sm:w-1/2">
         <button id="close-btn" class="absolute top-4 left-1/2 transform -translate-x-1/2 text-2xl cursor-pointer mt-4" aria-label="Close Sidebar">&times;</button>
         <nav class="flex flex-col items-center justify-center h-full p-4 space-y-4">
-            <a href="#" >Calendar</a>
+            <a href="../schedule/calender.html" >Calendar</a>
             <a href="../bookings/yourBookings.html" >Bookings</a>
             <a href="#" >Maintenance</a>
             <a href="../maintenance/maintenanceReports.html" >Report</a>
@@ -52,20 +52,8 @@
     <main class="min-h-screen p-8">
         <section>
             <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Available venues...</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <img class="w-full h-40 object-cover" src="img/lectureRooms.jpeg" alt="Venue 1">
-                <img class="w-full h-40 object-cover" src="img/tutorialRoom.png" alt="Venue 2">
-                <img class="w-full h-40 object-cover" src="img/labRooms0.jpg" alt="Venue 3">
-                <div class="relative">
-                    <img class="w-full h-40 object-cover" src="img/witsBoardroom.png" alt="Venue 4">
-                    <div class="absolute inset-0 bg-[#003B5C] bg-opacity-50 flex items-center justify-center cursor-pointer">
-                       <a href="viewAllVenues.html">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l7-7-7-7m-5 7h12"></path>
-                        </svg>
-                       </a>
-                    </div>
-                </div>
+            <div id="venue-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Venue elements will be dynamically inserted here -->
             </div>
         </section>
 
@@ -107,6 +95,8 @@
     <script src = "dashboard.js"></script>
     <script type = "module" src = "viewBookings.js"></script>
     <script type = "module" src = "../login/login.js"></script>
+    <script type = "module" src = "viewAllVenues.js"></script>
+    <script type = "module" src = "availVenues.js"></script>
 </body>
 </html>
 

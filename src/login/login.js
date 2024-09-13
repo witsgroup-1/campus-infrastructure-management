@@ -1,6 +1,5 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 
@@ -12,9 +11,8 @@ const firebaseConfig = {
     messagingSenderId: "981921503275",
     appId: "1:981921503275:web:78ce66a89f233a5c14f26e",
     measurementId: "G-Y95YE5ZDRY"
-  };
+};
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -39,7 +37,26 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     }
 });
 
+const googleProvider = new GoogleAuthProvider();
 
+document.getElementById('googleLogin').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+        console.log("User signed in with Google: ", user);
+
+        // You can now redirect the user or perform other actions
+        window.location.href = "../user-dashboard/dashboard.html";
+    } catch (error) {
+        console.error("Error signing in with Google: ", error.message);
+        alert("Error: " + error.message);
+    }
+});
+
+// Logout functionality
 document.getElementById('logout').addEventListener('click', async () => {
     try {
         await signOut(auth);
