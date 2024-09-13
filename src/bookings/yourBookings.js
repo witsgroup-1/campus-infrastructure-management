@@ -21,6 +21,25 @@ function showLoading() {
     const scheduledContent = document.getElementById('scheduled-content');
     scheduledContent.innerHTML = '<p>Loading bookings...</p>';
   }
+
+  function formatDate(date) {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear().toString().slice(-2); // Get last 2 digits of year
+    return `${day}/${month}/${year}`;
+  }
+  
+  function formatTimeSlot(startTime, endTime) {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const formatTime = (date) => {
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    };
+    return `${formatTime(start)}-${formatTime(end)}`;
+  }
   
   async function fetchUserBookings(userId) {
     try {
@@ -45,77 +64,168 @@ function showLoading() {
     }
   }
   
-  function displayBookings(bookings) {
-    const scheduledContent = document.getElementById('scheduled-content');
-    const inprogressContent = document.getElementById('in-progress-content')
+let currentPageUpcomingDesktop = 1;
+let currentPagePastDesktop = 1;
+let currentPageUpcomingMobile = 1;
+let currentPagePastMobile = 1;
+
+const itemsPerPageDesktop = 5;
+const itemsPerPageMobile = 2;
+
+function displayBookings(bookings) {
+  const scheduledContent = document.getElementById('scheduled-content');
+  const pastContent = document.getElementById('in-progress-content');
+  const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
+  const mobilePastContent = document.getElementById('mobile-in-progress-content');
+
+  // Clear any existing bookings content
+  scheduledContent.innerHTML = '';
+  pastContent.innerHTML = '';
+  mobileScheduledContent.innerHTML = '';
+  mobilePastContent.innerHTML = '';
+
+  const now = new Date();
+
+  // Separate upcoming and past bookings
+  const upcomingBookings = bookings.filter(booking => new Date(booking.start_time) > now);
+  const pastBookings = bookings.filter(booking => new Date(booking.start_time) <= now);
+
+
+  const paginatedUpcomingDesktop = paginateBookings(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop);
+  const paginatedPastDesktop = paginateBookings(pastBookings, currentPagePastDesktop, itemsPerPageDesktop);
+
   
-    // Clear any existing bookings content
-    scheduledContent.innerHTML = '';
+  const paginatedUpcomingMobile = paginateBookings(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile);
+  const paginatedPastMobile = paginateBookings(pastBookings, currentPagePastMobile, itemsPerPageMobile);
+
+ 
+  renderDesktopBookings(paginatedUpcomingDesktop, scheduledContent, 'upcoming');
+  renderDesktopBookings(paginatedPastDesktop, pastContent, 'past');
+
+ 
+  renderMobileBookings(paginatedUpcomingMobile, mobileScheduledContent, 'upcoming');
+  renderMobileBookings(paginatedPastMobile, mobilePastContent, 'past');
+
   
-    const now = new Date();
+  renderPaginationControls(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop, scheduledContent, 'desktop', 'upcoming');
+  renderPaginationControls(pastBookings, currentPagePastDesktop, itemsPerPageDesktop, pastContent, 'desktop', 'past');
+
+ 
+  renderPaginationControls(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile, mobileScheduledContent, 'mobile', 'upcoming');
+  renderPaginationControls(pastBookings, currentPagePastMobile, itemsPerPageMobile, mobilePastContent, 'mobile', 'past');
+}
+
+function paginateBookings(bookings, page, itemsPerPage) {
+  const start = (page - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return bookings.slice(start, end);
+}
+
+function renderDesktopBookings(bookings, container, type) {
+  const bookingsSection = document.createElement('div');
+  bookingsSection.classList.add(`${type}-bookings`, 'mb-4');
   
-    // Separate upcoming and past bookings
-    const upcomingBookings = bookings.filter(booking => new Date(booking.start_time) > now);
-    const pastBookings = bookings.filter(booking => new Date(booking.start_time) <= now);
-  
-    // Display Upcoming Bookings
-    const upcomingBookingsSection = document.createElement('div');
-    upcomingBookingsSection.classList.add('upcoming-bookings', 'mb-4');
-  
-  
-    if (upcomingBookings.length === 0) {
-      upcomingBookingsSection.innerHTML += '<p>No upcoming bookings.</p>';
-    } else {
-      upcomingBookings.forEach(booking => {
-        const bookingElement = document.createElement('div');
-        bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
-        bookingElement.innerHTML = `
-          <div class="flex justify-between items-center">
-            <div>
-              <div><strong>Name:</strong> ${booking.name}</div>
-              <div><strong>Venue:</strong> ${booking.venue_name}</div>
-              <div><strong>Start:</strong> ${new Date(booking.start_time).toLocaleString()}</div>
-              <div><strong>End:</strong> ${new Date(booking.end_time).toLocaleString()}</div>
-            </div>
-            <button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${booking.id}')">Cancel</button>
+  if (bookings.length === 0) {
+    bookingsSection.innerHTML = `<p>No ${type} bookings.</p>`;
+  } else {
+    bookings.forEach(booking => {
+      const bookingElement = document.createElement('div');
+      bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
+      bookingElement.innerHTML = `
+        <div class="flex justify-between items-center">
+          <div>
+            <div><strong>Name:</strong> ${booking.name}</div>
+            <div><strong>Venue:</strong> ${booking.venue_name}</div>
+            <div><strong>Date:</strong> ${formatDate(booking.start_time)}</div>
+            <div><strong>Slot:</strong> ${formatTimeSlot(booking.start_time, booking.end_time)}</div>
           </div>
-        `;
-        upcomingBookingsSection.appendChild(bookingElement);
-      });
-    }
-  
-    // Add upcoming bookings section to the scheduled content
-    scheduledContent.appendChild(upcomingBookingsSection);
-  
-    // Display Past Bookings
-    const pastBookingsSection = document.createElement('div');
-    pastBookingsSection.classList.add('past-bookings', 'mb-4');
-  
-  
-    if (pastBookings.length === 0) {
-      pastBookingsSection.innerHTML += '<p>No past bookings.</p>';
-    } else {
-      pastBookings.forEach(booking => {
-        const bookingElement = document.createElement('div');
-        bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
-        bookingElement.innerHTML = `
-          <div class="flex justify-between items-center">
-            <div>
-              <div><strong>Name:</strong> ${booking.name}</div>
-              <div><strong>Venue:</strong> ${booking.venue_name}</div>
-              <div><strong>Start:</strong> ${new Date(booking.start_time).toLocaleString()}</div>
-              <div><strong>End:</strong> ${new Date(booking.end_time).toLocaleString()}</div>
-            </div>
-            <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-[#003B5C] focus:outline-none" onclick="bookAgain('${booking.id}')">Book Again</button>
-          </div>
-        `;
-        pastBookingsSection.appendChild(bookingElement);
-      });
-    }
-  
-    // Add past bookings section to the scheduled content
-    inprogressContent.appendChild(pastBookingsSection);
+          ${type === 'upcoming' 
+            ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${booking.id}')">Cancel</button>`
+            : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.id}')">Book Again</button>`}
+        </div>
+      `;
+      bookingsSection.appendChild(bookingElement);
+    });
   }
+
+  container.appendChild(bookingsSection);
+}
+
+function renderMobileBookings(bookings, container, type) {
+  const bookingsSection = document.createElement('div');
+  bookingsSection.classList.add(`${type}-bookings-mobile`, 'mb-4');
+  
+  if (bookings.length === 0) {
+    bookingsSection.innerHTML = `<p>No ${type} bookings.</p>`;
+  } else {
+    bookings.forEach(booking => {
+      const bookingElement = document.createElement('div');
+      bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
+      bookingElement.innerHTML = `
+        <div class="flex flex-col justify-between items-start">
+          <div>
+            <div><strong>Name:</strong> ${booking.name}</div>
+            <div><strong>Venue:</strong> ${booking.venue_name}</div>
+            <div><strong>Date:</strong> ${formatDate(booking.start_time)}</div>
+            <div><strong>Slot:</strong> ${formatTimeSlot(booking.start_time, booking.end_time)}</div>
+          </div>
+          ${type === 'upcoming' 
+            ? `<button class="bg-red-500 text-white w-full mt-2 rounded" onclick="cancelBooking('${booking.id}')">Cancel</button>`
+            : `<button class="bg-green-500 text-white w-full mt-2 rounded" onclick="bookAgain('${booking.id}')">Book Again</button>`}
+        </div>
+      `;
+      bookingsSection.appendChild(bookingElement);
+    });
+  }
+
+  container.appendChild(bookingsSection);
+}
+
+function renderPaginationControls(bookings, currentPage, itemsPerPage, container, deviceType, bookingType) {
+  const totalPages = Math.ceil(bookings.length / itemsPerPage);
+  
+  if (totalPages <= 1) return; // No pagination needed if there's only one page
+
+  const paginationControls = document.createElement('div');
+  paginationControls.classList.add('pagination-controls', 'mt-4', 'flex', 'justify-between');
+
+  const prevButton = document.createElement('button');
+  prevButton.classList.add('bg-gray-400', 'text-white', 'px-4', 'py-2', 'rounded');
+  prevButton.innerText = 'Previous';
+  prevButton.disabled = currentPage === 1;
+  prevButton.onclick = () => {
+    if (deviceType === 'desktop') {
+      if (bookingType === 'upcoming') currentPageUpcomingDesktop--;
+      else currentPagePastDesktop--;
+    } else {
+      if (bookingType === 'upcoming') currentPageUpcomingMobile--;
+      else currentPagePastMobile--;
+    }
+    displayBookings(bookings);
+  };
+
+  const nextButton = document.createElement('button');
+  nextButton.classList.add('bg-gray-400', 'text-white', 'px-4', 'py-2', 'rounded');
+  nextButton.innerText = 'Next';
+  nextButton.disabled = currentPage === totalPages;
+  nextButton.onclick = () => {
+    if (deviceType === 'desktop') {
+      if (bookingType === 'upcoming') currentPageUpcomingDesktop++;
+      else currentPagePastDesktop++;
+    } else {
+      if (bookingType === 'upcoming') currentPageUpcomingMobile++;
+      else currentPagePastMobile++;
+    }
+    displayBookings(bookings);
+  };
+
+  paginationControls.appendChild(prevButton);
+  paginationControls.appendChild(nextButton);
+
+  container.appendChild(paginationControls);
+}
+
+
   
   // Function to handle booking cancellation
   function cancelBooking(bookingId) {
@@ -129,20 +239,20 @@ function showLoading() {
     // Add logic to create a new booking based on the past booking
   }
   
-  // Function to load user bookings once the user is authenticated
+
   async function loadUserBookings(userId) {
     showLoading(); // Display loading state while fetching
     const bookings = await fetchUserBookings(userId);
     displayBookings(bookings);
   }
   
-  // Listen to the user's authentication state and load bookings if signed in
+  
   onAuthStateChanged(auth, (user) => {
     if (user) {
       loadUserBookings(user.uid); // Load bookings for the signed-in user
     } else {
       console.log("No user is signed in.");
-      // Optionally redirect to login page or display message
+      
     }
   });
   
