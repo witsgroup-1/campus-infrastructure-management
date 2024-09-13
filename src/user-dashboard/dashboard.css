@@ -6,9 +6,6 @@
     --text-color: #2c3e50;
   }
 
-/* styles.css if you need custom styling */
-/* styles.css */
-
 #sidebar {
     position: fixed;
     top: 0;
@@ -28,26 +25,26 @@
 
 
 #close-btn {
-    position: absolute; /* Absolute positioning */
+    position: absolute; 
     top: 0;
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center the button */
-    margin-top: 1rem; /* Space from the top */
-    font-size: 2rem; /* Font size for the close button */
-    color: white; /* Color of the close button */
-    background: none; /* Remove background */
-    border: none; /* Remove border */
-    cursor: pointer; /* Pointer cursor on hover */
+    left: 50%;
+    transform: translateX(-50%); 
+    margin-top: 1rem; 
+    font-size: 2rem; 
+    color: white; 
+    background: none; 
+    border: none; 
+    cursor: pointer;
 }
 
 nav {
     display: flex;
-    flex-direction: column; /* Stack links vertically */
-    align-items: center; /* Center links horizontally */
-    justify-content: center; /* Center links vertically */
-    height: calc(80% - 3rem); /* Adjust height to avoid overlap with the close button */
-    padding: 1rem; /* Adjust padding as needed */
-    gap: 1rem; /* Space between items */
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    height: calc(80% - 3rem);
+    padding: 1rem; 
+    gap: 1rem; 
 }
 
 a {
@@ -68,8 +65,8 @@ h2:hover {
 .booking-container {
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Align items vertically centered */
-    width: 100%; /* Make sure the container takes full width */
+    align-items: center; 
+    width: 100%; 
   }
   
   .booking-info {
@@ -78,6 +75,21 @@ h2:hover {
   
   .booking-times {
     text-align: right;
+  }
+
+  #see-more-button {
+    position: center;
+    color: #003B5C;
+    margin-left: -20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  #see-more-button:hover{
+    text-decoration: underline;
+    color: var(--witsGold)
   }
   
 

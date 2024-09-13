@@ -12,16 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const getSidebarWidth = () => {
         const screenWidth = window.innerWidth;
         if (screenWidth >= 1024) {
-            return '20%'; //  (desktops)
+            return '20%';
         } else if (screenWidth >= 768) {
-            return '33%'; //(tablets)
+            return '33%';
         } else {
-            return '50%'; //(mobile)
+            return '50%';
         }
     };
 
     menuIcon.addEventListener('click', () => {
-        sidebar.style.width = getSidebarWidth(); // Set sidebar width dynamically
+        sidebar.style.width = getSidebarWidth(); 
     });
 
     closeBtn.addEventListener('click', () => {
@@ -66,3 +66,5 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '../make-booking/book-venue.html'
     })
 });
+
+
