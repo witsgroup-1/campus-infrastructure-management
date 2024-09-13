@@ -89,7 +89,7 @@ function showLoading() {
   
     // Display Past Bookings
     const pastBookingsSection = document.createElement('div');
-    pastBookingsSection.classList.add('past-bookings', 'mt-6');
+    pastBookingsSection.classList.add('past-bookings', 'mb-4');
   
   
     if (pastBookings.length === 0) {
@@ -106,7 +106,7 @@ function showLoading() {
               <div><strong>Start:</strong> ${new Date(booking.start_time).toLocaleString()}</div>
               <div><strong>End:</strong> ${new Date(booking.end_time).toLocaleString()}</div>
             </div>
-            <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-[#003B5C] focus:outline-none" onclick="bookAgain('${booking.id}')">Book Again</button>
+            <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-[#003B5C] focus:outline-none" onclick="bookAgain('${booking.id}')">Book Again</button>
           </div>
         `;
         pastBookingsSection.appendChild(bookingElement);

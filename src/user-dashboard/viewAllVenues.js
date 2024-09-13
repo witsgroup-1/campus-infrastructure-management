@@ -80,8 +80,12 @@ function renderBookings() {
         // Add click event listener to the button
         bookButton.onclick = function() {
             // Redirect to the booking details page, passing the booking ID or any other info through the URL
-            window.location.href = `booking-details.html?bookingId=${booking.id}`;
+            window.location.href = `../make-booking/booking-details.html?bookingId=${booking.id}`;
         };
+
+        statusButton.onclick = function(){
+          window.href.location = ``
+        }
         
         actionButtons.appendChild(bookButton);
         actionButtons.appendChild(statusButton);
