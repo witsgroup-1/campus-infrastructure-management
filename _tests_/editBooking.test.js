@@ -2,8 +2,10 @@ beforeEach(() => {
   // Mock DOM elements
   document.body.innerHTML = `
     <button id="saveChangesBtn"></button>
+    <select id="venueSelector"></select>
   `;
 });
+
 // Import the functions to be tested
 const { formatDateDMY, extractStartEndTime, getRoomInfo, getBooking, populateVenues } = require('../src/manage-bookings/editBooking.js');
 
@@ -39,9 +41,6 @@ test('getBooking returns the correct booking information', () => {
 
 // Test populateVenues
 test('populateVenues populates the venue selector correctly', () => {
-  // Set up the document body
-  document.body.innerHTML = `<select id="venueSelector"></select>`;
-
   populateVenues(mockVenues);
 
   const venueSelector = document.getElementById('venueSelector');
@@ -49,4 +48,3 @@ test('populateVenues populates the venue selector correctly', () => {
   expect(venueSelector.options[0].value).toBe('1');
   expect(venueSelector.options[0].text).toBe('Conference Room');
 });
-
