@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensure footer sticks to the bottom */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+        /* Uniform block size and layout */
+        .form-block {
+            min-height: 300px; 
+            width: 100%; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            position: relative; /* Make it relative to contain the absolute logo */
+        }
+        /* Ensure background logo fits inside the section */
+        .background-logo {
+            background-image: url('../images/WitsTransparent.png'); 
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            opacity: 0.9;
+        }
+        /* Absolute logo adjustments */
+        .logo-container {
+            position: absolute;
+            inset: 0; /* Fill the parent element */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 0;
+            pointer-events: none; /* Prevent logo from blocking clicks */
+        }
+        .logo-container img {
+            width: 100%;
+            max-width: 600px;
+            opacity: 0.1;
+        }
+        /* Center checkbox and label inside grey block */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .inner-box {
+            background-color: #f1f1f1; /* Grey background */
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        /* Add space between checkbox and label */
+        .checkbox-label {
+            margin-left: 10px; /* Space between checkbox and label */
+        }
+        /* Ensure form content stays above the logo */
+        .relative-content {
+            position: relative;
+            z-index: 10;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-block {
+                width: 85%; /* Make form narrower on tablets and small screens */
+            }
+        }
+        @media (max-width: 640px) {
+            .form-block {
+                width: 95%; /* Narrower form on smaller screens */
+                padding: 15px; /* Slightly reduce padding */
+                min-height: 300px; /* Reduce height on mobile */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Main Wrapper -->
+    <main class="flex-grow max-w-4xl mx-auto p-4">
+
+        <!-- Full-width Header -->
+        <header class="flex justify-between items-center w-full bg-[#003B5C] p-4 h-16 fixed left-0 top-0 right-0 z-10">
+            <!-- Back Button as Arrow -->
+            <button id="backBtn" class="text-6xl text-[#917248] font-bold">&larr;</button>
+
+            <!-- Dynamic Heading (Centered) -->
+            <div class="flex-grow text-center">
+                <h1 id="step-title" class="text-xl text-white font-bold">Welcome</h1>
+            </div>
+
+            <!-- Dynamic Progress Icon (Add fallback for SVG issue) -->
+            <img id="progress-icon" src="../images/Progress1.svg" alt="Progress" class="w-12 h-12">
+        </header>
+
+        <!-- Section 1 - Welcome -->
+        <section id="step-1" class="step active mt-20">
+            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md">
+                <!-- Transparent Logo (Behind Content) -->
+                <div class="logo-container">
+                    <img src="../images/WitsTransparent.png" alt="Logo">
+                </div>
+                <!-- Content -->
+                <div class="relative-content">
+                    <h2 class="text-2xl text-center text-[#003B5C]">Before you can join us - spend a moment to tell us more about you.</h2>
+                </div>
+            </div>
+            <button id="startBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Get Started</button>
+        </section>
+
+        <!-- Section 2 - Name and Surname -->
+        <section id="step-2" class="step hidden mt-20">
+            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md mx-auto md:w-3/4 w-full max-w-md">
+                <!-- Transparent Logo (Behind Content) -->
+                <div class="logo-container">
+                    <img src="../images/WitsTransparent.png" alt="Logo">
+                </div>
+                <!-- Form Content (Above the Logo) -->
+                <div class="relative-content">
+                    <label class="block text-[#003B5C]">Name</label>
+                    <input type="text" class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" id="name" required>
+
+                    <label class="block text-[#003B5C]">Surname</label>
+                    <input type="text" class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" id="surname" required>
+                </div>
+            </div>
+            <button id="nextBtn1" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Next</button>
+        </section>
+
+        <!-- Section 3 - Faculty and Role -->
+        <section id="step-3" class="step hidden mt-20">
+            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md">
+                <!-- Transparent Logo (Behind Content) -->
+                <div class="logo-container">
+                    <img src="../images/WitsTransparent.png" alt="Logo">
+                </div>
+                <!-- Form Content (Above the Logo) -->
+                <div class="relative-content">
+                    <label class="block text-[#003B5C]">Faculty</label>
+                    <select class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" id="faculty" required>
+                        <option value="" disabled selected>Select Faculty</option>
+                        <option value="Commerce, Law and Management">Commerce, Law and Management</option>
+                        <option value="Engineering and the Built environment">Engineering and the Built environment</option>
+                        <option value="Health Sciences">Health Sciences</option>
+                        <option value="Humanities">Humanities</option>
+                        <option value="Science">Science</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                    <label class="block text-[#003B5C]">Role</label>
+                    <select class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" id="role" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="Student">Student</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+            </div>
+            <button id="nextBtn2" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Next</button>
+        </section>
+
+        <!-- Section 4 - Checkboxes and Finish -->
+        <section id="step-4" class="step hidden mt-20">
+            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md">
+                <!-- Transparent Logo (Behind Content) -->
+                <div class="logo-container">
+                    <img src="../images/WitsTransparent.png" alt="Logo">
+                </div>
+                <!-- Form Content (Above the Logo) -->
+                <div class="relative-content">
+                    <div class="inner-box">
+                        <div class="checkbox-container">
+                            <span class="text-[#003B5C]">Are you a tutor?</span>
+                            <input type="checkbox" class="form-checkbox">
+                        </div>
+
+                        <div class="checkbox-container">
+                            <span class="text-[#003B5C]">Are you a lecturer?</span>
+                            <input type="checkbox" class="form-checkbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="finishBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Finish</button>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#003B5C] text-white text-center p-4 w-full">
+        <p>&copy; 2024 Group -1. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // JavaScript to control navigation and validation
+        const sections = document.querySelectorAll('.step');
+        let currentStep = 0;
+
+        const titles = ["Welcome", "Enter your name", "Specify your role", "Are you any of the following?"];
+        const icons = ["../images/Progress1.svg", "../images/Progress2.svg", "../images/Progress3.svg", "../images/Progress4.svg"];
+
+        function showStep(step) {
+            sections.forEach((section, index) => {
+                if (index === step) {
+                    section.classList.remove('hidden');
+                    section.classList.add('active');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+
+            // Update heading and progress icon dynamically
+            document.getElementById('step-title').textContent = titles[step];
+            document.getElementById('progress-icon').src = icons[step];
+        }
+
+        // Form validation for required fields -  make sure we enforce required
+        function validateStep1() {
+            const name = document.getElementById('name').value;
+            const surname = document.getElementById('surname').value;
+            return name.trim() !== '' && surname.trim() !== '';
+        }
+
+        function validateStep2() {
+            const faculty = document.getElementById('faculty').value;
+            const role = document.getElementById('role').value;
+            return faculty.trim() !== '' && role.trim() !== '';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            currentStep = 1;
+            showStep(currentStep);
+        });
+
+        document.getElementById('nextBtn1').addEventListener('click', () => {
+            if (validateStep1()) {
+                currentStep = 2;
+                showStep(currentStep);
+            } else {
+                alert('Please fill out all required fields.');
+            }
+        });
+
+        document.getElementById('nextBtn2').addEventListener('click', () => {
+            if (validateStep2()) {
+                currentStep = 3;
+                showStep(currentStep);
+            } else {
+                alert('Please fill out all required fields.');
+            }
+        });
+
+        document.getElementById('finishBtn').addEventListener('click', () => {
+            alert('Onboarding Complete!');
+        });
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+    </script>
+</body>
+</html>
