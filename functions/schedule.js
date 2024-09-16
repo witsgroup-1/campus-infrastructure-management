@@ -30,22 +30,6 @@ scheduleRouter.post('/schedules', async (req, res) => {
     }
 });
 
-// Get all schedules
-scheduleRouter.get('/schedules', async (req, res) => {
-    try {
-        const snapshot = await getDocs(collection(db, 'schedules'));
-        const schedules = [];
-
-        snapshot.forEach((doc) => {
-            schedules.push({ id: doc.id, ...doc.data() });
-        });
-
-        res.json(schedules);
-    } catch (error) {
-        res.status(500).send('Cannot get schedules');
-    }
-});
-
 // Retrieve a specific schedule by its ID
 scheduleRouter.get('/schedules/:scheduleId', async (req, res) => {
     const { scheduleId } = req.params;

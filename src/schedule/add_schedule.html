@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="add_schedule.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Add new Schedule</title>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+     <!-- Page Header -->
+  <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
+    <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">
+      <a href="calender.html">&larr;</a>
+    </button>
+    <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Add New Schedule</h1>
+  </header>
+
+  <!--Main Content -->
+  <main class="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8 items-start relative px-8">
+    <form id="schedule_form" class="space-y-6 lg:w-3/4">
+      
+      <!--Name and Surname -->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Name and Surname:
+        <input type="text" id="name" placeholder="Name and Surname" class="block w-full mt-1 p-2 border rounded-md"  required>
+      </label>
+
+      <!--Course -->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Course:
+        <input type="text" id="course" placeholder="Course" class="block w-full mt-1 p-2 border rounded-md"  required>
+      </label>
+
+      <!--Venue -->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Venue:
+        <select id="venue" class="block w-full mt-1 p-2 border rounded-md" required>
+          <option value="">Select Venue</option>
+          <option>Room 101</option>
+          <option>Room 102</option>
+          <option>Room 201</option>
+          <option>Lab A</option>
+          <option>Lab B</option>
+        </select>
+      </label>
+
+        <!--Day of the week-->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Day of the Week:
+        <select id="day" class="block w-full mt-1 p-2 border rounded-md" required>
+          <option value="">Select Day</option>
+          <option>Monday</option>
+          <option>Tuesday</option>
+          <option>Wednesday</option>
+          <option>Thursday</option>
+          <option>Friday</option>
+        </select>
+      </label>
+
+        <!-- Time Slot -->
+        <div id="time" class="flex items-center space-x-4">
+            <label class="text-lg text-[#003B5C] font-medium">
+            From:
+            <input type="time" id="time_from" class="block mt-1 p-2 border rounded-md" required>
+            </label>
+        
+            <label class="text-lg text-[#003B5C] font-medium">
+            To:
+            <input type="time" id="time_to" class="block mt-1 p-2 border rounded-md" required>
+            </label>
+        </div>
+
+        <div class="mt-1">
+          <label class="text-lg text-[#003B5C] font-medium">
+            Date:
+            <input type="date" id="date" class="block w-full mt-2 p-2 border rounded-md">
+          </label>
+        </div>
+
+        <!-- Recurring -->
+        <label class="block text-lg text-[#003B5C] font-medium">
+            Recurring:
+            <select id="recurring-select" class="block w-full mt-1 p-2 border rounded-md" required>
+            <option value="">Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            </select>
+        </label>
+        
+        <!-- Dates (Initially Hidden) -->
+        <div id="last-date" style="display: none;">
+          <label class="text-lg text-[#003B5C] font-medium">
+            Last Schedule:
+            <input type="date" id="end-date" class="block w-full mt-2 p-2 border rounded-md">
+          </label>
+        </div>
+  
+  
+
+      <!--Submit Button -->
+      <button type="submit" id="submit-button" class="block w-full bg-[#917248] text-white p-3 rounded-md font-semibold hover:bg-[#806541]">Submit</button>
+    </form>
+
+    <!--Image for Desktop Version -->
+    <img src="../images/schedule_image.svg" alt="Image" class="hidden lg:block lg:w-full lg:max-w-lg rounded-md bottom-20 absolute right-0 mb-1 mr-16">
+  </main>
+
+ <!--Footer -->
+ <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center p-4">
+    <p>&copy; 2024 Group -1. All rights reserved.</p>
+  </footer>
+
+</body>
+
+</html>

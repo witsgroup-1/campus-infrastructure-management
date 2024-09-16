@@ -22,25 +22,6 @@ venuesRouter.get('/venues', async (req,res)=>{
     }
 })
 
-venuesRouter.get('/venues/:venueId', async (req, res) => {
-    const { venueId } = req.params;
-
-    try {
-        const venueDoc = await getDoc(doc(db, 'venues', venueId));
-        if (venueDoc.exists()) {
-            res.status(200).json({ id: venueDoc.id, ...venueDoc.data() });
-        } else {
-            res.status(404).send('Venue not found');
-        }
-    } catch (error) {
-        console.error('Error getting Venue:', error);
-        res.status(500).send('Error getting venue');
-    }
-});
-
-
-
-
 // Get venue by category
 venuesRouter.get('/venues/:Category', async (req, res) => {
     const { Category } = req.params;
@@ -71,8 +52,6 @@ venuesRouter.post('/venues', async(req,res)=>{
             Features:req.body.Features,
             Building:req.body.Building,
             Name:req.body.Name,
-            //a boolean value that says if the venue is booked or not, it should change when a booking is made.
-            Booked:req.body.Booked
         };
         const docRef = await addDoc(collection(db, 'venues'), venue);
         res.status(201).json({id:docRef.id});

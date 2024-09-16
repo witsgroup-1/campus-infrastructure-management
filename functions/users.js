@@ -112,9 +112,9 @@ usersRouter.get('/users/:userId/bookings', async (req, res) => {
 // create a booking for a user
 usersRouter.post('/users/:userId/bookings', async (req, res) => {
     const { userId } = req.params;
-    const {venue_id, name, start_time, end_time,purpose, venue_name } = req.body;
+    const {venue_id, name, start_time, end_time } = req.body;
     try {
-        const bookingRef = await addDoc(collection(db, 'users', userId, 'bookings'), {venue_id, name, start_time, end_time,purpose,venue_name });
+        const bookingRef = await addDoc(collection(db, 'users', userId, 'bookings'), {venue_id, name, start_time, end_time });
         res.status(201).json({ id: bookingRef.id, message: 'Booking created successfully' });
     } catch (error) {
         console.error('Error creating booking:', error);
