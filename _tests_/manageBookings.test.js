@@ -8,7 +8,7 @@ const {
     cancelBooking,
     acceptBooking,
     rejectBooking
-  } = require('./manage-bookings/manageBookings.js');
+  } = require('../manage-bookings/manageBookings.js');
   
   // Mock data
   const mockVenues = [
