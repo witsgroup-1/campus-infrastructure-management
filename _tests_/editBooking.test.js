@@ -1,3 +1,9 @@
+beforeEach(() => {
+  // Mock DOM elements
+  document.body.innerHTML = `
+    <button id="saveChangesBtn"></button>
+  `;
+});
 // Import the functions to be tested
 const { formatDateDMY, extractStartEndTime, getRoomInfo, getBooking, populateVenues } = require('../src/manage-bookings/editBooking.js');
 
