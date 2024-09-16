@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="add_schedule.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="calender.js"></script>
     <title>Add new Schedule</title>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
      <!-- Page Header -->
   <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
     <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">
-      <a href="calender.html">&larr;</a>
+      <a href="timetable.html">&larr;</a>
     </button>
     <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Add New Schedule</h1>
   </header>
@@ -50,11 +51,13 @@
         Day of the Week:
         <select id="day" class="block w-full mt-1 p-2 border rounded-md" required>
           <option value="">Select Day</option>
-          <option>Monday</option>
-          <option>Tuesday</option>
-          <option>Wednesday</option>
-          <option>Thursday</option>
-          <option>Friday</option>
+          <option value="Sunday">Sunday</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
         </select>
       </label>
 
@@ -71,6 +74,7 @@
             </label>
         </div>
 
+        <!-- Date -->
         <div class="mt-1">
           <label class="text-lg text-[#003B5C] font-medium">
             Date:
@@ -83,12 +87,12 @@
             Recurring:
             <select id="recurring-select" class="block w-full mt-1 p-2 border rounded-md" required>
             <option value="">Select an option</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
+            <option value=true>Yes</option>
+            <option value=false>No</option>
             </select>
         </label>
         
-        <!-- Dates (Initially Hidden) -->
+        <!-- Last date (Initially Hidden) -->
         <div id="last-date" style="display: none;">
           <label class="text-lg text-[#003B5C] font-medium">
             Last Schedule:
