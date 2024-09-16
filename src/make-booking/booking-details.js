@@ -48,6 +48,39 @@ document.getElementById('bookNowBtn').addEventListener('click', () => {
         return;
     }
 
-    // Simulate booking confirmation (replace with real backend call)
-    alert(`Booking confirmed for ${venueData.Name || 'the selected venue'} at ${timeSlot}.\nPurpose: ${bookingPurpose}`);
+    // Prepare booking data
+    const bookingData = {
+        venue_id: bookingId,
+        name: venueData.Name,
+        start_time: timeSlot, // Adjust if you have a specific start time
+        end_time: '', // Provide end time if applicable
+        purpose: bookingPurpose,
+        venue_name: venueData.Name
+    };
+
+    // API URL to post booking data
+    const bookingUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/LuEegOvvNsSnIsYZfZdkoVi9nej2/bookings`; // Replace YOUR_USER_ID with actual user ID
+
+    // Post booking data to the API
+    fetch(bookingUrl, {
+        method: 'POST',
+        headers: {
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bookingData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(`Booking confirmed for ${venueData.Name || 'the selected venue'} at ${timeSlot}.\nPurpose: ${bookingPurpose}`);
+        console.log('Booking Response:', data);
+    })
+    .catch(error => {
+        console.error('Error posting booking data:', error);
+    });
 });
