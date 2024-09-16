@@ -95,15 +95,15 @@ button:hover {
 }
 
 .additional-options a {
-    color: #007AFF;
+    color: var(--witsBlue);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .additional-options a:hover {
-    color: #16337a;
+    color: var(--witsGold);
 }
 
 label {
-    color: #007AFF;
+    color: var(--witsBlue);
 }
