@@ -57,88 +57,89 @@ function getRoomInfo(venueId) {
 
 // Function to render bookings based on current filters
 function renderBookings() {
-    const container = document.getElementById('bookingsContainer');
-    container.innerHTML = ''; // Clear existing bookings
+  const container = document.getElementById('bookingsContainer');
+  container.innerHTML = ''; // Clear existing bookings
 
-    const statusFilter = document.getElementById('statusFilter').value;
-    const roomFilter = document.getElementById('roomFilter').value;
-    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('statusFilter').value;
+  const roomFilter = document.getElementById('roomFilter').value;
+  const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
-    // Filter bookings based on selected filters and search query
-    const filteredBookings = bookings.filter(booking => {
-        const matchesStatus = statusFilter ? booking.status.toLowerCase() === statusFilter : true;
-        const roomInfo = getRoomInfo(booking.venueId); // Get room info
-        const matchesRoom = roomFilter ? roomInfo && roomInfo.Category === roomFilter : true;
-        const matchesSearch = roomInfo && roomInfo.Building.toLowerCase().includes(searchQuery);
-        return matchesStatus && matchesRoom && matchesSearch;
-    });
+  // Filter bookings based on selected filters and search query
+  const filteredBookings = bookings.filter(booking => {
+      const matchesStatus = statusFilter ? booking.status.toLowerCase() === statusFilter : true;
+      const roomInfo = getRoomInfo(booking.venueId); // Get room info
+      const matchesRoom = roomFilter ? roomInfo && roomInfo.Category === roomFilter : true;
+      const matchesSearch = roomInfo && roomInfo.Building.toLowerCase().includes(searchQuery);
+      return matchesStatus && matchesRoom && matchesSearch;
+  });
 
-    if (filteredBookings.length === 0) {
-        container.innerHTML = '<p class="text-center text-gray-500">No bookings found.</p>';
-        return;
-    }
+  if (filteredBookings.length === 0) {
+      container.innerHTML = '<p class="text-center text-gray-500">No bookings found.</p>';
+      return;
+  }
 
-    // Create booking boxes
-    filteredBookings.forEach(booking => {
-        const roomInfo = getRoomInfo(booking.venueId); // Get room info
+  // Create booking boxes
+  filteredBookings.forEach(booking => {
+      const roomInfo = getRoomInfo(booking.venueId); // Get room info
 
-        if (roomInfo) {
-            const bookingBox = document.createElement('div');
-            bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
+      if (roomInfo) {
+          const bookingBox = document.createElement('div');
+          bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
-            // Room Info
-            const roomDetails = document.createElement('div');
-            roomDetails.className = 'flex-shrink-0';
-            roomDetails.innerHTML = `
-                <h2 class="text-lg font-semibold">${roomInfo.Name}</h2>
-                <p class="text-sm text-gray-600">Type: ${roomInfo.Category}</p>
-                <p class="text-sm text-gray-600">Date: ${booking.date}</p>
-                <p class="text-sm text-gray-600">Time: ${booking.start_time} - ${booking.end_time}</p>
-                <p class="text-sm text-gray-600">Status: ${booking.status}</p>
-            `;
-            bookingBox.appendChild(roomDetails);
+          // Room Info
+          const roomDetails = document.createElement('div');
+          roomDetails.className = 'flex-shrink-0';
+          roomDetails.innerHTML = `
+              <h2 class="text-lg font-semibold">${roomInfo.Name}</h2>
+              <p class="text-sm text-gray-600">Type: ${roomInfo.Category}</p>
+              <p class="text-sm text-gray-600">Date: ${booking.date}</p>
+              <p class="text-sm text-gray-600">Time: ${booking.start_time} - ${booking.end_time}</p>
+              <p class="text-sm text-gray-600">Status: ${booking.status}</p>
+          `;
+          bookingBox.appendChild(roomDetails);
 
-            const actionButtons = document.createElement('div');
-            actionButtons.className = 'flex flex-row space-x-2';
+          const actionButtons = document.createElement('div');
+          actionButtons.className = 'flex flex-row space-x-2';
 
-            if (booking.status.toLowerCase() === 'confirmed') {
-                const editButton = document.createElement('button');
-                editButton.className = 'bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
-                editButton.textContent = 'Edit';
-                editButton.onclick = () => editBooking(booking.id);
-                
+         if(booking.status.toLowerCase() != "pending"){
+          const editButton = document.createElement('button');
+          editButton.className = 'bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
+          editButton.textContent = 'Edit';
+          editButton.onclick = () => editBooking(booking.id);
+          actionButtons.appendChild(editButton);
+         }
+          // Conditional Buttons for Confirmed and Pending statuses
+          if (booking.status.toLowerCase() === 'confirmed') {
+              const cancelButton = document.createElement('button');
+              cancelButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
+              cancelButton.textContent = 'Cancel';
+              cancelButton.onclick = () => cancelBooking(booking.id);
+              actionButtons.appendChild(cancelButton);
+          } else if (booking.status.toLowerCase() === 'pending') {
+              const acceptButton = document.createElement('button');
+              acceptButton.className = 'bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 focus:outline-none';
+              acceptButton.textContent = 'Accept';
+              acceptButton.onclick = () => acceptBooking(booking.id);
 
-                const cancelButton = document.createElement('button');
-                cancelButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
-                cancelButton.textContent = 'Cancel';
-                cancelButton.onclick = () => cancelBooking(booking.id);
+              const rejectButton = document.createElement('button');
+              rejectButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
+              rejectButton.textContent = 'Reject';
+              rejectButton.onclick = () => rejectBooking(booking.id);
 
-                actionButtons.appendChild(editButton);
-                actionButtons.appendChild(cancelButton);
-            } else if (booking.status.toLowerCase() === 'pending') {
-                const acceptButton = document.createElement('button');
-                acceptButton.className = 'bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 focus:outline-none';
-                acceptButton.textContent = 'Accept';
-                acceptButton.onclick = () => acceptBooking(booking.id);
+              actionButtons.appendChild(acceptButton);
+              actionButtons.appendChild(rejectButton);
+          }
 
-                const rejectButton = document.createElement('button');
-                rejectButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
-                rejectButton.textContent = 'Reject';
-                rejectButton.onclick = () => rejectBooking(booking.id);
-
-                actionButtons.appendChild(acceptButton);
-                actionButtons.appendChild(rejectButton);
-            }
-
-            bookingBox.appendChild(actionButtons);
-            container.appendChild(bookingBox);
-        }
-    });
+          bookingBox.appendChild(actionButtons);
+          container.appendChild(bookingBox);
+      }
+  });
 }
 
     // Placeholder functions for button actions
   function editBooking(id) {
     window.location.href = `editBooking.html?bookingId=${id}`;
+    fetchBookings();
 
       
   }

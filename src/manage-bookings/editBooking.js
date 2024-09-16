@@ -1,5 +1,5 @@
-let bookings=[];
-let venues=[];
+let bookings = [];
+let venues = [];
 
 const params = new URLSearchParams(window.location.search);
 const bookingId = params.get('bookingId');
@@ -14,14 +14,14 @@ function fetchVenues() {
   return fetch(venuesUrl, {
     method: 'GET',
     headers: {
-      'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',  // Use environment variable for API key
+      'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
       'Content-Type': 'application/json'
     }
   })
   .then(response => response.json())
   .then(data => {
     venues = data; 
-    console.log(venues); // Store fetched venues
+    console.log(venues);
     populateVenues(venues);
   })
   .catch(error => {
@@ -34,47 +34,135 @@ function fetchBookings() {
   return fetch(bookingsUrl, {
     method: 'GET',
     headers: {
-      'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',  // Use environment variable for API key
+      'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
       'Content-Type': 'application/json'
     }
   })
   .then(response => response.json())
   .then(data => {
     bookings = data;
-    console.log(bookings);  // Store fetched bookings
-      // Render bookings after fetching data
+    console.log(bookings);
   })
   .catch(error => {
     console.error('Error fetching bookings:', error);
   });
 }
 
-// // Function to get the venue info based on venueId
-// function getRoomInfo(venueId) {
+// Function to get the venue info based on venueId
+function getRoomInfo(venueId) {
+  return venues.find(venue => venue.id === venueId);
+}
 
-//   for(let i=0;i<venues.length;i++){
-//     if(venueId==venues[i].id){
-//       console.log(venues[i]);
-//       return venues[i];
-//     }
-    
-//   }
-// }
+// Function to get the booking info based on bookingId
+function getBooking(bookingId) {
+  return bookings.find(booking => booking.id === bookingId);
+}
 
+// Populate venue dropdown
 function populateVenues(data) {
-            const venueSelector = document.getElementById('venueSelector');
-            data.forEach(venue => {
-                const option = document.createElement('option');
-                option.value = venue.id;
-                option.textContent = venue.Name;
-                venueSelector.appendChild(option);
-            });
-    
+  const venueSelector = document.getElementById('venueSelector');
+  venueSelector.innerHTML = '';
+
+  // Populate the dropdown with venue options
+  data.forEach(venue => {
+    const option = document.createElement('option');
+    option.value = venue.id;
+    option.textContent = venue.Name;
+    venueSelector.appendChild(option);
+  });
+
+  // Set the selected value if booking exists
+  const booking = getBooking(bookingId);
+  if (booking) {
+    const venueId = booking.venueId;
+    if (venueId) {
+      venueSelector.value = venueId; // Set the selected value
+    }
+  }
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchVenues().then(fetchBookings);  // Fetch venues first, then fetch bookings
-  });
-  
+// Validate input fields
+function isValidDate(dateString) {
+  return !isNaN(new Date(dateString).getTime());
+}
 
+function isValidTimeSlot(timeSlot) {
+  const regex = /^\d{1,2}:\d{2} [APM]{2} - \d{1,2}:\d{2} [APM]{2}$/; // Example format: 9:00 AM - 11:00 AM
+  return regex.test(timeSlot);
+}
+
+function isValidVenue(venueId) {
+  return venues.some(venue => venue.id === venueId);
+}
+
+// Save changes with validation
+function saveChanges(id) {
+  const selectedVenue = document.getElementById('venueSelector').value;
+  const bookingDate = document.getElementById('bookingDate').value;
+  const timeSlot = document.getElementById('timeSlot').value;
+  const status = document.getElementById('statusSelection').value;
+
+  if (!isValidVenue(selectedVenue)) {
+    alert('Please select a valid venue.');
+    return;
+  }
+
+  if (!isValidDate(bookingDate)) {
+    alert('Please enter a valid date.');
+    return;
+  }
+
+  if (!isValidTimeSlot(timeSlot)) {
+    alert('Please select a valid time slot.');
+    return;
+  }
+
+  const newDate = formatDateDMY(bookingDate);
+  const { startTime, endTime } = extractStartEndTime(timeSlot);
+  
+  fetch(`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${id}`, {
+    method: 'PUT',
+    headers: {
+      'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      start_time: startTime,
+      end_time: endTime,
+      date: newDate,
+      venueId: selectedVenue,
+      status: status
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    alert('Booking edited successfully');
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+// Format date as 'Day Month Year'
+function formatDateDMY(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleString('default', { month: 'long' });
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
+// Extract start and end time from time slot
+function extractStartEndTime(timeSlot) {
+  const [startTime, endTime] = timeSlot.split(' - ').map(time => time.trim());
+  return { startTime, endTime };
+}
+
+// Event listener for DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  fetchVenues().then(fetchBookings);
+});
+
+// Event listener for save button
+document.getElementById('saveChangesBtn').addEventListener('click', () => saveChanges(bookingId));
