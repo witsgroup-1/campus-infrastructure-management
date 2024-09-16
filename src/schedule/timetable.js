@@ -84,11 +84,6 @@ function displaySchedules() {
 
         tableBody.appendChild(row);
     });
-
-    // Add event listeners to delete buttons
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', handleDelete);
-    });
 }
 
 
