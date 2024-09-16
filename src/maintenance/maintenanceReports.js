@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         //Call API to create new maintenance requests
         
-        const response = await fetch('http://localhost:3000/api/maintenanceRequests', {
+        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
