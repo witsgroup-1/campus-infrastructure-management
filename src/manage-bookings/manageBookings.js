@@ -156,7 +156,7 @@ fetch(url, {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    status: 'cancelled'
+    status: 'Cancelled'
   })
 })
 .then(response => response.json())
@@ -164,6 +164,7 @@ fetch(url, {
 .catch(error => console.error('Error:', error));
 
       alert(`Booking cancelled successfully`);
+      fetchBookings();
       
   }
 
@@ -179,14 +180,14 @@ fetch(url, {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      status: 'confirmed'
+      status: 'Confirmed'
     })
   })
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(error => console.error('Error:', error));
       alert(`Booking succcessfully confirmed`);
-     
+      fetchBookings();
   }
 
   function rejectBooking(id) {
@@ -201,13 +202,14 @@ fetch(url, {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      status: 'rejected'
+      status: 'Rejected'
     })
   })
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(error => console.error('Error:', error));
       alert(`Booking rejected`);
+      fetchBookings();
       
   }
 
