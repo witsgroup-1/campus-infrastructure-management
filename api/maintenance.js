@@ -2,6 +2,8 @@ const express = require('express');
 const { app, db, auth } = require("../src/firebaseInit.js");
 const { collection, addDoc ,doc, getDoc, getDocs, setDoc, updateDoc, Timestamp, deleteDoc} = require("firebase/firestore"); 
 const maintenanceRouter = express.Router();
+const fetch = require('node-fetch');
+
 
 
 //get the maintenance requests 
@@ -56,18 +58,20 @@ maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {
 
 //post a request
  maintenanceRouter.post('/maintenanceRequests', async (req,res)=> {
-    const {assignedTo, createdAt, description, issueType, roomId, status, userId} = req.body;
+    const {assignedTo, createdAt, description, issueType, roomId, status,timestamp, userId} = req.body;
 
     try{
-        const timestamp = Timestamp.fromDate(new Date(createdAt));
+        const timestampNow = Timestamp.fromDate(new Date(createdAt));
+        const timestampTime = Timestamp.fromDate(new Date(timestamp));
 
         const docRef = await addDoc(collection(db, 'maintenanceRequests'), {
             assignedTo,
-            createdAt: timestamp,
+            createdAt: timestampNow,
             description,
             issueType,
             roomId,
             status,
+            timestamp: timestampTime,
             userId
         });
 
@@ -83,46 +87,46 @@ maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {
 
 
 
-
-//replace maintenence request - so update
 maintenanceRouter.put('/maintenanceRequests/:id', async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
   
     try {
-
-        if (Object.keys(updates).length === 0) {
-            return res.status(400).json({ error: 'No fields to update' });
-        }
-
-        // Get the document reference
-        const docRef = doc(db, 'maintenanceRequests', id);
-        
-        //so if only some fields are updated we can preserve the old fields
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-            return res.status(404).send('Document not found');
-        }
-
-        //merge the new data with existing data
-        const currentData = docSnap.data();
-        const updatedData = {
-            ...currentData,
-            ...updates,
-            createdAt: currentData.createdAt // Preserve the existing timestamp if not updated
-        };
-        //set the doc
-        await setDoc(docRef, updatedData);
-
-        // Return success message
-        res.status(200).json({ message: 'Document updated successfully' });
+      if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ error: 'No fields to update' });
+      }
+  
+      const docRef = doc(db, 'maintenanceRequests', id);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        return res.status(404).send('Document not found');
+      }
+  
+      const currentData = docSnap.data();
+  
+      if (updates.timestamp) {
+        const newDate = new Date( updates.timestamp);
+        updates.timestamp = Timestamp.fromDate(newDate);
+      }
+  
+      const updatedData = {
+        ...currentData,
+        ...updates,
+        createdAt: currentData.createdAt
+      };
+  
+      await setDoc(docRef, updatedData);
+  
+      res.status(200).json({ message: 'Document updated successfully' });
     } catch (error) {
-        console.error('Error updating document:', error);
-        if (!res.headersSent) {
-            res.status(500).send('Error updating document');
-        }
+      console.error('Error updating document:', error);
+      if (!res.headersSent) {
+        res.status(500).send('Error updating document');
+      }
     }
-});
+  });
+  
+
 
 
 //delete maintenance by id

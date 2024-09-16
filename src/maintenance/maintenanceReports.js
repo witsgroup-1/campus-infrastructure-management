@@ -1,35 +1,41 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     //add the event listener for the submit button
     document.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault(); //prevent the default form submission
   
+      const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
       //collect the data that we need from the form
-      const reportType = document.querySelector('select[placeholder="Report Type"]').value;
+      //const reportType = document.querySelector('select[placeholder="Report Type"]').value;
+      const reportType = document.querySelector('#reportType').value;
       const description = document.querySelector('textarea[placeholder="Enter description"]').value;
       const venue = document.querySelector('input[placeholder="Venue"]').value;
   
-  
+      
       //generate the timestamp
-      const timestamp = new Date().toISOString();
+      const timestampNow = new Date().toISOString();
+      //console.log(timestampNow);
   
       //data to be sent to the API
       const requestData = {
         assignedTo: 'none', // Default assigned value
-        createdAt: timestamp, // Generated timestamp
+        createdAt: timestampNow, // Generated timestamp
         description: description,
         issueType: reportType,
         roomId: venue,
-        status: 'Open', //status starts as open
+        status: 'Scheduled', //status starts as Scheduled 
+        timestamp: timestampNow, //default status
         userId: '12345' //we will replace with the user data
       };
   
       try {
         //Call API to create new maintenance requests
-        const response = await fetch('/api/maintenanceRequests', {
+        
+        const response = await fetch('http://localhost:3000/api/maintenanceRequests', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': process.env.API_KEY_1 
+            'x-api-key': apiKey 
           },
           body: JSON.stringify(requestData)
         });
@@ -37,36 +43,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!response.ok) {
           throw new Error('Failed to submit request');
         }
-  
-        //get the ID of the created maintenance request
-        const { id } = await response.json();
-  
-        //create a maintenance log entry
-        const logData = {
-          actionBy: 'system',
-          actionTaken: 'Scheduled',
-          logId: 'log_' + Math.random().toString(36).substr(2, 9), // Generate a random log ID
-          timestamp: timestamp 
-        };
-        //access the API for logs
-        const logResponse = await fetch(`/api/maintenanceRequests/${id}/maintenanceLogs`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': process.env.API_KEY_1 
-          },
-          body: JSON.stringify(logData)
-        });
-  
-        if (!logResponse.ok) {
-          throw new Error('Failed to create maintenance log');
-        }
-  
-        alert('Maintenance request created successfully with a scheduled log entry!');
-        // Optionally, reset the form or redirect to another page
+
+        //alert('Maintenance request created successfully!');
+        console.log('Maintenance request created successfully!');
+
+        document.querySelector("form").reset();
+        //document.querySelector("form").reset();
+        console.log(document.querySelector("#reportType").value); // Should log an empty string
+
+
       } catch (error) {
         console.error(error);
-        alert('There was an error creating the maintenance request');
+        //alert('There was an error creating the maintenance request');
+        console.error('There was an error creating the maintenance request');
       }
     });
   });

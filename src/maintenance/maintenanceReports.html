@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maintenance Report Page</title>
+  
+  <title>Maintenance Report</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -29,13 +30,13 @@
       <!--Report Type -->
       <label class="block text-lg text-[#003B5C] font-medium">
         Report Type
-        <select class="block w-full mt-1 p-2 border rounded-md"  required>
-            <option> </option>
-            <option>Electrical</option>
-          <option>Ventilation</option>
-          <option>Pests and Rodents</option>
-          <option>Roofing and Ceiling</option>
-          <option>Other</option>
+        <select id="reportType" class="block w-full mt-1 p-2 border rounded-md"  required>
+          <option value="" disabled selected>Select a report type</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Ventilation">Ventilation</option>
+          <option value="Pests and Rodents">Pests and Rodents</option>
+          <option value="Roofing and Ceiling">Roofing and Ceiling</option>
+          <option value="Other">Other</option>
         </select>
       </label>
 
