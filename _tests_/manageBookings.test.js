@@ -1,6 +1,4 @@
-// editBooking.test.js
 
-// Import functions to be tested
 const {
     fetchVenues,
     fetchBookings,
@@ -10,7 +8,7 @@ const {
     cancelBooking,
     acceptBooking,
     rejectBooking
-  } = require('./editBooking');
+  } = require('./manage-bookings/manageBookings.js');
   
   // Mock data
   const mockVenues = [
