@@ -1,5 +1,5 @@
 // Import the functions to be tested
-const { formatDateDMY, extractStartEndTime, getRoomInfo, getBooking, populateVenues } = require('./editBooking'); // Adjust the path as necessary
+const { formatDateDMY, extractStartEndTime, getRoomInfo, getBooking, populateVenues } = require('./manage-bookings/editBooking.js');
 
 // Mock data for testing
 const mockVenues = [
