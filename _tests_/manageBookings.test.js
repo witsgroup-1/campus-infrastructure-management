@@ -1,4 +1,12 @@
-
+beforeEach(() => {
+  // Mock DOM elements
+  document.body.innerHTML = `
+    <select id="statusFilter"></select>
+    <select id="roomFilter"></select>
+    <input id="searchInput" />
+    <div id="bookingsContainer"></div>
+  `;
+});
 const {
     fetchVenues,
     fetchBookings,
