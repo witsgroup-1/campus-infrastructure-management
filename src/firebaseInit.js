@@ -2,7 +2,7 @@ require('dotenv').config(); // Load environment variables from .env file
 
 const { initializeApp } = require("firebase/app");
 const { getFirestore } = require("firebase/firestore");
-const { getAuth, createUserWithEmailAndPassword } = require('firebase/auth');
+const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = require('firebase/auth');
 
 
 
@@ -37,4 +37,4 @@ if (typeof window !== "undefined") { // Ensure this is a browser environment
 }
 
 
-module.exports = { app, db, auth,createUserWithEmailAndPassword };
+module.exports = { app, db, auth,createUserWithEmailAndPassword,signInWithEmailAndPassword };

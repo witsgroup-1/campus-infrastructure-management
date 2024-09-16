@@ -3,7 +3,6 @@ const { app, db, auth } = require("../src/firebaseInit.js");
 const { collection, addDoc ,doc, getDoc, getDocs, setDoc, updateDoc, Timestamp, deleteDoc} = require("firebase/firestore"); 
 const maintenanceRouter = express.Router();
 
-
 //get the maintenance requests 
 maintenanceRouter.get('/maintenanceRequests', async(req,res)=>{
     try{
