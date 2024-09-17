@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wits Braamfontein Campus Map</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <!-- Back arrow for navigation -->
+    <a href="adminDashboard.html" class="absolute top-5 left-5 text-wits-blue text-3xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+    </a>
+
+    <!-- Page title -->
+    <h1 class="absolute top-10 text-wits-blue text-4xl font-bold text-center">
+        Wits Braamfontein Campus Map
+    </h1>
+
+    <!-- Embedded Google Map -->
+    <iframe class="border-4 border-wits-gold rounded-lg w-3/4 h-2/3"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1147.6927759270374!2d28.031835215823118!3d-26.192540721826155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e950c1ad317a273%3A0x1022f982a25a5ac0!2sSenate%20House%2C%20University%20of%20the%20Witwatersrand%2C%201%20Jan%20Smuts%20Ave%2C%20Johannesburg%2C%202000!5e0!3m2!1sen!2sza!4v1694979370489!5m2!1sen!2sza"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+    <!-- Tailwind CSS colors for Wits theme -->
+    <style>
+        .text-wits-blue {
+            color: #003B5C;
+        }
+
+        .border-wits-gold {
+            border-color: #fbb03b;
+        }
+    </style>
+
+</body>
+</html>
