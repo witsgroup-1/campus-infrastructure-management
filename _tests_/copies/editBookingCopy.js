@@ -179,5 +179,6 @@ module.exports = {
   isValidDate,
   isValidTimeSlot,
   isValidVenue,
-  saveChanges
+  saveChanges,
+  venues,
 };

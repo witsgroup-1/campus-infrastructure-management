@@ -9,7 +9,8 @@ const {
   getRoomInfo,
   getBooking,
   populateVenues,
-  saveChanges
+  saveChanges,
+  venues
 
 } = require('./copies/editBookingCopy.js');
 
