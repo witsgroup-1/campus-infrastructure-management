@@ -1,4 +1,13 @@
 // Array to hold venues data (mock or fetched)
+
+const userEmail = localStorage.getItem('userEmail');
+
+if (userEmail) {
+    console.log('User email:', userEmail);
+    document.getElementById('userEmailDisplay').textContent = `Logged in as: ${userEmail}`;
+} else {
+    console.log('No email found');
+}
 let bookings = [];
 
 // API URL
