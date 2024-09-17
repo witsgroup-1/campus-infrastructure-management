@@ -255,4 +255,6 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
       
     }
   });
+
+  module.exports ={formatDate, formatTimeSlot, fetchUserBookings, paginateBookings, showLoading, renderDesktopBookings, renderMobileBookings,renderPaginationControls }
   
