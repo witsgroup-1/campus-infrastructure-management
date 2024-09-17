@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookButton = document.getElementById('book-button');
     
 
-    const getSidebarWidth = () => {
+    function getSidebarWidth (){
         const screenWidth = window.innerWidth;
         if (screenWidth >= 1024) {
             return '20%';
