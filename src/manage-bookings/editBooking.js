@@ -162,10 +162,8 @@ function extractStartEndTime(timeSlot) {
 // Event listener for DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
   fetchVenues().then(fetchBookings);
-});
 
-// Event listener for save button
-const saveChangesBtn = document.getElementById('saveChangesBtn');
+  const saveChangesBtn = document.getElementById('saveChangesBtn');
 if (saveChangesBtn) {
   saveChangesBtn.addEventListener('click', () => saveChanges(bookingId));
 }
@@ -177,3 +175,6 @@ module.exports = {
   getBooking,
   
 };
+});
+
+
