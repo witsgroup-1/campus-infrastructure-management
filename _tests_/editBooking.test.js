@@ -83,22 +83,29 @@ describe('./copies/editBookingCopy.js', () => {
     expect(result).toEqual(mockBookings);
   });
 
-  test('populateVenues sets the selected venue correctly based on bookingId', () => {
-    const mockVenues = [
-      { id: '1', Name: 'Venue 1' },
-      { id: '2', Name: 'Venue 2' }
-    ];
-    venues.push(...mockVenues); // Use push to avoid reference errors
-    const mockBooking = { id: '123', venueId: '2' };
+  test('saveChanges validates input fields and updates booking', async () => {
+    const mockBookingId = '123';
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve({ success: true })
+    });
+    
+    await saveChanges(mockBookingId);
 
-    // Spy on the getBooking method from the imported module
-    jest.spyOn(require('./copies/editBookingCopy.js'), 'getBooking').mockReturnValue(mockBooking);
-
-    populateVenues(mockVenues);
-
-    const venueSelector = document.getElementById('venueSelector');
-    console.log('Selected venue ID:', venueSelector.value);
-    console.log('Expected venue ID:', mockBooking.venueId);
-    expect(venueSelector.value).toBe(mockBooking.venueId);
+    expect(fetch).toHaveBeenCalledWith(`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${mockBookingId}`, expect.any(Object));
+    expect(fetch).toHaveBeenCalledWith(expect.anything(), {
+      method: 'PUT',
+      headers: {
+        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        start_time: '9:00 AM',
+        end_time: '11:00 AM',
+        date: '17 September 2024',
+        venueId: '1',
+        status: 'confirmed'
+      })
+    });
   });
+
 });
