@@ -76,9 +76,9 @@ describe('editBookings.js', () => {
     fetch.mockResolvedValueOnce({
       json: () => Promise.resolve(mockBookings)
     });
-
-    await fetchBookings();
-    expect(bookings).toEqual(mockBookings);
+  
+    const result = await fetchBookings(); // Get the result of fetchBookings
+    expect(result).toEqual(mockBookings); // Test the result
   });
 
 
