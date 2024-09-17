@@ -10,14 +10,13 @@ const {
   getBooking,
   populateVenues,
   saveChanges,
-  venues
-
+  venues,
+  bookings
 } = require('./copies/editBookingCopy.js');
 
-global.fetch = jest.fn(); // Mock fetch globally
+global.fetch = jest.fn();
 
-describe('editBookings.js', () => {
-
+describe('./copies/editBookingCopy.js', () => {
   beforeEach(() => {
     fetch.mockClear();
     document.body.innerHTML = `
@@ -30,6 +29,9 @@ describe('editBookings.js', () => {
       </select>
       <button id="saveChangesBtn"></button>
     `;
+    // Reset global variables
+    venues.length = 0;
+    bookings.length = 0;
   });
 
   test('formatDateDMY formats date correctly', () => {
@@ -69,7 +71,6 @@ describe('editBookings.js', () => {
     expect(venueSelector.children[0].textContent).toBe(mockVenues[0].Name);
   });
 
-
   test('fetchBookings fetches bookings and stores in array', async () => {
     const mockBookings = [
       { id: '1', venueId: '1', date: '2024-09-17', timeSlot: '9:00 AM - 11:00 AM', status: 'confirmed' }
@@ -77,9 +78,9 @@ describe('editBookings.js', () => {
     fetch.mockResolvedValueOnce({
       json: () => Promise.resolve(mockBookings)
     });
-  
-    const result = await fetchBookings(); // Get the result of fetchBookings
-    expect(result).toEqual(mockBookings); // Test the result
+
+    const result = await fetchBookings();
+    expect(result).toEqual(mockBookings);
   });
 
   test('populateVenues sets the selected venue correctly based on bookingId', () => {
@@ -87,7 +88,7 @@ describe('editBookings.js', () => {
       { id: '1', Name: 'Venue 1' },
       { id: '2', Name: 'Venue 2' }
     ];
-    venues = mockVenues;
+    venues.push(...mockVenues); // Use push to avoid reference errors
     const mockBooking = { id: '123', venueId: '2' };
     jest.spyOn(global, 'getBooking').mockReturnValue(mockBooking);
 
@@ -96,7 +97,4 @@ describe('editBookings.js', () => {
     const venueSelector = document.getElementById('venueSelector');
     expect(venueSelector.value).toBe(mockBooking.venueId);
   });
-
-  });
-
-  
+});

@@ -21,7 +21,6 @@ async function fetchVenues() {
     });
     const data = await response.json();
     venues = data; 
-    console.log(venues);
     populateVenues(venues);
   } catch (error) {
     console.error('Error fetching venues:', error);
@@ -39,8 +38,8 @@ async function fetchBookings() {
       }
     });
     const data = await response.json();
-    bookings = data; // Update global bookings variable
-    return bookings; // Return the data for testing
+    bookings = data; 
+    return bookings; 
   } catch (error) {
     console.error('Error fetching bookings:', error);
   }
@@ -74,10 +73,11 @@ function populateVenues(data) {
   if (booking) {
     const venueId = booking.venueId;
     if (venueId) {
-      venueSelector.value = venueId; // Set the selected value
+      venueSelector.value = venueId;
     }
   }
 }
+
 
 // Validate input fields
 function isValidDate(dateString) {
@@ -181,4 +181,5 @@ module.exports = {
   isValidVenue,
   saveChanges,
   venues,
+  bookings
 };
