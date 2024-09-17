@@ -19,7 +19,8 @@ const db = getFirestore(app);
 const whitelist = [
    "lucky@bbd.co.za",
    "test1@email.com",
-   "luckynkosi@bbd.co.za"
+   "luckynkosi@bbd.co.za",
+    "blueivy@net.co.za"
 ];
 
 async function searchUserByEmail(email) {
