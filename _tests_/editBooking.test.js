@@ -1,3 +1,15 @@
+beforeEach(() => {
+  // Mock getElementById for different DOM elements
+  jest.spyOn(document, 'getElementById').mockImplementation((id) => {
+    if (id === 'saveChangesBtn') {
+      return { addEventListener: jest.fn() }; // Mock the button's event listener
+    } else if (id === 'venueSelector') {
+      return { options: [], add: jest.fn() }; // Mock a select element
+    }
+    return null; // Return null for any other elements
+  });
+});
+
 // Import the functions to be tested
 const { formatDateDMY, extractStartEndTime, getRoomInfo, getBooking } = require('../src/manage-bookings/editBooking.js');
 
