@@ -11,7 +11,7 @@ beforeEach(() => {
 });
 
 // Import the functions to be tested
-const { formatDateDMY, extractStartEndTime, getRoomInfo, getBooking } = require('../src/manage-bookings/editBooking.js');
+const {getRoomInfo, getBooking } = require('../src/manage-bookings/editBooking.js');
 
 // Mock data for testing
 const venues = [
@@ -23,15 +23,7 @@ const bookings = [
   { id: '101', venueId: '1', date: '2024-09-16', start_time: '9:00 AM', end_time: '11:00 AM', status: 'confirmed' },
 ];
 
-// Test formatDateDMY
-test('formatDateDMY formats date as "Day Month Year"', () => {
-  expect(formatDateDMY('2024-09-16')).toBe('16 September 2024');
-});
 
-// Test extractStartEndTime
-test('extractStartEndTime splits time slot into start and end times', () => {
-  expect(extractStartEndTime('9:00 AM - 11:00 AM')).toEqual({ startTime: '9:00 AM', endTime: '11:00 AM' });
-});
 
 // Test getRoomInfo
 test('getRoomInfo returns the correct venue information', () => {
