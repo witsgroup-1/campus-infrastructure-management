@@ -15,15 +15,21 @@
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
         "firebase": "^10.13.0",
+
         "jest": "^29.7.0",
         "node-fetch": "^3.3.2"
+
     },
     "scripts": {
-        "test": "sh node_modules/.bin/jest ./_tests_",
+        "test": "jest sh node_modules/.bin/jest ./_tests_",
         "start": "node app",
         "build:css": "npx postcss src/styles.css -o src/output.css"
     },
     "jest": {
+        "setupFilesAfterEnv": [
+            "<rootDir>/jest.setup.js"
+        ],
+        "testEnvironment": "jsdom",
         "collectCoverage": true,
         "coverageReporters": [
             "text",
@@ -39,8 +45,12 @@
         "@babel/cli": "^7.24.8",
         "@babel/core": "^7.25.2",
         "@babel/preset-env": "^7.25.3",
+        "@testing-library/dom": "^10.4.0",
+        "@testing-library/jest-dom": "^6.5.0",
+        "@testing-library/react": "^16.0.1",
         "autoprefixer": "^10.4.20",
         "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
         "jsdom": "^24.1.1",
         "postcss": "^8.4.41",
         "postcss-cli": "^11.0.0",
