@@ -173,7 +173,7 @@ module.exports = {
   extractStartEndTime,
   getRoomInfo,
   getBooking,
-  
+  populateVenues,
 };
 });
 
