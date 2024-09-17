@@ -23,78 +23,188 @@
         }
     </script>
 </head>
-<body class="bg-white w-[1440px] h-[1024px] relative">
-    <h1 class="absolute left-[450px] top-[98px] font-inter font-normal text-[64px] leading-[77px] text-[rgba(29,68,172,0.8)]">
+<body class="bg-white w-full min-h-screen relative p-8">
+    <h1 class="font-inter font-normal text-4xl md:text-[64px] leading-tight text-[rgba(29,68,172,0.8)] text-center mb-8">
         Admin Dashboard
     </h1>
 
     <!-- Arrow icon -->
-    <div class="absolute left-[50px] top-[98px] text-[rgba(0,0,0,0.8)]">
+    <div class="absolute left-4 top-4 text-[rgba(0,0,0,0.8)]">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
         </svg>
     </div>
 
     <!-- Settings icon -->
-    <div class="absolute left-[400px] top-[98px] text-[rgba(0,0,0,0.8)]">
+    <div class="absolute right-4 top-4 text-[rgba(0,0,0,0.8)]">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-14 h-14">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
     </div>
 
-    <div class="absolute left-[102px] top-[221px] w-[1267px] h-[791px] bg-custom-blue">
-        <div class="absolute left-[69px] top-[52px] w-[1163px] h-[220px] bg-custom-gray">
-            <h2 class="absolute left-[30px] top-[17px] font-inter font-normal text-[20px] leading-[24px] text-black">
+    <div class="bg-custom-blue p-8 rounded-lg">
+        <div id="bookingsSection" class="bg-custom-gray p-4 mb-6 rounded-lg">
+            <h2 class="font-inter font-normal text-[20px] leading-[24px] text-black mb-4">
                 Bookings
             </h2>
-            <div class="absolute left-[32px] top-[49px] w-[1090px] h-[61px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Accept</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Reject</button>
-            </div>
-            <div class="absolute left-[32px] top-[134px] w-[1090px] h-[68px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Accept</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Reject</button>
-            </div>
+            <div id="bookingsList" class="space-y-4"></div>
         </div>
 
-        <div class="absolute left-[69px] top-[314px] w-[1163px] h-[197px] bg-custom-gray">
-            <h2 class="absolute left-[30px] top-[14px] font-inter font-normal text-[20px] leading-[24px] text-black">
+        <div id="maintenanceSection" class="bg-custom-gray p-4 mb-6 rounded-lg">
+            <h2 class="font-inter font-normal text-[20px] leading-[24px] text-black mb-4">
                 Maintenance
             </h2>
-            <div class="absolute left-[40px] top-[55px] w-[1082px] h-[50px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Assign</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Track</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
-            </div>
-            <div class="absolute left-[44px] top-[129px] w-[1078px] h-[52px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Assign</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Track</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
-            </div>
+            <div id="maintenanceRequests" class="space-y-4"></div>
         </div>
 
-        <div class="absolute left-[69px] top-[544px] w-[1163px] h-[213px] bg-custom-gray">
-            <h2 class="absolute left-[30px] top-[23px] font-inter font-normal text-[20px] leading-[24px] text-black">
+        <div id="schedulesSection" class="bg-custom-gray p-4 mb-6 rounded-lg">
+            <h2 class="font-inter font-normal text-[20px] leading-[24px] text-black mb-4">
                 Schedules
             </h2>
-            <button class="absolute left-[44px] top-[57px] w-[523px] h-[136px] bg-custom-blue rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                <span class="absolute left-[40px] top-[18px] w-[455px] h-[104px] font-roboto font-medium text-[34px] leading-[20px] flex items-center text-center text-white">
-                    Update Room Availability
-                </span>
-            </button>
-            <button class="absolute left-[598px] top-[57px] w-[513px] h-[136px] bg-custom-blue rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                <span class="absolute left-[29px] top-[16px] w-[455px] h-[104px] font-roboto font-medium text-[34px] leading-[20px] flex items-center text-center text-white">
-                    Add Room
-                </span>
-            </button>
+            <div id="schedulesList" class="space-y-4"></div>
+        </div>
+
+        <div class="bg-custom-gray p-4 rounded-lg">
+            <h2 class="font-inter font-normal text-[20px] leading-[24px] text-black mb-4">
+                Venue Management
+            </h2>
+            <div class="flex justify-between">
+                <button class="bg-custom-blue text-white font-roboto font-medium text-2xl py-4 px-8 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <a href="venueAvailability.html">Update Room Availability</a>
+                </button>
+                <button class="bg-custom-blue text-white font-roboto font-medium text-2xl py-4 px-8 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <a href="addVenue.html">Add Venue</a>
+                </button>
+            </div>
         </div>
     </div>
+
+    <script>
+        const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
+        const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
+
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${apiBaseUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': apiKey,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching data from ${endpoint}:`, error);
+                return null;
+            }
+        }
+
+        async function fetchMaintenanceRequests() {
+            const data = await fetchData('/maintenanceRequests');
+            if (data) {
+                displayMaintenanceRequests(data);
+            }
+        }
+
+        async function fetchBookings() {
+            const data = await fetchData('/Bookings');
+            if (data) {
+                displayBookings(data);
+            }
+        }
+
+        async function fetchSchedules() {
+            const data = await fetchData('/schedules');
+            if (data) {
+                displaySchedules(data);
+            }
+        }
+
+        function displayMaintenanceRequests(requests) {
+            const container = document.getElementById('maintenanceRequests');
+            container.innerHTML = '';
+
+            requests.slice(0, 2).forEach((request) => {
+                const requestElement = document.createElement('div');
+                requestElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center rounded';
+                requestElement.innerHTML = `
+                    <span class="font-inter text-[16px]">${request.description}</span>
+                    <div>
+                        <button onclick="handleMaintenanceAction('assign', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Assign</button>
+                        <button onclick="handleMaintenanceAction('track', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Track</button>
+                        <button onclick="handleMaintenanceAction('update', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
+                    </div>
+                `;
+                container.appendChild(requestElement);
+            });
+        }
+
+        function displayBookings(bookings) {
+            const container = document.getElementById('bookingsList');
+            container.innerHTML = '';
+
+            bookings.slice(0, 2).forEach((booking) => {
+                const bookingElement = document.createElement('div');
+                bookingElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center rounded';
+                bookingElement.innerHTML = `
+                    <span class="font-inter text-[16px]">
+                        ${booking.purpose} - ${new Date(booking.start_time.seconds * 1000).toLocaleString()}
+                    </span>
+                    <div>
+                        <button onclick="handleBookingAction('accept', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Accept</button>
+                        <button onclick="handleBookingAction('reject', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Reject</button>
+                    </div>
+                `;
+                container.appendChild(bookingElement);
+            });
+        }
+
+        function displaySchedules(schedules) {
+            const container = document.getElementById('schedulesList');
+            container.innerHTML = '';
+
+            schedules.slice(0, 2).forEach((schedule) => {
+                const scheduleElement = document.createElement('div');
+                scheduleElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center rounded';
+                scheduleElement.innerHTML = `
+                    <span class="font-inter text-[16px]">
+                        Room: ${schedule.roomId}, Course: ${schedule.courseId}, 
+                        Time: ${schedule.startTime} - ${schedule.endTime}
+                    </span>
+                    <div>
+                        <button onclick="handleScheduleAction('edit', '${schedule.scheduleId}')" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Edit</button>
+                        <button onclick="handleScheduleAction('delete', '${schedule.scheduleId}')" class="font-inter font-normal text-[20px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Delete</button>
+                    </div>
+                `;
+                container.appendChild(scheduleElement);
+            });
+        }
+
+        function handleMaintenanceAction(action, requestId) {
+            console.log(`${action} action for maintenance request ${requestId}`);
+            // Implement the logic for each action (assign, track, update) here
+        }
+
+        function handleBookingAction(action, bookingId) {
+            console.log(`${action} action for booking ${bookingId}`);
+            // Implement the logic for each action (accept, reject) here
+        }
+
+        function handleScheduleAction(action, scheduleId) {
+            console.log(`${action} action for schedule ${scheduleId}`);
+            // Implement the logic for each action (edit, delete) here
+        }
+
+        // Fetch data when the page loads
+        fetchMaintenanceRequests();
+        fetchBookings();
+        fetchSchedules();
+    </script>
 </body>
 </html>
