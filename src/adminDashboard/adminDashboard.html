@@ -44,40 +44,18 @@
     </div>
 
     <div class="absolute left-[102px] top-[221px] w-[1267px] h-[791px] bg-custom-blue">
-        <div class="absolute left-[69px] top-[52px] w-[1163px] h-[220px] bg-custom-gray">
+        <div id="bookingsSection" class="absolute left-[69px] top-[52px] w-[1163px] h-[220px] bg-custom-gray">
             <h2 class="absolute left-[30px] top-[17px] font-inter font-normal text-[20px] leading-[24px] text-black">
                 Bookings
             </h2>
-            <div class="absolute left-[32px] top-[49px] w-[1090px] h-[61px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Accept</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Reject</button>
-            </div>
-            <div class="absolute left-[32px] top-[134px] w-[1090px] h-[68px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Accept</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Reject</button>
-            </div>
+            <div id="bookingsList" class="mt-12 space-y-4"></div>
         </div>
 
-        <div class="absolute left-[69px] top-[314px] w-[1163px] h-[197px] bg-custom-gray">
+        <div id="maintenanceSection" class="absolute left-[69px] top-[314px] w-[1163px] h-[197px] bg-custom-gray">
             <h2 class="absolute left-[30px] top-[14px] font-inter font-normal text-[20px] leading-[24px] text-black">
                 Maintenance
             </h2>
-            <div class="absolute left-[40px] top-[55px] w-[1082px] h-[50px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Assign</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Track</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
-            </div>
-            <div class="absolute left-[44px] top-[129px] w-[1078px] h-[52px] bg-custom-light-blue flex justify-end items-center pr-6">
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Assign</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Track</button>
-                <span class="mx-2">|</span>
-                <button class="font-inter font-normal text-[24px] leading-[29px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
-            </div>
+            <div id="maintenanceRequests" class="mt-12 space-y-4"></div>
         </div>
 
         <div class="absolute left-[69px] top-[544px] w-[1163px] h-[213px] bg-custom-gray">
@@ -86,15 +64,108 @@
             </h2>
             <button class="absolute left-[44px] top-[57px] w-[523px] h-[136px] bg-custom-blue rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 <span class="absolute left-[40px] top-[18px] w-[455px] h-[104px] font-roboto font-medium text-[34px] leading-[20px] flex items-center text-center text-white">
-                    Update Room Availability
+                    <a href="venueAvailability.html">Update Room Availability</a>
                 </span>
             </button>
             <button class="absolute left-[598px] top-[57px] w-[513px] h-[136px] bg-custom-blue rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
                 <span class="absolute left-[29px] top-[16px] w-[455px] h-[104px] font-roboto font-medium text-[34px] leading-[20px] flex items-center text-center text-white">
-                    Add Room
+                    <a href="addVenue.html">Add Venue</a>
                 </span>
             </button>
         </div>
     </div>
+
+    <script>
+        const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
+        const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
+
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${apiBaseUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': apiKey,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching data from ${endpoint}:`, error);
+                return null;
+            }
+        }
+
+        async function fetchMaintenanceRequests() {
+            const data = await fetchData('/maintenanceRequests');
+            if (data) {
+                displayMaintenanceRequests(data);
+            }
+        }
+
+        async function fetchBookings() {
+            const data = await fetchData('/Bookings');
+            if (data) {
+                displayBookings(data);
+            }
+        }
+
+        function displayMaintenanceRequests(requests) {
+            const container = document.getElementById('maintenanceRequests');
+            container.innerHTML = '';
+
+            requests.slice(0, 2).forEach((request) => {
+                const requestElement = document.createElement('div');
+                requestElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center';
+                requestElement.innerHTML = `
+                    <span class="font-inter text-[16px]">${request.description}</span>
+                    <div>
+                        <button onclick="handleMaintenanceAction('assign', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Assign</button>
+                        <button onclick="handleMaintenanceAction('track', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Track</button>
+                        <button onclick="handleMaintenanceAction('update', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
+                    </div>
+                `;
+                container.appendChild(requestElement);
+            });
+        }
+
+        function displayBookings(bookings) {
+            const container = document.getElementById('bookingsList');
+            container.innerHTML = '';
+
+            bookings.slice(0, 2).forEach((booking) => {
+                const bookingElement = document.createElement('div');
+                bookingElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center';
+                bookingElement.innerHTML = `
+                    <span class="font-inter text-[16px]">
+                        ${booking.purpose} - ${new Date(booking.start_time.seconds * 1000).toLocaleString()}
+                    </span>
+                    <div>
+                        <button onclick="handleBookingAction('accept', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Accept</button>
+                        <button onclick="handleBookingAction('reject', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Reject</button>
+                    </div>
+                `;
+                container.appendChild(bookingElement);
+            });
+        }
+
+        function handleMaintenanceAction(action, requestId) {
+            console.log(`${action} action for maintenance request ${requestId}`);
+            // Implement the logic for each action (assign, track, update) here
+        }
+
+        function handleBookingAction(action, bookingId) {
+            console.log(`${action} action for booking ${bookingId}`);
+            // Implement the logic for each action (accept, reject) here
+        }
+
+        // Fetch data when the page loads
+        fetchMaintenanceRequests();
+        fetchBookings();
+    </script>
 </body>
 </html>

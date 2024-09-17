@@ -21,65 +21,101 @@
         }
     </script>
 </head>
-<body class="bg-white w-[1440px] h-[1024px] relative">
+<body class="bg-white w-full min-h-screen relative">
     <div class="flex items-center mt-6 justify-center">
         <!-- Arrow icon -->
-        <div class="absolute left-4 text-[rgba(0,0,0,0.8)] mr-4">
+        <a href="adminDashboard.html">
+        	<div class="absolute left-4 text-[rgba(0,0,0,0.8)] mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
             </svg>
         </div>
+        </a>
 
         <!-- Edit icon and Title -->
         <div class="flex items-center justify-center w-full">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-14 h-14 text-[rgba(0,0,0,0.8)] mr-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
             </svg>
-            <h1 class="font-inter text-[64px] leading-[77px] text-[rgba(29,68,172,0.8)]">Update Venue Availability</h1>
+            <h1 class="font-inter text-4xl md:text-[64px] leading-tight text-[rgba(29,68,172,0.8)]">Update Venue Availability</h1>
         </div>
     </div>
 
-    <div class="mt-6 ml-24 w-[1267px] bg-custom-blue p-8 rounded-lg">
+    <div class="mt-6 mx-auto max-w-7xl bg-custom-blue p-8 rounded-lg">
         <div class="bg-white p-4 rounded-lg">
-            <input type="text" placeholder="Search for a venue" class="w-full p-2 mb-4 border rounded">
-            <div class="space-y-4">
-                <div class="bg-custom-gray p-4 rounded flex justify-between items-center">
-                    <div>
-                        <h3 class="text-xl font-semibold">Venue: WSS1</h3>
-                        <p>Location: Wits Science Stadium, West Campus</p>
-                        <p>Capacity: 200</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    </label>
-                </div>
-
-                <div class="bg-custom-gray p-4 rounded flex justify-between items-center">
-                    <div>
-                        <h3 class="text-xl font-semibold">Venue: WSS2</h3>
-                        <p>Location: Wits Science Stadium, West Campus</p>
-                        <p>Capacity: 200</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    </label>
-                </div>
-
-                <div class="bg-custom-gray p-4 rounded flex justify-between items-center">
-                    <div>
-                        <h3 class="text-xl font-semibold">Venue: WSS3</h3>
-                        <p>Location: Wits Science Stadium, West Campus</p>
-                        <p>Capacity: 200</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    </label>
-                </div>
+            <input type="text" id="searchInput" placeholder="Search for a venue" class="w-full p-2 mb-4 border rounded">
+            <div id="venueList" class="space-y-4">
+                <!-- Venues will be dynamically inserted here -->
             </div>
         </div>
     </div>
+
+    <script>
+        const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
+        const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
+
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${apiBaseUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': apiKey,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Could not fetch data: ", error);
+            }
+        }
+
+        async function loadVenues() {
+            const venues = await fetchData('/venues');
+            const venueList = document.getElementById('venueList');
+            venueList.innerHTML = ''; // Clear existing venues
+
+            venues.forEach(venue => {
+                const venueElement = document.createElement('div');
+                venueElement.className = 'bg-custom-gray p-4 rounded flex justify-between items-center';
+                venueElement.innerHTML = `
+                    <div>
+                        <h3 class="text-xl font-semibold">Venue: ${venue.Name}</h3>
+                        <p>Location: ${venue.Building}</p>
+                        <p>Capacity: ${venue.Capacity}</p>
+                        <p>Category: ${venue.Category}</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" ${venue.isAvailable ? 'checked' : ''}>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                `;
+                venueList.appendChild(venueElement);
+            });
+        }
+
+        function filterVenues() {
+            const searchInput = document.getElementById('searchInput');
+            const filter = searchInput.value.toUpperCase();
+            const venueList = document.getElementById('venueList');
+            const venues = venueList.getElementsByTagName('div');
+
+            for (let i = 0; i < venues.length; i++) {
+                const venueText = venues[i].textContent || venues[i].innerText;
+                if (venueText.toUpperCase().indexOf(filter) > -1) {
+                    venues[i].style.display = "";
+                } else {
+                    venues[i].style.display = "none";
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            loadVenues();
+            document.getElementById('searchInput').addEventListener('keyup', filterVenues);
+        });
+    </script>
 </body>
 </html>
