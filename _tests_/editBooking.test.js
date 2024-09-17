@@ -69,6 +69,19 @@ describe('editBookings.js', () => {
   });
 
 
+  test('fetchBookings fetches bookings and stores in array', async () => {
+    const mockBookings = [
+      { id: '1', venueId: '1', date: '2024-09-17', timeSlot: '9:00 AM - 11:00 AM', status: 'confirmed' }
+    ];
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve(mockBookings)
+    });
+
+    await fetchBookings();
+    expect(bookings).toEqual(mockBookings);
+  });
+
+
 
   });
 
