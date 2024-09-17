@@ -243,6 +243,7 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
   async function loadUserBookings(userId) {
     showLoading(); // Display loading state while fetching
     const bookings = await fetchUserBookings(userId);
+    console.log(userId)
     displayBookings(bookings);
   }
   
