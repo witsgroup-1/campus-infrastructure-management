@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLecturer = document.getElementById('lecturerCheckbox').checked;
             const email = localStorage.getItem('userEmail') || 'No email found';
 
+              // Store email in localStorage 
+        localStorage.setItem('userEmail', email);
+
             // Create user object
             const userData = {
                 name,
