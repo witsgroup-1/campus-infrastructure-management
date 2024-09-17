@@ -37,12 +37,12 @@
     <div id="sidebar" class="fixed top-0 right-0 h-full bg-[#003B5C] text-white w-0 overflow-hidden transition-all duration-300 lg:w-1/4 md:w-1/3 sm:w-1/2">
         <button id="close-btn" class="absolute top-4 left-1/2 transform -translate-x-1/2 text-2xl cursor-pointer mt-4" aria-label="Close Sidebar">&times;</button>
         <nav class="flex flex-col items-center justify-center h-full p-4 space-y-4">
-            <a href="../schedule/calender.html" >Calendar</a>
+            <a href="../schedule/timetable.html" >Schedules</a>
             <a href="../bookings/yourBookings.html" >Bookings</a>
-            <a href="#" >Maintenance</a>
+            <a href="../maintenance/maintenanceLogs.html" >Maintenance</a>
             <a href="../maintenance/maintenanceReports.html" >Report</a>
             <a href="viewAllVenues.html" >Venues</a>
-            <a href="#" id = "logout">Log out</a>
+            <a href="../login/login.html" id = "logout">Log out</a>
         </nav>
     </div>
     
@@ -85,13 +85,24 @@
         <button id="book-button" class="hidden bg-blue-950 text-white py-2 px-4 rounded-full font-semibold  w-20 h-12 shadow-lg mb-4">Book</button>
         
         <!-- Main Button -->
-        <button id="main-button" class="bg-[#917248] text-blue-950 py-2 px-4 rounded-full font-bold text-3xl shadow-lg">+</button>
+        <button id="main-button" class="bg-[#917248] text-blue-950 py-2 px-4 rounded-full font-bold text-3xl shadow-lg p-5">+</button>
     </div>
     
     
 
-    <footer class="bg-[#003B5C] text-white text-center p-4">
-        <p>&copy; 2024 Infrastructure Management</p>
+    <footer class="bg-[#003B5C] text-white flex justify-around">
+        <!--Security API stub-->
+        <section class="text-center p-2">
+            <p class="text-[#917248]">Security Contact Information:</p>
+            <p class="text-xs">East Campus: (011) 717 4444 / 6666</p>
+            <p class="text-xs">West Campus (011) 717 1842.</p>
+            <p class="text-xs">Health Sciences Campus: (011) 717 2222 / 2232</p>
+            <p class="text-xs">Education Campus: (011) 717 3340</p>
+        </section>
+
+        <section class="text-center p-9">
+            <p>&copy; 2024 Infrastructure Management</p>
+        </section>
     </footer>
     <script type = "module" src = "dashboard.js"></script>
     <script type = "module" src = "viewBookings.js"></script>
