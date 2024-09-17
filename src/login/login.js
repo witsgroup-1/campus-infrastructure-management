@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -16,6 +16,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const whitelist = [
+   "lucky@bbd.co.za",
+   "test1@email.com",
+   "luckynkosi@bbd.co.za"
+];
+
 async function searchUserByEmail(email) {
     const usersCollection = collection(db, 'users');
     const q = query(usersCollection, where('email', '==', email));
@@ -26,11 +32,6 @@ async function searchUserByEmail(email) {
             console.log('No matching documents.');
             return null;
         }
-
-        querySnapshot.forEach((doc) => {
-            console.log('Document data:', doc.data());
-        });
-
         return querySnapshot.docs.map(doc => doc.data());
     } catch (error) {
         console.error('Error searching for user:', error);
@@ -39,34 +40,58 @@ async function searchUserByEmail(email) {
 }
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault(); // Prevent default form submission
 
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log("User signed in:", user);
-        console.log("Signed in successfully");
+    if (whitelist.includes(email)) {
+        try {
+            // Attempt to sign in with email and password
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                console.log("User signed in:", email);
 
-        // Store the user's email in localStorage
-        localStorage.setItem('userEmail', user.email);
+                // Store the user's email in localStorage
+                localStorage.setItem('userEmail', email);
 
-        // Search for the user in Firestore
-        const userData = await searchUserByEmail(email);
-        if (userData) {
-            // Redirect to user dashboard if email is found
-            window.location.href = "../user-dashboard/dashboard.html";
-        } else {
-            // Redirect to onboarding page if email is not found
-            window.location.href = "../onboarding/onboarding.html";
+                // Search for user data
+                const userData = await searchUserByEmail(email);
+                if (userData) {
+                    window.location.href = "../user-dashboard/dashboard.html";
+                } else {
+                    // Redirect to password creation page if user is not found
+                    window.location.href = "../onboarding/onboarding.html";
+                }
+            } catch (signInError) {
+                // If sign-in fails (invalid credentials or other error), create a new user
+                console.log("Sign-in failed:", signInError.message);
+                console.log("Creating new user...");
+
+                try {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    console.log("User created:", email);
+
+                    // Store the user's email in localStorage
+                    localStorage.setItem('userEmail', email);
+
+                    // Redirect to password creation page
+                    window.location.href = "../onboarding/onboarding.html";
+                } catch (createUserError) {
+                    console.error("Error creating user:", createUserError.message);
+                    alert("Error: " + createUserError.message);
+                }
+            }
+        } catch (error) {
+            console.error("Error during login process:", error.message);
+            alert("Error: " + error.message);
         }
-    } catch (error) {
-        console.error("Error signing in:", error.message);
-        alert("Error: " + error.message);
+    } else {
+        console.error("Email not whitelisted.");
+        alert("Error: Email not whitelisted.");
     }
 });
+
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -75,22 +100,19 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
-        console.log("User signed in with Google: ", user);
+        console.log("User signed in with Google:", user);
 
-        // Store the user's email in localStorage
         localStorage.setItem('userEmail', user.email);
 
-        // Search for the user in Firestore
+        // Search for user data
         const userData = await searchUserByEmail(user.email);
         if (userData) {
-            // Redirect to user dashboard if email is found
             window.location.href = "../user-dashboard/dashboard.html";
         } else {
-            // Redirect to onboarding page if email is not found
             window.location.href = "../onboarding/onboarding.html";
         }
     } catch (error) {
-        console.error("Error signing in with Google: ", error.message);
+        console.error("Error signing in with Google:", error.message);
         alert("Error: " + error.message);
     }
 });
@@ -109,3 +131,4 @@ document.getElementById('logout').addEventListener('click', async () => {
         alert("Error: " + error.message);
     }
 });
+
