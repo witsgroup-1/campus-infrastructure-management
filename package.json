@@ -31,8 +31,8 @@
         "coverageReporters": [
             "text",
             "cobertura"
-        ],
-        "testEnvironment": "jsdom"
+        ]
+
     },
     "author": "",
     "bugs": {
