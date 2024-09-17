@@ -24,10 +24,14 @@ fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules'
 document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.getElementById('table-body');
 
+    // Event delegation on tableBody
     tableBody.addEventListener('click', async function(event) {
-        if (event.target.classList.contains('delete-btn')) {
-            const id = event.target.getAttribute('data-id');
-            
+        // Use closest to check if the clicked element or its parent has the class 'delete-btn'
+        const deleteButton = event.target.closest('.delete-btn');
+        
+        if (deleteButton) {
+            const id = deleteButton.getAttribute('data-id'); // Get the unique id
+
             // Confirm deletion
             if (confirm('Are you sure you want to delete this schedule?')) {
                 try {
@@ -45,8 +49,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     // Remove the row from the table
-                    event.target.closest('tr').remove();
-                    
+                    deleteButton.closest('tr').remove();
+
                     alert('Schedule deleted successfully!');
                 } catch (error) {
                     console.error('Error deleting schedule:', error);
@@ -56,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 
 
 
