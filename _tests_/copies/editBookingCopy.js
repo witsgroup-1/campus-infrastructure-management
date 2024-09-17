@@ -39,8 +39,8 @@ async function fetchBookings() {
       }
     });
     const data = await response.json();
-    bookings = data;
-    console.log(bookings);
+    bookings = data; // Update global bookings variable
+    return bookings; // Return the data for testing
   } catch (error) {
     console.error('Error fetching bookings:', error);
   }
