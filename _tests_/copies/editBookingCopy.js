@@ -73,10 +73,11 @@ function populateVenues(data) {
   if (booking) {
     const venueId = booking.venueId;
     if (venueId) {
-      venueSelector.value = venueId;
+      venueSelector.value = venueId; // Set the selected value
     }
   }
 }
+
 
 
 // Validate input fields

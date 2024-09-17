@@ -90,11 +90,15 @@ describe('./copies/editBookingCopy.js', () => {
     ];
     venues.push(...mockVenues); // Use push to avoid reference errors
     const mockBooking = { id: '123', venueId: '2' };
+
+    // Spy on the getBooking method from the imported module
     jest.spyOn(require('./copies/editBookingCopy.js'), 'getBooking').mockReturnValue(mockBooking);
 
     populateVenues(mockVenues);
 
     const venueSelector = document.getElementById('venueSelector');
+    console.log('Selected venue ID:', venueSelector.value);
+    console.log('Expected venue ID:', mockBooking.venueId);
     expect(venueSelector.value).toBe(mockBooking.venueId);
   });
 });
