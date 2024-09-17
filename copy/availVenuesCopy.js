@@ -168,14 +168,4 @@ document.addEventListener('DOMContentLoaded', () => {
     populateVenues();
 });
 
-
-//module.exports = {populateVenues, fetchVenues, createVenueElement}
-
-
-
-  
-
-
-
-
-
+module.exports = {populateVenues, fetchVenues, createVenueElement}
