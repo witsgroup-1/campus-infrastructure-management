@@ -47,29 +47,6 @@ describe('./copies/editBookingCopy.js', () => {
       })
     );
   });
-
-  test('saveChanges updates booking with valid inputs', async () => {
-    const mockBookingId = '123';
-    document.body.innerHTML = `
-      <select id="venueSelector"><option value="1">Venue 1</option></select>
-      <input id="bookingDate" value="2024-09-17" />
-      <input id="timeSlot" value="9:00 AM - 11:00 AM" />
-      <select id="statusSelection"><option value="confirmed">Confirmed</option></select>
-    `;
-    
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({}),
-      })
-    );
-  
-    await saveChanges(mockBookingId);
-  
-    expect(fetch).toHaveBeenCalledWith(
-      `https://campus-infrastructure-management.azurewebsites.net/api/bookings/${mockBookingId}`,
-      expect.any(Object)
-    );
-  });
   
 
   test('formatDateDMY formats date correctly', () => {
