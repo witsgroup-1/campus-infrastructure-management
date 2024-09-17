@@ -18,27 +18,56 @@ global.fetch = jest.fn();
 
 describe('./copies/editBookingCopy.js', () => {
   beforeEach(() => {
+    // Clear previous mocks and setup the DOM
     fetch.mockClear();
     document.body.innerHTML = `
-      <select id="venueSelector"></select>
+      <select id="venueSelector">
+        <option value="1">Venue 1</option>
+        <option value="2">Venue 2</option>
+      </select>
       <input id="bookingDate" value="2024-09-17" />
       <input id="timeSlot" value="9:00 AM - 11:00 AM" />
       <select id="statusSelection">
         <option value="confirmed">Confirmed</option>
         <option value="pending">Pending</option>
       </select>
-      <button id="saveChangesBtn"></button>
     `;
+    
     // Reset global variables
     venues.length = 0;
     bookings.length = 0;
+
+    // Mock alert to prevent errors
     jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+    // Mock fetch to return a promise
     global.fetch = jest.fn(() =>
       Promise.resolve({
         json: () => Promise.resolve({}),
       })
     );
-  
+  });
+
+  test('saveChanges validates input fields and updates booking', async () => {
+    const mockBookingId = '123';
+
+    // Mock getBooking to return a booking
+    jest.spyOn(require('./copies/editBookingCopy.js'), 'getBooking').mockReturnValue({
+      id: mockBookingId,
+      venueId: '2',
+      date: '2024-09-17',
+      timeSlot: '9:00 AM - 11:00 AM',
+      status: 'confirmed',
+    });
+
+    // Call the saveChanges function
+    await saveChanges(mockBookingId);
+
+    // Check that the fetch call was made with the correct URL and options
+    expect(fetch).toHaveBeenCalledWith(
+      `https://campus-infrastructure-management.azurewebsites.net/api/bookings/${mockBookingId}`,
+      expect.any(Object)
+    );
   });
 
   test('formatDateDMY formats date correctly', () => {
@@ -88,27 +117,6 @@ describe('./copies/editBookingCopy.js', () => {
 
     const result = await fetchBookings();
     expect(result).toEqual(mockBookings);
-  });
-
-  test('saveChanges validates input fields and updates booking', async () => {
-    const mockBookingId = '123';
-
-    // Mock the getBooking function to return a valid booking
-    jest.spyOn(require('./copies/editBookingCopy.js'), 'getBooking').mockReturnValue({
-      id: mockBookingId,
-      venueId: '2',
-      date: '2024-09-17',
-      timeSlot: '9:00 AM - 11:00 AM',
-      status: 'confirmed',
-    });
-
-    await saveChanges(mockBookingId);
-
-    // Check that the fetch call was made with the correct URL and options
-    expect(fetch).toHaveBeenCalledWith(
-      `https://campus-infrastructure-management.azurewebsites.net/api/bookings/${mockBookingId}`,
-      expect.any(Object)
-    );
   });
 
 });
