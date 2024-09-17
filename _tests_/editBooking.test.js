@@ -101,6 +101,25 @@ global.fetch = jest.fn(() =>
   })
 );
 
+test('should initialize with default values', () => {
+  // Setup
+  const defaultVenue = {
+    Building: 'Default Building',
+    Capacity: 100,
+    Category: 'Default Category',
+    Features: [],
+    Name: 'Default Venue',
+    id: 'default-id'
+  };
+
+  // Initialize
+  venues.push(defaultVenue);
+
+  // Check
+  expect(getRoomInfo('default-id')).toEqual(defaultVenue);
+});
+
+
 test('saveChanges should call fetch with correct arguments', async () => {
   const mockId = '101'; // This ID is not in the mock data, should be adjusted if necessary
   const mockFormValues = {
