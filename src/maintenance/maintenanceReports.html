@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maintenance Report Page</title>
+  
+  <title>Maintenance Report</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -12,7 +13,8 @@
   
   <!-- Page Header -->
   <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-    <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button>
+    <!-- <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button> -->
+    <a href="../user-dashboard/dashboard.html" class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</a>
     <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Report</h1>
   </header>
 
@@ -29,13 +31,13 @@
       <!--Report Type -->
       <label class="block text-lg text-[#003B5C] font-medium">
         Report Type
-        <select class="block w-full mt-1 p-2 border rounded-md"  required>
-            <option> </option>
-            <option>Electrical</option>
-          <option>Ventilation</option>
-          <option>Pests and Rodents</option>
-          <option>Roofing and Ceiling</option>
-          <option>Other</option>
+        <select id="reportType" class="block w-full mt-1 p-2 border rounded-md"  required>
+          <option value="" disabled selected>Select a report type</option>
+          <option value="Electrical">Electrical</option>
+          <option value="Ventilation">Ventilation</option>
+          <option value="Pests and Rodents">Pests and Rodents</option>
+          <option value="Roofing and Ceiling">Roofing and Ceiling</option>
+          <option value="Other">Other</option>
         </select>
       </label>
 
@@ -66,4 +68,9 @@
 
 
 </body>
+
+
+<script src="maintenanceReports.js"></script>
+
+
 </html>
