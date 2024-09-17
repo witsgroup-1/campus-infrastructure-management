@@ -139,5 +139,4 @@ describe('Script tests', () => {
     closePopup();
     expect(document.getElementById('detailsModal').classList.contains('hidden')).toBe(true);
   });
-
 });

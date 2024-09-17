@@ -1,15 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Retrieve the user's email from localStorage
-    const userEmail = localStorage.getItem('userEmail');
-
-    // Display the email if it exists
-    if (userEmail) {
-        document.getElementById('userEmail').textContent = `Logged in as: ${userEmail}`;
-    } else {
-        document.getElementById('userEmail').textContent = 'No email found.';
-    }
-
-
     const menuIcon = document.getElementById('menu-icon');
     const sidebar = document.getElementById('sidebar');
     const closeBtn = document.getElementById('close-btn');

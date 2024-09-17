@@ -2,9 +2,7 @@ const express = require('express');
 const { app, db, auth } = require("../src/firebaseInit.js");
 const { collection, addDoc ,doc, getDoc, getDocs, setDoc, updateDoc, Timestamp, deleteDoc} = require("firebase/firestore"); 
 const maintenanceRouter = express.Router();
-
 const fetch = require('node-fetch');
-
 
 
 //get the maintenance requests 
