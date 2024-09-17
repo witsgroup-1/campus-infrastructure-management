@@ -28,7 +28,7 @@ fetch(url, {
   });
 
 // Function to render bookings (i.e., venues) based on current filters
-function renderBookings() {
+export function renderBookings() {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing bookings
 
@@ -107,4 +107,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBookings();
 });
 
-module.exports = { renderBookings };
+//module.exports = { renderBookings };

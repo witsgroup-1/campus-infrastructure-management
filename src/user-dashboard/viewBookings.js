@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
   authDomain: "campusinfrastructuremanagement.firebaseapp.com",
@@ -137,12 +138,6 @@ async function loadUserBookings(userId) {
   hideLoading();
 }
 
-function hideLoading() {
-  const bookingsContainer = document.getElementById('bookings-container');
-  bookingsContainer.innerHTML = '';
-}
-
-
 onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("User is signed in:", user.uid);
@@ -161,4 +156,4 @@ window.addEventListener('resize', async () => {
 });
 
 
-module.exports = { showLoading, formatDate, formatTimeSlot, fetchUserBookings, displayBookings, loadUserBookings}
+

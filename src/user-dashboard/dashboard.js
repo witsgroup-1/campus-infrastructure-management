@@ -1,40 +1,3 @@
-// dashboard.js
-
-export function getSidebarWidth() {
-    const screenWidth = window.innerWidth;
-    if (screenWidth >= 1024) {
-        return '20%';
-    } else if (screenWidth >= 768) {
-        return '33%';
-    } else {
-        return '50%';
-    }
-}
-
-export function handleMenuIconClick(sidebar) {
-    sidebar.style.width = getSidebarWidth();
-}
-
-export function handleCloseButtonClick(sidebar) {
-    sidebar.style.width = '0';
-}
-
-export function handleNotifBellClick(notificationPanel) {
-    notificationPanel.classList.toggle('hidden');
-}
-
-export function handleMainButtonClick(reportButton, bookButton, isExpanded) {
-    if (!isExpanded) {
-        reportButton.classList.remove('hidden');
-        bookButton.classList.remove('hidden');
-        return true;
-    } else {
-        reportButton.classList.add('hidden');
-        bookButton.classList.add('hidden');
-        return false;
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const menuIcon = document.getElementById('menu-icon');
     const sidebar = document.getElementById('sidebar');
@@ -44,9 +7,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainButton = document.getElementById('main-button');
     const reportButton = document.getElementById('report-button');
     const bookButton = document.getElementById('book-button');
+    
 
-    menuIcon.addEventListener('click', () => handleMenuIconClick(sidebar));
-    closeBtn.addEventListener('click', () => handleCloseButtonClick(sidebar));
+    function getSidebarWidth (){
+        const screenWidth = window.innerWidth;
+        if (screenWidth >= 1024) {
+            return '20%';
+        } else if (screenWidth >= 768) {
+            return '33%';
+        } else {
+            return '50%';
+        }
+    };
+
+    menuIcon.addEventListener('click', () => {
+        sidebar.style.width = getSidebarWidth(); 
+    });
+
+    closeBtn.addEventListener('click', () => {
+        sidebar.style.width = '0'; 
+    });
 
     window.addEventListener('resize', () => {
         if (sidebar.style.width !== '0') {
@@ -54,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    notifBell.addEventListener('click', () => handleNotifBellClick(notificationPanel));
+    notifBell.addEventListener('click', () => {
+        notificationPanel.classList.toggle('hidden');
+    });
 
     document.addEventListener('click', (event) => {
         if (!notifBell.contains(event.target) && !notificationPanel.contains(event.target)) {
@@ -65,14 +47,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let isExpanded = false;
 
     mainButton.addEventListener('click', () => {
-        isExpanded = handleMainButtonClick(reportButton, bookButton, isExpanded);
+        if (!isExpanded) {
+            reportButton.classList.remove('hidden');
+            bookButton.classList.remove('hidden');
+            isExpanded = true;
+        } else {
+            reportButton.classList.add('hidden');
+            bookButton.classList.add('hidden');
+            isExpanded = false;
+        }
     });
 
-    reportButton.addEventListener('click', () => {
-        window.location.href = '../maintenance/maintenanceReports.html';
-    });
+    reportButton.addEventListener('click', ()=>{
+        window.location.href = '../maintenance/maintenanceReports.html'
+    })
 
-    bookButton.addEventListener('click', () => {
-        window.location.href = '../make-booking/book-venue.html';
-    });
+    bookButton.addEventListener('click', ()=>{
+        window.location.href = '../make-booking/book-venue.html'
+    })
 });
+
+

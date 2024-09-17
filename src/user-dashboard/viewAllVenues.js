@@ -107,4 +107,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBookings();
 });
 
-module.exports = { renderBookings };
+//module.exports = { renderBookings };
