@@ -27,6 +27,7 @@ fetch(url, {
     console.error('Error fetching venues:', error);
   });
 
+
 // Function to render bookings (i.e., venues) based on current filters
 function renderBookings() {
     const container = document.getElementById('bookingsContainer');
@@ -62,7 +63,7 @@ function renderBookings() {
         `;
         bookingBox.appendChild(bookingInfo);
 
-        // Action Buttons
+        // Book button for all bookings
         const actionButtons = document.createElement('div');
         actionButtons.className = 'flex flex-row space-x-2';
 
@@ -70,18 +71,22 @@ function renderBookings() {
         bookButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
         bookButton.textContent = 'Book';
         
+        //so we can know what venues are available/venues under maintenance.
+        //if under maintenance === true -> then show pop up or something.
         const statusButton = document.createElement('button');
         statusButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-[#003B5C] focus:outline-none';
         statusButton.textContent = 'Status';
 
+        // Add click event listener to the button
         bookButton.onclick = function() {
+            // Redirect to the booking details page, passing the booking ID or any other info through the URL
             window.location.href = `../make-booking/booking-details.html?bookingId=${booking.id}`;
         };
 
-        statusButton.onclick = function() {
-            window.location.href = `../status-page/status.html?bookingId=${booking.id}`;
-        };
-
+        statusButton.onclick = function(){
+          window.href.location = ``
+        }
+        
         actionButtons.appendChild(bookButton);
         actionButtons.appendChild(statusButton);
         bookingBox.appendChild(actionButtons);
@@ -90,21 +95,11 @@ function renderBookings() {
     });
 }
 
-// Attach event listeners outside of the renderBookings function
-document.addEventListener('DOMContentLoaded', () => {
-    const roomFilter = document.getElementById('roomFilter');
-    const searchInput = document.getElementById('searchInput');
 
-    if (roomFilter) {
-        roomFilter.addEventListener('change', renderBookings);
-    }
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', renderBookings);
-    }
 
-    // Initial render
-    renderBookings();
-});
+// Attach event listeners to filters and search input
+document.getElementById('roomFilter').addEventListener('change', renderBookings);
+document.getElementById('searchInput').addEventListener('input', renderBookings);
 
-//module.exports = { renderBookings };
+// Initial render after DOM content loads
+document.addEventListener('DOMContentLoaded', renderBookings);
