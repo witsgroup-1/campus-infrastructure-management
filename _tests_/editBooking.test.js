@@ -12,7 +12,7 @@ const {
   saveChanges,
   venues,
   bookings
-} = require('./copies/editBookingCopy'); 
+} = require('./copies/editBookingCopy'); // Adjust the path as needed
 
 // Mock fetch API
 global.fetch = jest.fn(() =>
@@ -21,9 +21,15 @@ global.fetch = jest.fn(() =>
   })
 );
 
+// Mock window.alert
+beforeAll(() => {
+  global.alert = jest.fn();
+});
+
 describe('editBookingCopy', () => {
   beforeEach(() => {
     fetch.mockClear();
+    global.alert.mockClear();
   });
 
   // Test formatDateDMY function
@@ -75,6 +81,7 @@ describe('editBookingCopy', () => {
   test('populateVenues should populate the venue dropdown correctly', () => {
     document.body.innerHTML = '<select id="venueSelector"></select>';
 
+    venues.length = 0;
     venues.push({ id: 'venue1', Name: 'Venue One' });
     populateVenues(venues);
 
