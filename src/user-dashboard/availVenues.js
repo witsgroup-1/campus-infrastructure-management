@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
+
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
   authDomain: "campusinfrastructuremanagement.firebaseapp.com",
@@ -167,6 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
     populateVenues();
 });
 
+
+module.exports = {populateVenues, fetchVenues, createVenueElement}
 
 
 
