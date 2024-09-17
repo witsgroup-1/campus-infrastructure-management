@@ -81,7 +81,20 @@ describe('editBookings.js', () => {
     expect(result).toEqual(mockBookings); // Test the result
   });
 
+  test('populateVenues sets the selected venue correctly based on bookingId', () => {
+    const mockVenues = [
+      { id: '1', Name: 'Venue 1' },
+      { id: '2', Name: 'Venue 2' }
+    ];
+    venues = mockVenues;
+    const mockBooking = { id: '123', venueId: '2' };
+    jest.spyOn(global, 'getBooking').mockReturnValue(mockBooking);
 
+    populateVenues(mockVenues);
+
+    const venueSelector = document.getElementById('venueSelector');
+    expect(venueSelector.value).toBe(mockBooking.venueId);
+  });
 
   });
 
