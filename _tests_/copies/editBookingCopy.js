@@ -21,7 +21,6 @@ async function fetchVenues() {
     });
     const data = await response.json();
     venues = data; 
-    console.log(venues);
     populateVenues(venues);
   } catch (error) {
     console.error('Error fetching venues:', error);
@@ -39,8 +38,8 @@ async function fetchBookings() {
       }
     });
     const data = await response.json();
-    bookings = data;
-    console.log(bookings);
+    bookings = data; 
+    return bookings; 
   } catch (error) {
     console.error('Error fetching bookings:', error);
   }
@@ -78,6 +77,8 @@ function populateVenues(data) {
     }
   }
 }
+
+
 
 // Validate input fields
 function isValidDate(dateString) {
@@ -179,5 +180,7 @@ module.exports = {
   isValidDate,
   isValidTimeSlot,
   isValidVenue,
-  saveChanges
+  saveChanges,
+  venues,
+  bookings
 };
