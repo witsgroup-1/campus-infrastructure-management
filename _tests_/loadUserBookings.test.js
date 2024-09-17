@@ -45,7 +45,7 @@ describe('View All Venues', () => {
   test('formatTimeSlot correctly formats time slots', () => {
     const startTime = '2024-09-16T09:00:00Z';
     const endTime = '2024-09-16T10:00:00Z';
-    expect(formatTimeSlot(startTime, endTime)).toBe('9:00-10:00'); // Fixed time slot formatting
+    expect(formatTimeSlot(startTime, endTime)).toBe('09:00-10:00'); // Fixed time slot formatting
   });
 
   test('fetchUserBookings fetches and returns bookings', async () => {
