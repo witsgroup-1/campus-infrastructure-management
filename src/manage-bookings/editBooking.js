@@ -170,3 +170,10 @@ if (saveChangesBtn) {
   saveChangesBtn.addEventListener('click', () => saveChanges(bookingId));
 }
 
+module.exports = {
+  formatDateDMY,
+  extractStartEndTime,
+  getRoomInfo,
+  getBooking,
+  
+};
