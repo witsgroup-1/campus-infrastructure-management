@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage lines-valid="73" lines-covered="68" line-rate="0.9315000000000001" branches-valid="30" branches-covered="15" branch-rate="0.5" timestamp="1726522410032" complexity="0" version="0.1">
+<coverage lines-valid="72" lines-covered="67" line-rate="0.9305" branches-valid="30" branches-covered="15" branch-rate="0.5" timestamp="1726556241286" complexity="0" version="0.1">
   <sources>
     <source>C:\Users\Skitt\campus-infrastructure-management</source>
   </sources>
   <packages>
-    <package name="main" line-rate="0.9315000000000001" branch-rate="0.5">
+    <package name="main" line-rate="0.9305" branch-rate="0.5">
       <classes>
-        <class name="maintenanceLogs.js" filename="src\maintenance\maintenanceLogs.js" line-rate="0.909" branch-rate="0.4642">
+        <class name="maintenanceLogsCopy.js" filename="_tests_\copies\maintenanceLogsCopy.js" line-rate="0.9074" branch-rate="0.4642">
           <methods>
             <method name="(anonymous_0)" hits="1" signature="()V">
               <lines>
@@ -131,14 +131,13 @@
             <line number="143" hits="1" branch="true" condition-coverage="50% (1/2)"/>
             <line number="144" hits="1" branch="false"/>
             <line number="145" hits="1" branch="false"/>
-            <line number="147" hits="1" branch="false"/>
             <line number="149" hits="0" branch="false"/>
             <line number="152" hits="0" branch="false"/>
             <line number="157" hits="2" branch="false"/>
             <line number="161" hits="1" branch="false"/>
           </lines>
         </class>
-        <class name="maintenanceReports.js" filename="src\maintenance\maintenanceReports.js" line-rate="1" branch-rate="1">
+        <class name="maintenanceReportsCopy.js" filename="_tests_\copies\maintenanceReportsCopy.js" line-rate="1" branch-rate="1">
           <methods>
             <method name="(anonymous_0)" hits="2" signature="()V">
               <lines>
