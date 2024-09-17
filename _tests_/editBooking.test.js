@@ -3,6 +3,13 @@ const {
   extractStartEndTime,
   isValidDate,
   isValidTimeSlot,
+  isValidVenue,
+  fetchVenues,
+  fetchBookings,
+  getRoomInfo,
+  getBooking,
+  populateVenues,
+  saveChanges
 
 } = require('./copies/editBookingCopy.js');
 
@@ -12,7 +19,16 @@ describe('editBookings.js', () => {
 
   beforeEach(() => {
     fetch.mockClear();
-    // Reset DOM or any global state if needed
+    document.body.innerHTML = `
+      <select id="venueSelector"></select>
+      <input id="bookingDate" value="2024-09-17" />
+      <input id="timeSlot" value="9:00 AM - 11:00 AM" />
+      <select id="statusSelection">
+        <option value="confirmed">Confirmed</option>
+        <option value="pending">Pending</option>
+      </select>
+      <button id="saveChangesBtn"></button>
+    `;
   });
 
   test('formatDateDMY formats date correctly', () => {
@@ -35,6 +51,22 @@ describe('editBookings.js', () => {
     expect(isValidTimeSlot('Invalid Time Slot')).toBe(false);
   });
 
+  test('fetchVenues populates venue dropdown correctly', async () => {
+    const mockVenues = [
+      { id: '1', Name: 'Venue 1' },
+      { id: '2', Name: 'Venue 2' }
+    ];
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve(mockVenues)
+    });
+
+    await fetchVenues();
+
+    const venueSelector = document.getElementById('venueSelector');
+    expect(venueSelector.children.length).toBe(mockVenues.length);
+    expect(venueSelector.children[0].value).toBe(mockVenues[0].id);
+    expect(venueSelector.children[0].textContent).toBe(mockVenues[0].Name);
+  });
 
 
 
