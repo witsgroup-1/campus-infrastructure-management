@@ -27,7 +27,7 @@
         "setupFilesAfterEnv": [
             "<rootDir>/jest.setup.js"
         ],
-        "testEnvironment": "jsdom",
+        "testEnvironment": "jest-environment-jsdom",
         "collectCoverage": true,
         "coverageReporters": [
             "text",
@@ -42,6 +42,8 @@
             "^https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js$": "<rootDir>/__mocks__/firebase/auth.js",
             "^https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js$": "<rootDir>/__mocks__/firebase/firestore.js"
         }
+        ]
+
     },
     "author": "",
     "bugs": {
