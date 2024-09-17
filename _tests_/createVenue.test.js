@@ -22,7 +22,7 @@ jest.mock('firebase/firestore', () => {
 });
 
 // Now import your module
-import { createVenueElement } from '../src/user-dashboard/availVenues'; // Adjust the import path
+import { createVenueElement } from '../copy/availVenuesCopy'; // Adjust the import path
 
 describe('createVenueElement', () => {
     it('creates a venue element with correct attributes and classes', () => {
