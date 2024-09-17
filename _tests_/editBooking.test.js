@@ -12,7 +12,7 @@ const {
   saveChanges,
   venues,
   bookings
-} = require('./editBookingCopy'); // Adjust the path as needed
+} = require('./copies/editBookingCopy'); 
 
 // Mock fetch API
 global.fetch = jest.fn(() =>
