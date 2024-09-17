@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="api-key" content="QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW">
   <title>Maintenance Logs</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -28,7 +29,8 @@
 
   <!-- Header -->
   <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-    <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button>
+    <!-- <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button> -->
+    <a href="../user-dashboard/dashboard.html" class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</a>
     <h1 class="text-2xl font-semibold text-center text-white flex-grow drop-shadow-lg">Maintenance Logs</h1>
   </header>
 
@@ -76,21 +78,37 @@
       <div class="bg-white p-4 rounded-md shadow-sm" id="mobile-scheduled-content">
         <!-- One item displayed from Scheduled -->
       </div>
-      <button class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2" onclick="toggleExpand('mobile-scheduled-content')">Show More</button>
+      <button id="show-more-scheduled" class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2">Show More</button>
 
       <!-- In Progress Section -->
       <div class="bg-[#917248] text-white text-left p-4 rounded-md">In Progress</div>
       <div class="bg-white p-4 rounded-md shadow-sm" id="mobile-in-progress-content">
         <!-- One item displayed from In Progress -->
       </div>
-      <button class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2" onclick="toggleExpand('mobile-scheduled-content')">Show More</button>
+      <button id="show-more-in-progress" class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2">Show More</button>
       <!-- Completed Section -->
       <div class="bg-[#917248] text-white text-left p-4 rounded-md">Completed</div>
       <div class="bg-white p-4 rounded-md shadow-sm" id="mobile-completed-content">
         <!-- One item displayed from Completed -->
       </div>
-      <button class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2" onclick="toggleExpand('mobile-scheduled-content')">Show More</button>
+      <!-- <button class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2" onclick="toggleExpand('mobile-scheduled-content')">Show More</button> -->
+      <button id="show-more-completed" class="bg-white text-[#003B5C] text-left p-3 rounded-md font-semibold w-full mt-2">Show More</button>
     </div>
+
+  <!-- The popup requst popup details -->
+    <div id="detailsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+      <div class="bg-white p-6 rounded-md w-full max-w-md">
+        <div id="modal-content">
+          <!-- The modal content will be injected here -->
+        </div>
+        <!-- Move close button to the bottom -->
+        <!-- <button onclick="closePopup()" class="mt-4 bg-white text-[#917248]  p-2 rounded border-[#917248]">Close</button> -->
+        <button onclick="closePopup()" class="mt-4 bg-white text-[#917248] p-2 rounded border border-[#917248]">Close</button>
+      </div>
+    </div>
+    
+  
+  
   </main>
 
 <!--Footer -->
@@ -103,8 +121,11 @@
 
 
 
+  <script src="maintenanceLogs.js"></script>
   <!-- JS to handle toggle expand -->
   <script>
+    
+
     function toggleExpand(id) {
       var content = document.getElementById(id);
       if (content.style.maxHeight) {
