@@ -1,10 +1,14 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
+
 <coverage lines-valid="72" lines-covered="67" line-rate="0.9305" branches-valid="30" branches-covered="15" branch-rate="0.5" timestamp="1726556241286" complexity="0" version="0.1">
+
   <sources>
     <source>C:\Users\Skitt\campus-infrastructure-management</source>
   </sources>
   <packages>
+       <line number="58" hits="0"/>
+
     <package name="main" line-rate="0.9305" branch-rate="0.5">
       <classes>
         <class name="maintenanceLogsCopy.js" filename="_tests_\copies\maintenanceLogsCopy.js" line-rate="0.9074" branch-rate="0.4642">
@@ -47,20 +51,24 @@
             <method name="(anonymous_7)" hits="2" signature="()V">
               <lines>
                 <line number="59" hits="2"/>
+
               </lines>
             </method>
             <method name="(anonymous_8)" hits="0" signature="()V">
               <lines>
+
                 <line number="60" hits="0"/>
               </lines>
             </method>
             <method name="createRequestBlock" hits="5" signature="()V">
               <lines>
                 <line number="72" hits="5"/>
+
               </lines>
             </method>
             <method name="(anonymous_10)" hits="0" signature="()V">
               <lines>
+
                 <line number="81" hits="0"/>
               </lines>
             </method>
@@ -77,11 +85,13 @@
             <method name="closePopup" hits="2" signature="()V">
               <lines>
                 <line number="156" hits="2"/>
+
               </lines>
             </method>
           </methods>
           <lines>
             <line number="3" hits="1" branch="false"/>
+
             <line number="5" hits="1" branch="false"/>
             <line number="6" hits="1" branch="false"/>
             <line number="11" hits="1" branch="false"/>
@@ -138,6 +148,7 @@
           </lines>
         </class>
         <class name="maintenanceReportsCopy.js" filename="_tests_\copies\maintenanceReportsCopy.js" line-rate="1" branch-rate="1">
+
           <methods>
             <method name="(anonymous_0)" hits="2" signature="()V">
               <lines>

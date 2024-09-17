@@ -1,14 +1,15 @@
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-  //console.log('Script loaded');
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
     //const apiKey = document.querySelector('meta[name="api-key"]').getAttribute('content');
    
     //https://campus-infrastructure-management.azurewebsites.net
+
     //http://localhost:3000
     const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
+
       method: 'GET',
       headers: {
         'x-api-key': apiKey,
@@ -131,7 +132,9 @@ async function saveChanges(id) {
  //https://campus-infrastructure-management.azurewebsites.net
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
+
     const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/${id}`, {
+
       method: 'PUT',
       headers: {
         'x-api-key': apiKey,
@@ -141,12 +144,14 @@ async function saveChanges(id) {
     });
 
     if (response.ok) {
+
       console.log('Request updated successfully');
       closePopup();
       
       location.reload();
     } else {
       console.log('Failed to update request');
+
     }
   } catch (error) {
     console.error('Error updating request:', error);
@@ -156,6 +161,7 @@ async function saveChanges(id) {
 function closePopup() {
   document.getElementById('detailsModal').classList.add('hidden');
 }
+
 
 
 module.exports = {closePopup,saveChanges,openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop};

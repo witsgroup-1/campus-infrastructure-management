@@ -1,6 +1,7 @@
-// // Import the file that contains the event listener (formHandler.js)
+
 //require('../src/maintenance/maintenanceReports.js');
 require('./copies/maintenanceReportsCopy');
+
 
 /**
  * @jest-environment jsdom
