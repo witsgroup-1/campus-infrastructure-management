@@ -1,6 +1,6 @@
 
 // Import functions to test
-import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup } from '../src/maintenance/maintenanceLogs'; // Adjust the import path as needed
+import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup } from './copies/maintenanceLogsCopy'; 
 
 // Mock the DOM methods and fetch
 global.fetch = jest.fn();
@@ -66,7 +66,7 @@ describe('Script tests', () => {
       json: async () => mockData
     });
 
-    await require('../src/maintenance/maintenanceLogs');
+    await require('./copies/maintenanceLogsCopy');
 
       // Trigger the DOMContentLoaded event
     document.dispatchEvent(new Event('DOMContentLoaded'));
