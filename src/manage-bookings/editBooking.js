@@ -165,4 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Event listener for save button
-document.getElementById('saveChangesBtn').addEventListener('click', () => saveChanges(bookingId));
+const saveChangesBtn = document.getElementById('saveChangesBtn');
+if (saveChangesBtn) {
+  saveChangesBtn.addEventListener('click', () => saveChanges(bookingId));
+}
+
