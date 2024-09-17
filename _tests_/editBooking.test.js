@@ -1,6 +1,5 @@
 const { fetchVenues, populateVenues } = require('../src/manage-bookings/editBooking.js');
 
-// Mock API call for venues
 global.fetch = jest.fn(() =>
   Promise.resolve({
     json: () => Promise.resolve([
@@ -10,8 +9,9 @@ global.fetch = jest.fn(() =>
 );
 
 test('fetchVenues populates venues array and calls populateVenues', async () => {
-  const mockPopulateVenues = jest.fn();
-  populateVenues = mockPopulateVenues; // Mock populateVenues
+  // Spy on populateVenues to mock its behavior
+  const mockPopulateVenues = jest.spyOn(require('../src/manage-bookings/editBooking.js'), 'populateVenues');
+  mockPopulateVenues.mockImplementation(() => {});
 
   await fetchVenues();
 
