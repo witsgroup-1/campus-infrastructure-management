@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -17,6 +16,28 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+async function searchUserByEmail(email) {
+    const usersCollection = collection(db, 'users');
+    const q = query(usersCollection, where('email', '==', email));
+
+    try {
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            console.log('No matching documents.');
+            return null;
+        }
+
+        querySnapshot.forEach((doc) => {
+            console.log('Document data:', doc.data());
+        });
+
+        return querySnapshot.docs.map(doc => doc.data());
+    } catch (error) {
+        console.error('Error searching for user:', error);
+        return null;
+    }
+}
+
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault(); // Prevent the default form submission
 
@@ -29,8 +50,18 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         console.log("User signed in:", user);
         console.log("Signed in successfully");
 
-        // Redirect to another page or handle authenticated state
-        window.location.href = "../user-dashboard/dashboard.html";
+        // Store the user's email in localStorage
+        localStorage.setItem('userEmail', user.email);
+
+        // Search for the user in Firestore
+        const userData = await searchUserByEmail(email);
+        if (userData) {
+            // Redirect to user dashboard if email is found
+            window.location.href = "../user-dashboard/dashboard.html";
+        } else {
+            // Redirect to onboarding page if email is not found
+            window.location.href = "../onboarding/onboarding.html";
+        }
     } catch (error) {
         console.error("Error signing in:", error.message);
         alert("Error: " + error.message);
@@ -43,13 +74,21 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
     e.preventDefault();
     try {
         const result = await signInWithPopup(auth, googleProvider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
         const user = result.user;
         console.log("User signed in with Google: ", user);
 
-        // You can now redirect the user or perform other actions
-        window.location.href = "../user-dashboard/dashboard.html";
+        // Store the user's email in localStorage
+        localStorage.setItem('userEmail', user.email);
+
+        // Search for the user in Firestore
+        const userData = await searchUserByEmail(user.email);
+        if (userData) {
+            // Redirect to user dashboard if email is found
+            window.location.href = "../user-dashboard/dashboard.html";
+        } else {
+            // Redirect to onboarding page if email is not found
+            window.location.href = "../onboarding/onboarding.html";
+        }
     } catch (error) {
         console.error("Error signing in with Google: ", error.message);
         alert("Error: " + error.message);
