@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dining Menu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .menu-container {
+            width: 90%;
+            margin: 20px auto;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .menu {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .menu h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .menu-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .menu-item h3 {
+            margin: 0 0 10px 0;
+        }
+        .ingredients {
+            color: #555;
+        }
+        .reserve-button {
+            background-color: #003B5C;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+        .reserve-button:hover {
+            background-color: #0056b3;
+        }
+        /* Reservation Form Styles */
+        .reservation-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .reservation-form h2 {
+            margin-top: 0;
+        }
+        .reservation-form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        .reservation-form input, .reservation-form select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .reservation-form button {
+            background-color: #003B5C;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .reservation-form button:hover {
+            background-color: #0056b3;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .popup h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .popup button {
+            background-color: #003B5C;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .popup button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <h1>Today's Menu</h1>
+        <!-- Menu will be populated here by JavaScript -->
+        <div id="menuList"></div>
+    </div>
+
+    <!-- Reservation Form -->
+    <div id="reservationOverlay" class="overlay"></div>
+    <div id="reservationForm" class="reservation-form">
+        <h2>Make a Reservation</h2>
+        <form id="reservationDetailsForm">
+            <input type="hidden" id="item_id">
+            <label for="diningHall">Dining Hall:</label>
+            <select id="diningHall" required>
+                <option value="">Select a dining hall</option>
+                <option value="Education Campus">Education Campus</option>
+                <option value="Convocation">Convocation</option>
+                <option value="Matrix DH">Matrix DH</option>
+            </select>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+            <label for="date">Date:</label>
+            <input type="date" id="date" required>
+            <label for="time">Time:</label>
+            <input type="time" id="time" required>
+            <label for="numberOfPeople">Number of People:</label>
+            <input type="number" id="numberOfPeople" min="1" required>
+            <button type="submit">Confirm Reservation</button>
+        </form>
+    </div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <p>Sorry! Our Server is currently down. You have been added to a waiting list.</p>
+        <button id="popupCloseButton">Close</button>
+    </div>
+
+    <script>
+        // Mock Data (can be fetched from an API in a real application)
+        const menuData = {
+            "menus": [
+                {
+                    "menu_id": "M001",
+                    "name": "Breakfast",
+                    "items": [
+                        {
+                            "item_id": "I001",
+                            "name": "Pancakes",
+                            "calories": 350,
+                            "ingredients": ["flour", "eggs", "milk", "butter"]
+                        },
+                        {
+                            "item_id": "I002",
+                            "name": "Scrambled Eggs",
+                            "calories": 200,
+                            "ingredients": ["eggs", "butter", "salt", "pepper"]
+                        }
+                    ]
+                },
+                {
+                    "menu_id": "M002",
+                    "name": "Lunch",
+                    "items": [
+                        {
+                            "item_id": "I003",
+                            "name": "Chicken Salad",
+                            "calories": 450,
+                            "ingredients": ["chicken", "lettuce", "tomatoes", "olive oil"]
+                        },
+                        {
+                            "item_id": "I004",
+                            "name": "Vegetarian Pizza",
+                            "calories": 700,
+                            "ingredients": ["flour", "tomatoes", "cheese", "mushrooms", "olives"]
+                        }
+                    ]
+                },
+                {
+                    "menu_id": "M003",
+                    "name": "Dinner",
+                    "items": [
+                        {
+                            "item_id": "I003",
+                            "name": "Rice and Chicken",
+                            "calories": 750,
+                            "ingredients": ["chicken", "rice", "tomatoes", "olive oil"]
+                        },
+                        {
+                            "item_id": "I004",
+                            "name": "Vegetarian Pasta",
+                            "calories": 500,
+                            "ingredients": ["Pasta", "tomatoes", "cheese", "mushrooms", "olives"]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Function to display the menu
+        function displayMenu(data) {
+            const menuList = document.getElementById('menuList');
+            data.menus.forEach(menu => {
+                // Create a menu section
+                const menuDiv = document.createElement('div');
+                menuDiv.classList.add('menu');
+                
+                // Menu name
+                const menuTitle = document.createElement('h2');
+                menuTitle.textContent = menu.name;
+                menuDiv.appendChild(menuTitle);
+
+                // Items in the menu
+                menu.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('menu-item');
+
+                    const itemName = document.createElement('h4');
+                    itemName.textContent = `${item.name} - ${item.calories} calories`;
+                    itemDiv.appendChild(itemName);
+
+                    // Reservation button
+                    const reserveButton = document.createElement('button');
+                    reserveButton.textContent = 'Make Reservation';
+                    reserveButton.classList.add('reserve-button');
+                    reserveButton.onclick = () => showReservationForm(item.item_id);
+                    itemDiv.appendChild(reserveButton);
+
+                    menuDiv.appendChild(itemDiv);
+                });
+
+                menuList.appendChild(menuDiv);
+            });
+        }
+
+        // Function to show reservation form
+        function showReservationForm(itemId) {
+            document.getElementById('item_id').value = itemId;
+            document.getElementById('reservationForm').style.display = 'block';
+            document.getElementById('reservationOverlay').style.display = 'block';
+        }
+
+        // Function to handle reservation form submission
+        function handleFormSubmit(event) {
+        event.preventDefault();
+
+        // Simulate a server down situation
+        showPopup();
+
+        // Hide the reservation form
+        document.getElementById('reservationForm').style.display = 'none';
+        document.getElementById('reservationOverlay').style.display = 'none';
+    }
+        // Function to show the popup
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        // Function to hide the popup
+        function hidePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Attach event listener to the form
+        document.getElementById('reservationDetailsForm').addEventListener('submit', handleFormSubmit);
+
+        // Attach event listener to the popup close button
+        document.getElementById('popupCloseButton').addEventListener('click', hidePopup);
+
+        // Initial call to display the menu
+        displayMenu(menuData);
+    </script>
+</body>
+</html>
