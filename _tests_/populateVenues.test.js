@@ -1,4 +1,4 @@
-import { populateVenues,fetchVenues,createVenueElement } from '../src/user-dashboard/availVenues'; // Adjust the import path
+import { populateVenues,fetchVenues,createVenueElement } from '../copy/availVenuesCopy'; // Adjust the import path
 jest.mock('firebase/app', () => {
     return {
         initializeApp: jest.fn(),  // Mock the initializeApp function
