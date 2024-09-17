@@ -1,5 +1,5 @@
 // Import your functions
-import { formatDate, formatTimeSlot, fetchUserBookings, paginateBookings, showLoading,renderDesktopBookings, renderMobileBookings,renderPaginationControls } from '../src/bookings/yourBookings'; // Adjust import as necessary
+import { formatDate, formatTimeSlot, fetchUserBookings, paginateBookings, showLoading,renderDesktopBookings, renderMobileBookings,renderPaginationControls } from '../copy/yourBookingsCopy'; // Adjust import as necessary
 import fetchMock from 'jest-fetch-mock';
 jest.mock('firebase/app', () => {
     return {
