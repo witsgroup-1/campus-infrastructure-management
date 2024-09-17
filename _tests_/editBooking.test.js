@@ -90,7 +90,7 @@ describe('./copies/editBookingCopy.js', () => {
     ];
     venues.push(...mockVenues); // Use push to avoid reference errors
     const mockBooking = { id: '123', venueId: '2' };
-    jest.spyOn(global, 'getBooking').mockReturnValue(mockBooking);
+    jest.spyOn(require('./copies/editBookingCopy.js'), 'getBooking').mockReturnValue(mockBooking);
 
     populateVenues(mockVenues);
 
