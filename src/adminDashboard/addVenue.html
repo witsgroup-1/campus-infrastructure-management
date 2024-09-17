@@ -13,9 +13,12 @@
         }
         .container {
             position: relative;
-            width: 1440px;
-            height: 1024px;
+            width: 100%;
+            max-width: 1440px;
+            min-height: 100vh;
             margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .arrow-left {
             position: absolute;
@@ -38,24 +41,21 @@
             transform: rotate(-45deg);
         }
         .title {
-            position: absolute;
-            width: 989px;
-            height: 70px;
-            left: 347px;
-            top: 10px;
+            width: 100%;
+            max-width: 989px;
+            margin: 0 auto 40px;
             font-weight: 400;
             font-size: 64px;
             line-height: 77px;
             color: #1D44AC;
+            text-align: center;
         }
         .form-container {
-            position: absolute;
-            width: 1274px;
-            height: 750px;
-            left: 124px;
-            top: 213px;
+            width: 100%;
+            max-width: 1274px;
+            margin: 0 auto;
             background: #003B5C;
-            padding: 20px;
+            padding: 40px;
             box-sizing: border-box;
         }
         .form-field {
@@ -90,6 +90,21 @@
         .submit-button:hover {
             background: #163A8C;
         }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -101,24 +116,87 @@
     	</a>
         <h1 class="title">Add Venue</h1>
         <div class="form-container">
-            <form>
+            <form id="addVenueForm">
                 <div class="form-field">
                     <label class="form-label" for="venue-name">Venue Name</label>
-                    <input class="form-input" type="text" id="venue-name" name="venue-name">
+                    <input class="form-input" type="text" id="venue-name" name="Name" required>
                 </div>
                 <div class="form-field">
                     <label class="form-label" for="location">Location</label>
-                    <input class="form-input" type="text" id="location" name="location">
+                    <input class="form-input" type="text" id="location" name="Building" required>
                 </div>
                 <div class="form-field">
                     <label class="form-label" for="capacity">Capacity</label>
-                    <input class="form-input" type="text" id="capacity" name="capacity">
+                    <input class="form-input" type="number" id="capacity" name="Capacity" required>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="category">Category</label>
+                    <input class="form-input" type="text" id="category" name="Category" required>
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="features">Features (comma-separated)</label>
+                    <input class="form-input" type="text" id="features" name="Features">
                 </div>
                 <div class="form-field">
                     <input class="submit-button" type="submit" value="Submit">
                 </div>
             </form>
+            <div id="message" class="message"></div>
         </div>
     </div>
+
+    <script>
+        const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
+        const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
+
+        document.getElementById('addVenueForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const venueData = Object.fromEntries(formData.entries());
+            
+            // Convert Capacity to number
+            venueData.Capacity = parseInt(venueData.Capacity);
+            
+            // Convert Features to array
+            if (venueData.Features) {
+                venueData.Features = venueData.Features.split(',').map(feature => feature.trim());
+            } else {
+                venueData.Features = [];
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/venues`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey
+                    },
+                    body: JSON.stringify(venueData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add venue');
+                }
+
+                const result = await response.json();
+                showMessage('Venue added successfully!', 'success');
+                document.getElementById('addVenueForm').reset();
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Failed to add venue. Please try again.', 'error');
+            }
+        });
+
+        function showMessage(message, type) {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = message;
+            messageElement.className = `message ${type}`;
+            setTimeout(() => {
+                messageElement.textContent = '';
+                messageElement.className = 'message';
+            }, 5000);
+        }
+    </script>
 </body>
 </html>
