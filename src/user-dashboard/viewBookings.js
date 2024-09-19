@@ -17,15 +17,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-function formatDate(dateString) {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+function formatDate(date) {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear().toString().slice(-2); // Get last 2 digits of year
+  return `${day}/${month}/${year}`;
 }
 
 function formatTimeSlot(startTime, endTime) {
-  const start = new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const end = new Date(endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  return `${start} - ${end}`;
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const formatTime = (date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+  return `${formatTime(start)}-${formatTime(end)}`;
 }
 
 
@@ -87,7 +95,7 @@ async function fetchUserBookings(userId) {
 }
 
 function displayBookings(bookings) {
-  console.log("Displaying bookings:", bookings);
+  //console.log("Displaying bookings:", bookings);
 
   const bookingsContainer = document.getElementById('bookings-container');
   const noBookingsMessage = document.getElementById('no-bookings-message');
@@ -148,8 +156,8 @@ async function loadUserBookings(userEmail) {
   } else {
     console.error('Could not find Firestore userId for the given email.');
   }
-
-  hideLoading(); // Hide loading message
+  displayBookings(bookings);
+  hideLoading();
 }
 
 onAuthStateChanged(auth, (user) => {

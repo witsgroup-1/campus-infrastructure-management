@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -63,6 +64,35 @@ function showLoading() {
       return [];
     }
   }
+
+
+  async function getFirestoreUserIdByEmail(email) {
+    try {
+      // Query the Firestore 'users' collection where the 'email' field equals the Firebase Auth email
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('email', '==', email));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        // Retrieve the document ID (which is the Firestore userId)
+        const userDoc = querySnapshot.docs[0];
+        const firestoreUserId = userDoc.id; // The document ID is the userId
+        return firestoreUserId;
+      } else {
+        throw new Error('No matching user document found in Firestore.');
+      }
+    } catch (error) {
+      console.error('Error fetching Firestore userId by email:', error);
+      return null; // Handle the error
+    }
+  }
+
+
+  // Function to hide the loading state
+function hideLoading() {
+  const bookingsContainer = document.getElementById('bookings-container');
+  bookingsContainer.innerHTML = ''; // Clear the loading message
+}
   
 let currentPageUpcomingDesktop = 1;
 let currentPagePastDesktop = 1;
@@ -240,20 +270,30 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
   }
   
 
-  async function loadUserBookings(userId) {
-    showLoading(); // Display loading state while fetching
-    const bookings = await fetchUserBookings(userId);
-    console.log(userId)
-    displayBookings(bookings);
-  }
+  async function loadUserBookings(userEmail) {
+    showLoading(); // Show loading message
   
+    // Fetch the corresponding Firestore userId using Firebase Auth email
+    const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
+    console.log(firestoreUserId)
+  
+    if (firestoreUserId) {
+      // Use the Firestore userId to fetch bookings
+      const bookings = await fetchUserBookings(firestoreUserId);
+      displayBookings(bookings);
+    } else {
+      console.error('Could not find Firestore userId for the given email.');
+    }
+  
+    hideLoading(); // Hide loading message
+  }
   
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      loadUserBookings(user.uid); // Load bookings for the signed-in user
+      console.log("User is signed in with email:", user.email);
+      loadUserBookings(user.email); // Load bookings based on the user's email
+      console.log(user.email)
     } else {
       console.log("No user is signed in.");
-      
     }
   });
-  
