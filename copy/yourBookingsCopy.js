@@ -30,7 +30,7 @@ export  function formatDate(date) {
     return `${day}/${month}/${year}`;
   }
   
-  function formatTimeSlot(startTime, endTime) {
+  export function formatTimeSlot(startTime, endTime) {
     const start = new Date(startTime);
     const end = new Date(endTime);
     const formatTime = (date) => {

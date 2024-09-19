@@ -42,7 +42,7 @@ describe('formatTimeSlot', () => {
   test('formats time slot correctly', () => {
     const startTime = '2024-09-01T10:00:00Z';
     const endTime = '2024-09-01T11:00:00Z';
-    expect(formatTimeSlot(startTime, endTime)).toBe('12:00-13:00');
+    expect(formatTimeSlot(startTime, endTime)).toBe('10:00-11:00');
   });
 });
 
