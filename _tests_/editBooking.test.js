@@ -184,6 +184,8 @@ describe('editBookingCopy', () => {
         venueId: "1534"
       });
     
+
+      jest.spyOn(global, 'fetchVenues').mockResolvedValue(venues);
     
       // Assertion to compare expected and actual data
       expect(fetchVenues()).toEqual([
