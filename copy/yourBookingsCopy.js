@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -18,12 +17,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-function showLoading() {
+export function showLoading() {
     const scheduledContent = document.getElementById('scheduled-content');
     scheduledContent.innerHTML = '<p>Loading bookings...</p>';
   }
 
-  function formatDate(date) {
+export  function formatDate(date) {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -31,7 +30,7 @@ function showLoading() {
     return `${day}/${month}/${year}`;
   }
   
-  function formatTimeSlot(startTime, endTime) {
+  export function formatTimeSlot(startTime, endTime) {
     const start = new Date(startTime);
     const end = new Date(endTime);
     const formatTime = (date) => {
@@ -42,7 +41,7 @@ function showLoading() {
     return `${formatTime(start)}-${formatTime(end)}`;
   }
   
-  async function fetchUserBookings(userId) {
+  export async function fetchUserBookings(userId) {
     try {
       const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings`;
       const response = await fetch(url, {
@@ -64,35 +63,6 @@ function showLoading() {
       return [];
     }
   }
-
-
-  async function getFirestoreUserIdByEmail(email) {
-    try {
-      // Query the Firestore 'users' collection where the 'email' field equals the Firebase Auth email
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('email', '==', email));
-      const querySnapshot = await getDocs(q);
-  
-      if (!querySnapshot.empty) {
-        // Retrieve the document ID (which is the Firestore userId)
-        const userDoc = querySnapshot.docs[0];
-        const firestoreUserId = userDoc.id; // The document ID is the userId
-        return firestoreUserId;
-      } else {
-        throw new Error('No matching user document found in Firestore.');
-      }
-    } catch (error) {
-      console.error('Error fetching Firestore userId by email:', error);
-      return null; // Handle the error
-    }
-  }
-
-
-  // Function to hide the loading state
-function hideLoading() {
-  const bookingsContainer = document.getElementById('bookings-container');
-  bookingsContainer.innerHTML = ''; // Clear the loading message
-}
   
 let currentPageUpcomingDesktop = 1;
 let currentPagePastDesktop = 1;
@@ -102,7 +72,7 @@ let currentPagePastMobile = 1;
 const itemsPerPageDesktop = 5;
 const itemsPerPageMobile = 2;
 
-function displayBookings(bookings) {
+export function displayBookings(bookings) {
   const scheduledContent = document.getElementById('scheduled-content');
   const pastContent = document.getElementById('in-progress-content');
   const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
@@ -145,13 +115,13 @@ function displayBookings(bookings) {
   renderPaginationControls(pastBookings, currentPagePastMobile, itemsPerPageMobile, mobilePastContent, 'mobile', 'past');
 }
 
-function paginateBookings(bookings, page, itemsPerPage) {
+export function paginateBookings(bookings, page, itemsPerPage) {
   const start = (page - 1) * itemsPerPage;
   const end = start + itemsPerPage;
   return bookings.slice(start, end);
 }
 
-function renderDesktopBookings(bookings, container, type) {
+export function renderDesktopBookings(bookings, container, type) {
   const bookingsSection = document.createElement('div');
   bookingsSection.classList.add(`${type}-bookings`, 'mb-4');
   
@@ -181,7 +151,7 @@ function renderDesktopBookings(bookings, container, type) {
   container.appendChild(bookingsSection);
 }
 
-function renderMobileBookings(bookings, container, type) {
+export function renderMobileBookings(bookings, container, type) {
   const bookingsSection = document.createElement('div');
   bookingsSection.classList.add(`${type}-bookings-mobile`, 'mb-4');
   
@@ -211,7 +181,7 @@ function renderMobileBookings(bookings, container, type) {
   container.appendChild(bookingsSection);
 }
 
-function renderPaginationControls(bookings, currentPage, itemsPerPage, container, deviceType, bookingType) {
+export function renderPaginationControls(bookings, currentPage, itemsPerPage, container, deviceType, bookingType) {
   const totalPages = Math.ceil(bookings.length / itemsPerPage);
   
   if (totalPages <= 1) return; // No pagination needed if there's only one page
@@ -270,30 +240,19 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
   }
   
 
-  async function loadUserBookings(userEmail) {
-    showLoading(); // Show loading message
-  
-    // Fetch the corresponding Firestore userId using Firebase Auth email
-    const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
-    console.log(firestoreUserId)
-  
-    if (firestoreUserId) {
-      // Use the Firestore userId to fetch bookings
-      const bookings = await fetchUserBookings(firestoreUserId);
-      displayBookings(bookings);
-    } else {
-      console.error('Could not find Firestore userId for the given email.');
-    }
-  
-    hideLoading(); // Hide loading message
+  export async function loadUserBookings(userId) {
+    showLoading(); // Display loading state while fetching
+    const bookings = await fetchUserBookings(userId);
+    displayBookings(bookings);
   }
+  
   
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("User is signed in with email:", user.email);
-      loadUserBookings(user.email); // Load bookings based on the user's email
-      console.log(user.email)
+      loadUserBookings(user.uid); // Load bookings for the signed-in user
     } else {
       console.log("No user is signed in.");
+      
     }
   });
+  
