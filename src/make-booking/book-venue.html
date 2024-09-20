@@ -25,9 +25,15 @@
 <body class="bg-white text-gray-800">
 <main class="wrapper content">
     <header class="p-4 bg-[#003B5C] text-white text-center relative">
-        <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4"><a href="../user-dashboard/dashboard.html">&larr;</a></button>
+        <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.location.href='../user-dashboard/dashboard.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        
         <h1 class="text-xl">Book a Venue</h1>
     </header>
+    
 
 
     <!-- Search bar -->
@@ -44,22 +50,34 @@
     </section>
 
 
-    <!-- Filter dropdown for desktop, filter buttons for mobile -->
-    <section class="p-4 w-full flex justify-start  md:pl-4">
-
+<!-- Filter dropdown for desktop, filter buttons for mobile -->
+<section class="p-4 w-full flex justify-start md:pl-4">
+    <div class="relative max-w-xs">
+        <!-- Label with Filter Icon Before the Text -->
+        <label for="roomFilter" class="block text-gray-700 text-sm font-semibold mb-2 p-3 pr-2 flex items-center">
+            <!-- Filter Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14v6a1 1 0 01-1.447.894l-4-2A1 1 0 017 18v-4a1 1 0 00-.293-.707L3.293 6.707A1 1 0 013 6V4z" />
+            </svg>
+            Filters:
+        </label>
         
-
-        <div>
-            <label for="roomFilter" class="block text-gray-700 text-sm font-semibold mb-2">Filter</label>
-            <select id="roomFilter" class="block w-full max-w-xs bg-[#003B5C] text-white border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Filter by room type</option>
+        <!-- Dropdown with Filter Icon -->
+        <div class="relative">
+            <select id="roomFilter" class="block w-full bg-[#003B5C] text-white border border-gray-300 rounded-lg p-2 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Room type</option>
                 <option value="Lecture Hall">Lecture Hall</option>
                 <option value="Tutorial Room">Tutorial Room</option>
                 <option value="Boardroom">Boardroom</option>
                 <option value="Exam Venue">Exam Venue</option>
             </select>
         </div>
-    </section>
+    </div>
+</section>
+
+
+
+
 
     <!-- Box with booking info-->
 
