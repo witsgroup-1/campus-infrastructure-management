@@ -4,7 +4,7 @@ const userEmail = localStorage.getItem('userEmail');
 
 if (userEmail) {
     console.log('User email:', userEmail);
-    document.getElementById('userEmailDisplay').textContent = `Logged in as: ${userEmail}`;
+   console.log(`Logged in as: ${userEmail}`);
 } else {
     console.log('No email found');
 }
