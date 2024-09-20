@@ -163,32 +163,8 @@ describe('editBookingCopy', () => {
 
 
     // Test getBooking function
-    test('fetchVenues should return all venues stored in DB', () => {
-      // Mocking the venues stored in DB
-    
-      venues.push({
-        building: "Great Hall",
-        Capacity: "300",
-        Category: "Hall",
-        Features: [],
-        Name: "Great Hall",
-        venueId: "1234"
-      });
-    
-      venues.push({
-        building: "Hall 29",
-        Capacity: "300",
-        Category: "Exam Hall",
-        Features: [],
-        Name: "Hall 29",
-        venueId: "1534"
-      });
-    
-
-      jest.spyOn(global, 'fetchVenues').mockResolvedValue(venues);
-    
-      // Assertion to compare expected and actual data
-      expect(fetchVenues()).toEqual([
+    test('fetchVenues should return all venues stored in DB', async () => {
+      const mockVenues = [
         {
           building: "Great Hall",
           Capacity: "300",
@@ -205,7 +181,20 @@ describe('editBookingCopy', () => {
           Name: "Hall 29",
           venueId: "1534"
         }
-      ]);
+      ];
+    
+      // Mock the global fetch to return the mockVenues
+      fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(mockVenues)
+      });
+    
+      const fetchedVenues = await fetchVenues();
+      
+      // Expect fetch to have been called once
+      expect(fetch).toHaveBeenCalledTimes(1);
+      
+      // Assertion to compare expected and actual data
+      expect(fetchedVenues).toEqual(mockVenues);
     });
     
 
