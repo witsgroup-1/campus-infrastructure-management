@@ -94,15 +94,13 @@ bookingsRouter.get('/Bookings/date/:date', async (req, res) => {
 bookingsRouter.post('/Bookings', async (req, res) => {
     try {
 
-        const start_timestamp = Timestamp.fromDate(new Date(req.body.start_time));
-        const end_timestamp = Timestamp.fromDate(new Date(req.body.end_time));
         const booking = {
             status: req.body.status,
             date: req.body.date,
-            end_time: end_timestamp,
+            end_time: req.body.end_time,
             purpose: req.body.purpose,
             roomId: req.body.roomId,
-            start_time: start_timestamp,
+            start_time: req.body.start_time,
             userId: req.body.userId,
             venueId: req.body.venueId,
         };
