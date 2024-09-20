@@ -21,17 +21,11 @@ const db = getFirestore(app);
 document.addEventListener('DOMContentLoaded', () => {
 
     // Validate Step 3
-    function validateStep3() {
-        const isTutor = document.getElementById('tutorCheckbox')?.checked;
-        const isLecturer = document.getElementById('lecturerCheckbox')?.checked;
-
-        // Check if at least one checkbox is selected
-        return isTutor || isLecturer;
-    }
+   
 
     // Finish Button Event Listener
     document.getElementById('finishBtn')?.addEventListener('click', async () => {
-        if (validateStep3()) {
+        
             // Gather form data
             const name = document.getElementById('name').value;
             const surname = document.getElementById('surname').value;
@@ -65,8 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error adding user: ', error);
                 alert('There was an issue completing your onboarding. Please try again.');
             }
-        } else {
-            alert('Please select at least one role (tutor or lecturer).');
-        }
+        
     });
 });
