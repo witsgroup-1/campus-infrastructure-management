@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -17,7 +17,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-function formatDate(date) {
+// Function to show a loading state
+export function showLoading() {
+  const bookingsContainer = document.getElementById('bookings-container');
+  bookingsContainer.innerHTML = '<p>Loading bookings...</p>';
+}
+
+export function formatDate(date) {
   const d = new Date(date);
   const day = String(d.getDate()).padStart(2, '0');
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -25,7 +31,7 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 }
 
-function formatTimeSlot(startTime, endTime) {
+export function formatTimeSlot(startTime, endTime) {
   const start = new Date(startTime);
   const end = new Date(endTime);
   const formatTime = (date) => {
@@ -36,41 +42,8 @@ function formatTimeSlot(startTime, endTime) {
   return `${formatTime(start)}-${formatTime(end)}`;
 }
 
-
-// Function to show a loading state
-function showLoading() {
-  const bookingsContainer = document.getElementById('bookings-container');
-  bookingsContainer.innerHTML = '<p>Loading bookings...</p>';
-}
-
-// Function to hide the loading state
-function hideLoading() {
-  const bookingsContainer = document.getElementById('bookings-container');
-  bookingsContainer.innerHTML = ''; // Clear the loading message
-}
-
-async function getFirestoreUserIdByEmail(email) {
-  try {
-    // Query the Firestore 'users' collection where the 'email' field equals the Firebase Auth email
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      // Retrieve the document ID (which is the Firestore userId)
-      const userDoc = querySnapshot.docs[0];
-      const firestoreUserId = userDoc.id; // The document ID is the userId
-      return firestoreUserId;
-    } else {
-      throw new Error('No matching user document found in Firestore.');
-    }
-  } catch (error) {
-    console.error('Error fetching Firestore userId by email:', error);
-    return null; // Handle the error
-  }
-}
 // Function to fetch user bookings from the API
-async function fetchUserBookings(userId) {
+export async function fetchUserBookings(userId) {
   try {
     const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings`;
     const response = await fetch(url, {
@@ -94,9 +67,7 @@ async function fetchUserBookings(userId) {
   }
 }
 
-function displayBookings(bookings) {
-  //console.log("Displaying bookings:", bookings);
-
+export function displayBookings(bookings) {
   const bookingsContainer = document.getElementById('bookings-container');
   const noBookingsMessage = document.getElementById('no-bookings-message');
 
@@ -118,60 +89,72 @@ function displayBookings(bookings) {
     bookingsContainer.classList.remove('hidden');
     noBookingsMessage.classList.add('hidden');
 
+    const viewportWidth = window.innerWidth;
+
     bookingsToDisplay.forEach(booking => {
       const bookingElement = document.createElement('div');
       bookingElement.classList.add('w-11/12', 'h-16', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-2');
 
-      bookingElement.innerHTML = `
-        <div class="booking-container flex items-center">
-          <div class="booking-info flex-1">
-            <div><strong>Name:</strong> ${booking.name}</div>
-            <div><strong>Venue:</strong> ${booking.venue_name}</div>
+      // Set HTML structure based on screen size
+      if (viewportWidth >= 768) { // Larger screens
+        bookingElement.innerHTML = `
+          <div class="booking-container flex items-center">
+             <div class="booking-info flex-1">
+              <div><strong>Name:</strong> ${booking.name}</div>
+              <div><strong>Venue:</strong> ${booking.venue_name}</div>
+            </div>
+             <div class="separator w-px bg-[#003B5C] h-12 mx-4"></div>
+            <div class="booking-times flex-1 text-right">
+              <div><strong>Date:</strong> ${formatDate(booking.start_time)}</div>
+              <div><strong>Slot:</strong> ${formatTimeSlot(booking.start_time, booking.end_time)}</div>
+            </div>
           </div>
-          <div class="separator w-px bg-[#003B5C] h-12 mx-4"></div>
-          <div class="booking-times flex-1 text-right">
-            <div><strong>Date:</strong> ${formatDate(booking.start_time)}</div>
-            <div><strong>Slot:</strong> ${formatTimeSlot(booking.start_time, booking.end_time)}</div>
-          </div>
-        </div>
-      `;
+        `;
+      } else {
+        bookingElement.innerHTML = `
+          <div class="booking-container flex flex-row items-center justify-between">
+            <div class="booking-info flex-1">
+              <div><strong>Name:</strong> ${booking.name}</div>
+              <div><strong>Venue:</strong> ${booking.venue_name}</div>
+            </div>
+            <div class="booking-times flex-1 text-right">
+              <div><strong>Date:</strong> ${formatDate(booking.start_time)}</div>
+              <div><strong>Slot:</strong> ${formatTimeSlot(booking.start_time, booking.end_time)}</div>
+            </div>
+          </div>    
+        `;
+      }
 
       bookingsContainer.appendChild(bookingElement);
     });
   }
 }
 
-// Function to load and display user bookings
-async function loadUserBookings(userEmail) {
-  showLoading(); // Show loading message
-
-  // Fetch the corresponding Firestore userId using Firebase Auth email
-  const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
-  console.log(firestoreUserId)
-
-  if (firestoreUserId) {
-    // Use the Firestore userId to fetch bookings
-    const bookings = await fetchUserBookings(firestoreUserId);
-    displayBookings(bookings);
-  } else {
-    console.error('Could not find Firestore userId for the given email.');
-  }
+export async function loadUserBookings(userId) {
+  showLoading();
+  const bookings = await fetchUserBookings(userId);
   displayBookings(bookings);
   hideLoading();
 }
 
+export function hideLoading() {
+  const bookingsContainer = document.getElementById('bookings-container');
+  bookingsContainer.innerHTML = '';
+}
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    console.log("User is signed in with email:", user.email);
-    loadUserBookings(user.email); // Load bookings based on the user's email
-    console.log(user.email)
+    console.log("User is signed in:", user.uid);
+    loadUserBookings(user.uid); // Load bookings for the signed-in user
   } else {
     console.log("No user is signed in.");
   }
 });
 
-  
-
-
-
-
+window.addEventListener('resize', async () => {
+  const user = auth.currentUser;
+  if (user) {
+    const bookings = await fetchUserBookings(user.uid);
+    displayBookings(bookings);
+  }
+});

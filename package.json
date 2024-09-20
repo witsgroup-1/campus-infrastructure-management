@@ -31,7 +31,12 @@
         "coverageReporters": [
             "text",
             "cobertura"
-        ]
+        ],
+        "moduleNameMapper": {
+            "^https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js$": "<rootDir>/__mocks__/firebase/app.js",
+            "^https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js$": "<rootDir>/__mocks__/firebase/auth.js",
+            "^https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js$": "<rootDir>/__mocks__/firebase/firestore.js"
+        }
     },
     "author": "",
     "bugs": {
@@ -48,6 +53,7 @@
         "autoprefixer": "^10.4.20",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
+        "jest-fetch-mock": "^3.0.3",
         "jsdom": "^24.1.1",
         "postcss": "^8.4.41",
         "postcss-cli": "^11.0.0",

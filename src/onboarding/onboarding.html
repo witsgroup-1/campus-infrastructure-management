@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onboarding</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="onboarding.js"></script>
+    <script src="onboarding.js" type="module"></script>
+    <!-- Firebase SDK -->
+
     <style>
         /* Ensure footer sticks to the bottom */
         body {
@@ -103,8 +105,10 @@
             <img id="progress-icon" src="../images/Progress1.svg" alt="Progress" class="w-12 h-12">
         </header>
 
+      
         <!-- Section 1 - Welcome -->
         <section id="step-1" class="step active mt-20">
+            <p id="userEmail"></p>
             <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md">
                 <!-- Transparent Logo (Behind Content) -->
                 <div class="logo-container">
@@ -169,29 +173,31 @@
         </section>
 
         <!-- Section 4 - Checkboxes and Finish -->
-        <section id="step-4" class="step hidden mt-20">
-            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md">
-                <!-- Transparent Logo (Behind Content) -->
-                <div class="logo-container">
-                    <img src="../images/WitsTransparent.png" alt="Logo">
+<section id="step-4" class="step hidden mt-20">
+    <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md">
+        <!-- Transparent Logo (Behind Content) -->
+        <div class="logo-container">
+            <img src="../images/WitsTransparent.png" alt="Logo">
+        </div>
+        <!-- Form Content (Above the Logo) -->
+        <div class="relative-content">
+            <div class="inner-box">
+                <div class="checkbox-container">
+                    <span class="text-[#003B5C]">Are you a tutor?</span>
+                    <input type="checkbox" id="tutorCheckbox" class="form-checkbox">
                 </div>
-                <!-- Form Content (Above the Logo) -->
-                <div class="relative-content">
-                    <div class="inner-box">
-                        <div class="checkbox-container">
-                            <span class="text-[#003B5C]">Are you a tutor?</span>
-                            <input type="checkbox" class="form-checkbox">
-                        </div>
 
-                        <div class="checkbox-container">
-                            <span class="text-[#003B5C]">Are you a lecturer?</span>
-                            <input type="checkbox" class="form-checkbox">
-                        </div>
-                    </div>
+                <div class="checkbox-container">
+                    <span class="text-[#003B5C]">Are you a lecturer?</span>
+                    <input type="checkbox" id="lecturerCheckbox" class="form-checkbox">
                 </div>
             </div>
-            <button id="finishBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Finish</button>
-        </section>
+        </div>
+    </div>
+    <button id="finishBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Finish</button>
+</section>
+
+
 
     </main>
 
@@ -199,7 +205,15 @@
         <p>&copy; 2024 Group -1. All rights reserved.</p>
     </footer>
 
+
     <script>
+ const userEmail = localStorage.getItem('userEmail');
+if (userEmail) {
+        
+        console.log(userEmail);
+    } else {
+        console.log('No email found.');
+    }
         // JavaScript to control navigation and validation
         const sections = document.querySelectorAll('.step');
         let currentStep = 0;
