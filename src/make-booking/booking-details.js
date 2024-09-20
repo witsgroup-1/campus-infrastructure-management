@@ -1,6 +1,6 @@
 // Import Firebase SDK and Firestore
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { where, getDocs, query,getFirestore, collection, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { where, getDocs, query,getFirestore, collection, doc, getDoc, addDoc,  Timestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -69,27 +69,128 @@ async function getUserByEmail(email) {
     }
 }
 
+// Function to check if the venue is booked for the selected time slot
+async function isVenueAvailable(venueId, bookingDate, startTimestamp, endTimestamp) {
+    try {
+        // Query all bookings for the venue on the selected date
+        const bookingsRef = collection(db, 'venues', venueId, bookingDate);
+        const bookingsSnapshot = await getDocs(bookingsRef);
+
+        if (bookingsSnapshot.empty) {
+            // No bookings exist for this date, the venue is available
+            return true;
+        }
+
+        // Loop through all bookings and check for matching start and end times
+        let isAvailable = true;
+        bookingsSnapshot.forEach(doc => {
+            const booking = doc.data();
+
+            // Check if the booking has the same start and end times
+            const existingStart = booking.startTime.toDate();
+            const existingEnd = booking.endTime.toDate();
+
+            if (
+                startTimestamp.toDate().getTime() === existingStart.getTime() && 
+                endTimestamp.toDate().getTime() === existingEnd.getTime()
+            ) {
+                // Exact time match found, the venue is not available
+                isAvailable = false;
+            }
+        });
+
+        return isAvailable;
+    } catch (error) {
+        console.error('Error checking venue availability:', error);
+        return false;
+    }
+}
+
+
+// Function to clear the form
+function clearForm() {
+    document.getElementById('bookingDate').value = "";
+    document.getElementById('timeSlot').value = "";
+    document.getElementById('bookingPurpose').value = "";
+}
+
+// Function to show loading and disable the button
+function showLoading() {
+    document.getElementById('loadingIndicator').classList.remove('hidden');
+    document.getElementById('bookNowBtn').disabled = true;
+}
+
+// Function to hide loading and enable the button
+function hideLoading() {
+    document.getElementById('loadingIndicator').classList.add('hidden');
+    document.getElementById('bookNowBtn').disabled = false;
+}
+
 // Function to submit the booking to Firestore
-async function submitBooking(userId, bookingData) {
-    if (!userId || !bookingData) {
-        console.log('Missing userId or booking data');
+async function submitBooking(userId, bookingData, venueBookingData, venueId, bookingDate, venueName) {
+    if (!userId || !bookingData || !venueId || !bookingDate) {
+        console.log('Missing userId, bookingData, venueId, or bookingDate');
+        hideLoading();  // Ensure to hide loading if there's an error
         return;
     }
 
     try {
-        const bookingRef = await addDoc(collection(db, 'users', userId, 'bookings'), bookingData);
-        alert(`Booking confirmed for ${bookingData.venue_name} at ${bookingData.start_time}.\nPurpose: ${bookingData.purpose}`);
+        // Add booking to the user's bookings collection
+        await addDoc(collection(db, 'users', userId, 'bookings'), bookingData);
+
+        // Add booking to the venue's collection for the specific date
+        await addDoc(collection(db, 'venues', venueId, bookingDate), venueBookingData);
+
+        alert(`Booking confirmed for venue name: ${venueName} at ${Date(bookingData.startTime)}.\nPurpose: ${bookingData.purpose}`);
+
+         // Clear the form after successful booking
+         clearForm();
     } catch (error) {
         console.error('Error posting booking data:', error);
     }
+    finally {
+        hideLoading();  // Always hide loading after the booking is processed
+    }
+
+
+}
+
+/// Function to validate if the booking is for a future date and time
+function isFutureDateTime(bookingDate, startTime) {
+    const currentDateTime = new Date();
+    const bookingDateTime = new Date(`${bookingDate}T${startTime}:00`);
+    
+    // Check if the selected booking time is in the future
+    return bookingDateTime > currentDateTime;
+}
+
+// Function to validate the form
+function isFormValid() {
+    const bookingDate = document.getElementById('bookingDate').value;
+    const timeSlot = document.getElementById('timeSlot').value;
+    const bookingPurpose = document.getElementById('bookingPurpose').value;
+
+    if (!bookingDate || !timeSlot || !bookingPurpose) {
+        alert("Please fill in all fields.");
+        return false;
+    }
+
+    // Extract the start time from the selected time slot
+    const [startTime, endTime] = timeSlot.split(' - ');
+
+    // Check if the booking date and time are in the future
+    if (!isFutureDateTime(bookingDate, startTime)) {
+        alert("You cannot book for a date and time in the past. Please select a valid time.");
+        return false;
+    }
+
+    return true;
 }
 
 // Initialize booking functionality
 window.onload = function () {
-
-    // Fetch venue details from URL parameters
     const params = new URLSearchParams(window.location.search);
-    const bookingId = params.get('bookingId');
+    const bookingId = params.get('bookingId'); // This is the venueId
 
     if (!bookingId) {
         console.error('No bookingId provided in URL');
@@ -104,13 +205,11 @@ window.onload = function () {
         }
 
         document.getElementById("venueName").textContent = `${venueData.Name} (${venueData.Category})`;
-        if (venueData.date) {
-            document.getElementById('date').textContent = venueData.date;
-        }
+        let venueName = venueData.Name;
 
         const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
-            document.getElementById('userEmailDisplay').textContent = `Logged in as: ${userEmail}`;
+            console.log(`Logged in as: ${userEmail}`);
 
             getUserByEmail(userEmail).then(userId => {
                 if (!userId) {
@@ -122,34 +221,61 @@ window.onload = function () {
 
                 // Add event listener to the 'Book Now' button
                 bookNowBtn.addEventListener('click', async function () {
-                    const bookingDate = document.getElementById('bookingDate').value;
+                    showLoading();  // Show loading when booking starts
+
+                    // Validate the form and the selected date/time
+                    if (!isFormValid()) {
+                        hideLoading();
+                        return;
+                    }
+
+                    const bookingDate = document.getElementById('bookingDate').value; // e.g., '2024-09-20'
                     const timeSlot = document.getElementById('timeSlot').value;
                     const bookingPurpose = document.getElementById('bookingPurpose').value;
 
-                    if (!bookingDate || !timeSlot || !bookingPurpose) {
-                        alert("Please fill in all booking details.");
-                        return;
+                    // Split the time slot into start and end times
+                    const [startTime, endTime] = timeSlot.split(' - ');
+
+                    // Combine the date and time to create Date objects
+                    const startDateTimeString = `${bookingDate}T${startTime}:00`;
+                    const endDateTimeString = `${bookingDate}T${endTime}:00`;
+
+                    const startDateTime = new Date(startDateTimeString);
+                    const endDateTime = new Date(endDateTimeString);
+
+                    // Convert Date objects to Firestore Timestamps
+                    const startTimestamp = Timestamp.fromDate(startDateTime);
+                    const endTimestamp = Timestamp.fromDate(endDateTime);
+
+                    // Await the result of the venue availability check
+                    const isAvailable = await isVenueAvailable(bookingId, bookingDate, startTimestamp, endTimestamp);
+
+                    if (isAvailable) {
+                        // Create the booking object for the user
+                        const bookingData = {
+                            venueId: bookingId,
+                            startTime: startTimestamp,
+                            endTime: endTimestamp,
+                            purpose: bookingPurpose,
+                            createdAt: Timestamp.now()
+                        };
+
+                        // Create the booking object for the venue
+                        const venueBookingData = {
+                            startTime: startTimestamp,
+                            endTime: endTimestamp,
+                            purpose: bookingPurpose,
+                            createdAt: Timestamp.now()
+                        };
+
+                        console.log(bookingData);
+
+                        // Post booking data to both the user's collection and the venue's collection
+                        await submitBooking(userId, bookingData, venueBookingData, bookingId, bookingDate, venueName);
+                    } else {
+                        alert("Venue booked for that time, sorry.");
+                        hideLoading();  // Always hide loading after the booking is processed
                     }
-
-                    // Ensure venueData has been fetched before proceeding
-                    if (!venueData || !venueData.Name) {
-                        alert("Venue data is missing. Please try again later.");
-                        return;
-                    }
-
-                    // Prepare booking data
-                    const bookingData = {
-                        venue_id: bookingId,
-                        name: venueData.Name,
-                        start_time: timeSlot,
-                        end_time: '', // Provide end time if applicable
-                        purpose: bookingPurpose,
-                        venue_name: venueData.Name,
-                        booking_date: bookingDate
-                    };
-
-                    // Post booking data
-                    submitBooking(userId, bookingData);
                 });
             });
         } else {
