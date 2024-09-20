@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Schedules</title>
+    <script type = "module" src="timetable.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /*Back to Top Button Styling */
+        #back-to-top {
+          display: none;
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 50;
+          background-color: #917248;
+          color: white;
+          padding: 10px 15px;
+          border-radius: 50%;
+          font-size: 20px;
+          cursor: pointer;
+        }
+
+      </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!--header-->
+    <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
+        <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4"><a href="../user-dashboard/dashboard.html">&larr;</a></button>
+        <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Your Schedules</h1>
+
+    </header>
+
+      <!--main-->
+   <main class="px-4 flex-grow-0">
+    <!--for desktop-->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 m-5" id="table">
+          <thead>
+            <tr>
+              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Day</th>
+              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3 relative"> 
+                Dates
+              </th>
+              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Course</th>
+              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Venue</th>
+              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Time</th>
+              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3"></th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="min-w-full bg-white border border-gray-200 mx-2">
+            <!-- JavaScript will dynamically insert rows here -->
+          </tbody>
+        </table>
+      </div>
+
+
+      <section class="flex justify-center mt-4">
+        <button id="new_schedule" class="px-4 py-2 m-3 bg-[#917248] text-white rounded-lg hover:bg-[#806541]">
+          <a href="add_schedule.html">Add Schedule</a>
+        </button>
+    </section>
+    
+  
+    </main>
+
+     <!--footer -->
+    <footer class="mt-8 bg-[#003B5C] text-white text-center p-4 bottom-0 w-full fixed">
+        <p>&copy; 2024 Group -1. All rights reserved.</p>
+    </footer>
+
+      <!--back to top button-->
+  <button id="back-to-top" onclick="scrollToTop()">↑</button>
+
+
+  <script>
+    function toggleExpand(id) {
+      var content = document.getElementById(id);
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    }
+
+
+        //scroll to top
+        function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Show Back to Top Button on Scroll
+    window.onscroll = function() {
+      var backToTopButton = document.getElementById("back-to-top");
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        backToTopButton.style.display = "block";
+      } else {
+        backToTopButton.style.display = "none";
+      }
+    };
+
+
+
+  </script>
+    
+</body>
+</html>

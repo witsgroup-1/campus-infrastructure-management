@@ -22,25 +22,6 @@ venuesRouter.get('/venues', async (req,res)=>{
     }
 })
 
-venuesRouter.get('/venues/:venueId', async (req, res) => {
-    const { venueId } = req.params;
-
-    try {
-        const venueDoc = await getDoc(doc(db, 'venues', venueId));
-        if (venueDoc.exists()) {
-            res.status(200).json({ id: venueDoc.id, ...venueDoc.data() });
-        } else {
-            res.status(404).send('Venue not found');
-        }
-    } catch (error) {
-        console.error('Error getting Venue:', error);
-        res.status(500).send('Error getting venue');
-    }
-});
-
-
-
-
 // Get venue by category
 venuesRouter.get('/venues/:Category', async (req, res) => {
     const { Category } = req.params;
@@ -55,6 +36,10 @@ venuesRouter.get('/venues/:Category', async (req, res) => {
                 category.push({ id: doc.id, ...doc.data() });
             }
         });
+
+        if(category.length==0){
+            res.status(200).send("No venues found for this filter");
+        }
 
         res.status(200).json(category);
     } catch (error) {
@@ -71,9 +56,11 @@ venuesRouter.post('/venues', async(req,res)=>{
             Features:req.body.Features,
             Building:req.body.Building,
             Name:req.body.Name,
+            //a boolean value that says if the venue is booked or not, it should change when a booking is made.
+            Booked:req.body.Booked
         };
         const docRef = await addDoc(collection(db, 'venues'), venue);
-        res.status(201).json({id:docRef.id});
+        res.status(201).send("Venue created successfully");
     }
 
     catch(error){
@@ -82,4 +69,49 @@ venuesRouter.post('/venues', async(req,res)=>{
     }
 });
 
-module.exports = venuesRouter;
+
+venuesRouter.put('/venues/:venueId', async (req, res) => {
+    const { venueId } = req.params;
+    const updates = req.body;
+
+    try {
+
+        const venueDocRef= doc(db, 'venues',venueId);
+        const venueDoc= await getDoc(venueDocRef);
+
+        if (!(venueDoc.exists())) {
+            return res.status(404).send('Venue not found');
+        }
+
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
+        
+
+        await updateDoc(venueDocRef, updates);
+        res.status(200).json({ venueId: venueId, message: 'Venue updated successfully.' });
+    } catch (error) {
+        console.error('Error updating your venue:', error);
+        res.status(500).send('Error updating venue');
+    }
+});
+
+
+venuesRouter.delete('/venues/:venueId', async (req, res) => {
+    const { venueId } = req.params;
+
+    try {
+
+        const venueDocRef= doc(db, 'venues',venueId);
+        const venueDoc= await getDoc(venueDocRef);
+
+        await deleteDoc(venueDocRef);
+        res.status(200).json({ message: 'Venue deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting venue:', error);
+        res.status(500).send('Error deleting venue');
+    }
+});
+
+
+module.exports=venuesRouter;

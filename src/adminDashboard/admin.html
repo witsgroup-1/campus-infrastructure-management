@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        witsBlue: '#003366',
+                        witsGold: '#FFD700',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex items-center mb-8">
+        <div class="text-witsBlue text-3xl font-bold">Admin Dashboard</div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-witsBlue mb-4">Bookings</h2>
+            <div id="bookings-container" class="space-y-4"></div>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-witsBlue mb-4">Maintenance</h2>
+            <button id="create-maintenance-btn" class="bg-witsBlue text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-700 transition duration-300">Create Maintenance</button>
+            <div id="maintenance-container" class="space-y-4"></div>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-witsBlue mb-4">Schedules</h2>
+            <button id="create-schedule-btn" class="bg-witsBlue text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-700 transition duration-300">Create Schedule</button>
+            <div id="schedules-container" class="space-y-4"></div>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-witsBlue mb-4">Venue Management</h2>
+            <button id="add-venue-btn" class="bg-witsBlue text-white px-4 py-2 rounded-md mr-2 hover:bg-blue-700 transition duration-300">Add Venue</button>
+            <button id="update-venue-btn" class="bg-witsGold text-witsBlue px-4 py-2 rounded-md hover:bg-yellow-500 transition duration-300">Update Venue</button>
+        </div>
+    </div>
+</div>
+
+<!-- Maintenance Update Popup -->
+<div id="maintenance-popup" class="popup">
+    <div class="popup-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h2 id="maintenance-popup-title" class="text-2xl font-semibold text-witsBlue mb-4">Update Maintenance</h2>
+        <form id="maintenance-update-form" class="space-y-4">
+            <input type="hidden" id="maintenance-id">
+            <div>
+                <label for="issue-type" class="block text-sm font-medium text-gray-700">Issue Type:</label>
+                <input type="text" id="issue-type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Description:</label>
+                <textarea id="description" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50"></textarea>
+            </div>
+            <div>
+                <label for="room-id" class="block text-sm font-medium text-gray-700">Room ID:</label>
+                <input type="text" id="room-id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700">Status:</label>
+                <select id="status" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            <div>
+                <label for="assigned-to" class="block text-sm font-medium text-gray-700">Assigned To:</label>
+                <input type="text" id="assigned-to" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button type="submit" id="maintenance-submit-btn" class="bg-witsBlue text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">Update</button>
+                <button type="button" onclick="closeMaintenancePopup()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition duration-300">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Schedule Update Popup -->
+<div id="schedule-popup" class="popup">
+    <div class="popup-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h2 id="schedule-popup-title" class="text-2xl font-semibold text-witsBlue mb-4">Update Schedule</h2>
+        <form id="schedule-update-form" class="space-y-4">
+            <input type="hidden" id="schedule-id">
+            <div>
+                <label for="schedule-room-id" class="block text-sm font-medium text-gray-700">Room ID:</label>
+                <input type="text" id="schedule-room-id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="course-id" class="block text-sm font-medium text-gray-700">Course ID:</label>
+                <input type="text" id="course-id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="start-time" class="block text-sm font-medium text-gray-700">Start Time:</label>
+                <input type="time" id="start-time" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="end-time" class="block text-sm font-medium text-gray-700">End Time:</label>
+                <input type="time" id="end-time" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="days-of-week" class="block text-sm font-medium text-gray-700">Days of Week:</label>
+                <input type="text" id="days-of-week" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="start-date" class="block text-sm font-medium text-gray-700">Start Date:</label>
+                <input type="date" id="start-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div>
+                <label for="end-date" class="block text-sm font-medium text-gray-700">End Date:</label>
+                <input type="date" id="end-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-witsBlue focus:ring focus:ring-witsBlue focus:ring-opacity-50">
+            </div>
+            <div class="flex items-center">
+                <input type="checkbox" id="recurring" class="rounded border-gray-300 text-witsBlue focus:ring-witsBlue">
+                <label for="recurring" class="ml-2 block text-sm text-gray-900">Recurring</label>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button type="submit" id="schedule-submit-btn" class="bg-witsBlue text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">Update</button>
+                <button type="button" onclick="closeSchedulePopup()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition duration-300">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
+const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
+
+async function fetchData(endpoint) {
+    try {
+        const response = await fetch(`${apiBaseUrl}${endpoint}`, {
+            method: 'GET',
+            headers: {
+                'x-api-key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching data from ${endpoint}:`, error);
+        return null;
+    }
+}
+
+// Event handler for accepting/rejecting a booking
+function handleBookingAction(bookingId, action) {
+    const status = action === 'accept' ? 'Accepted' : 'Rejected';
+
+    fetch(`${apiBaseUrl}/bookings/${bookingId}`, {
+        method: 'PUT',
+        headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Error updating booking status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Booking status updated successfully', data);
+        document.querySelector(`.booking[data-id="${bookingId}"] .status`).textContent = status;
+    })
+    .catch(error => {
+        console.error('Error updating booking status:', error);
+    });
+}
+
+// Event handler for updating maintenance
+function handleUpdateMaintenance(maintenanceId) {
+    console.log(`Updating Maintenance ID: ${maintenanceId}`);
+    // Fetch the current maintenance data and populate the form
+    fetch(`${apiBaseUrl}/maintenanceRequests/${maintenanceId}`, {
+        method: 'GET',
+        headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('maintenance-id').value = data.id;
+        document.getElementById('issue-type').value = data.issueType;
+        document.getElementById('description').value = data.description;
+        document.getElementById('room-id').value = data.roomId;
+        document.getElementById('status').value = data.status;
+        document.getElementById('assigned-to').value = data.assignedTo;
+
+        document.getElementById('maintenance-popup-title').textContent = 'Update Maintenance';
+        document.getElementById('maintenance-submit-btn').textContent = 'Update';
+        document.getElementById('maintenance-popup').style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error fetching maintenance data:', error);
+    });
+}
+
+// Function to close the maintenance popup
+function closeMaintenancePopup() {
+    document.getElementById('maintenance-popup').style.display = 'none';
+}
+
+// Event listener for the maintenance update form submission
+document.getElementById('maintenance-update-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const maintenanceId = document.getElementById('maintenance-id').value;
+    const updatedData = {
+        issueType: document.getElementById('issue-type').value,
+        description: document.getElementById('description').value,
+        roomId: document.getElementById('room-id').value,
+        status: document.getElementById('status').value,
+        assignedTo: document.getElementById('assigned-to').value,
+        userId: "Admin User"
+    };
+
+    const method = maintenanceId ? 'PUT' : 'POST';
+    const url = maintenanceId ? `${apiBaseUrl}/maintenanceRequests/${maintenanceId}` : `${apiBaseUrl}/maintenanceRequests`;
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Error ${maintenanceId ? 'updating' : 'creating'} maintenance: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Maintenance ${maintenanceId ? 'updated' : 'created'} successfully`, data);
+        closeMaintenancePopup();
+        fetchAndDisplayMaintenance();
+    })
+    .catch(error => {
+        console.error(`Error ${maintenanceId ? 'updating' : 'creating'} maintenance:`, error);
+    });
+});
+
+// Function to delete a maintenance request
+function handleDeleteMaintenance(maintenanceId) {
+    if (confirm('Are you sure you want to delete this maintenance request?')) {
+        fetch(`${apiBaseUrl}/maintenanceRequests/${maintenanceId}`, {
+            method: 'DELETE',
+            headers: {
+                'x-api-key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error deleting maintenance request: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Maintenance request deleted successfully', data);
+            fetchAndDisplayMaintenance();
+        })
+        .catch(error => {
+            console.error('Error deleting maintenance request:', error);
+        });
+    }
+}
+
+// Event handler for updating schedule
+function handleUpdateSchedule(scheduleId) {
+    console.log(`Updating Schedule ID: ${scheduleId}`);
+    fetch(`${apiBaseUrl}/schedules/${scheduleId}`, {
+        method: 'GET',
+        headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('schedule-id').value = data.id;
+        document.getElementById('schedule-room-id').value = data.roomId;
+        document.getElementById('course-id').value = data.courseId;
+        document.getElementById('start-time').value = data.startTime;
+        document.getElementById('end-time').value = data.endTime;
+        document.getElementById('days-of-week').value = data.daysOfWeek;
+        document.getElementById('start-date').value = data.startDate;
+        document.getElementById('end-date').value = data.endDate;
+        document.getElementById('recurring').checked = data.recurring;
+
+        document.getElementById('schedule-popup-title').textContent = 'Update Schedule';
+        document.getElementById('schedule-submit-btn').textContent = 'Update';
+        document.getElementById('schedule-popup').style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error fetching schedule data:', error);
+    });
+}
+
+// Function to delete a schedule
+function handleDeleteSchedule(scheduleId) {
+    if (confirm('Are you sure you want to delete this schedule?')) {
+        fetch(`${apiBaseUrl}/schedules/${scheduleId}`, {
+            method: 'DELETE',
+            headers: {
+                'x-api-key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error deleting schedule: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Schedule deleted successfully', data);
+            fetchAndDisplaySchedules();
+        })
+        .catch(error => {
+            console.error('Error deleting schedule:', error);
+        });
+    }
+}
+
+// Function to close the schedule popup
+function closeSchedulePopup() {
+    document.getElementById('schedule-popup').style.display = 'none';
+}
+
+// Event listener for the schedule update form submission
+document.getElementById('schedule-update-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const scheduleId = document.getElementById('schedule-id').value;
+    const updatedData = {
+        roomId: document.getElementById('schedule-room-id').value,
+        courseId: document.getElementById('course-id').value,
+        startTime: document.getElementById('start-time').value,
+        endTime: document.getElementById('end-time').value,
+        daysOfWeek: document.getElementById('days-of-week').value,
+        startDate: document.getElementById('start-date').value,
+        endDate: document.getElementById('end-date').value,
+        recurring: document.getElementById('recurring').checked,
+        userId: "Menzi Shazi"
+    };
+
+    const method = scheduleId ? 'PUT' : 'POST';
+    const url = scheduleId ? `${apiBaseUrl}/schedules/${scheduleId}` : `${apiBaseUrl}/schedules`;
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Error ${scheduleId ? 'updating' : 'creating'} schedule: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Schedule ${scheduleId ? 'updated' : 'created'} successfully`, data);
+        closeSchedulePopup();
+        fetchAndDisplaySchedules();
+    })
+    .catch(error => {
+        console.error(`Error ${scheduleId ? 'updating' : 'creating'} schedule:`, error);
+    });
+});
+
+// Event handler for adding/updating venues
+function handleVenueManagement(action) {
+    console.log(`Action: ${action}`);
+    // Add logic for handling venue addition or update here.
+}
+
+// Function to fetch and display bookings
+async function fetchAndDisplayBookings() {
+    const bookings = await fetchData('/bookings');
+    if (bookings) {
+        const container = document.getElementById('bookings-container');
+        container.innerHTML = ''; // Clear any existing content
+        bookings.forEach(booking => {
+            const bookingDiv = document.createElement('div');
+            bookingDiv.classList.add('booking');
+            bookingDiv.setAttribute('data-id', booking.id);
+
+            bookingDiv.innerHTML = `
+                <h3>${booking.purpose}</h3>
+                <p><strong>Date:</strong> ${booking.date}</p>
+                <p><strong>Time:</strong> ${booking.start_time} - ${booking.end_time}</p>
+                <p><strong>Status:</strong> <span class="status">${booking.status}</span></p>
+                <p><strong>Venue ID:</strong> ${booking.venueId}</p>
+                <p><strong>Room ID:</strong> ${booking.roomId}</p>
+                <p><strong>User ID:</strong> ${booking.userId}</p>
+                <button class="accept-btn bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600" data-id="${booking.id}">Accept</button>
+                <button class="reject-btn bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600" data-id="${booking.id}">Reject</button>
+            `;
+
+            container.appendChild(bookingDiv);
+        });
+
+        // Add event listeners to the buttons
+        document.querySelectorAll('.accept-btn').forEach(button => {
+            button.addEventListener('click', () => handleBookingAction(button.dataset.id, 'accept'));
+        });
+        document.querySelectorAll('.reject-btn').forEach(button => {
+            button.addEventListener('click', () => handleBookingAction(button.dataset.id, 'reject'));
+        });
+    }
+}
+
+// Function to fetch and display maintenance
+async function fetchAndDisplayMaintenance() {
+    const maintenance = await fetchData('/maintenanceRequests');
+    if (maintenance) {
+        const container = document.getElementById('maintenance-container');
+        container.innerHTML = ''; // Clear any existing content
+        maintenance.forEach(item => {
+            const maintenanceDiv = document.createElement('div');
+            maintenanceDiv.classList.add('maintenance-item');
+
+            maintenanceDiv.innerHTML = `
+                <h3>${item.issueType}</h3>
+                <p><strong>Description:</strong> ${item.description}</p>
+                <p><strong>Room ID:</strong> ${item.roomId}</p>
+                <p><strong>Status:</strong> ${item.status}</p>
+                <p><strong>Assigned To:</strong> ${item.assignedTo}</p>
+                <p><strong>User ID:</strong> ${item.userId}</p>
+                <p><strong>Timestamp:</strong> ${new Date(item.timestamp.seconds * 1000).toLocaleString()}</p>
+                <button class="update-maintenance-btn bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600" data-id="${item.id}">Update</button>
+                <button class="delete-maintenance-btn bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600" data-id="${item.id}">Delete</button>
+            `;
+
+            container.appendChild(maintenanceDiv);
+        });
+
+        // Add event listeners to the update and delete buttons
+        document.querySelectorAll('.update-maintenance-btn').forEach(button => {
+            button.addEventListener('click', () => handleUpdateMaintenance(button.dataset.id));
+        });
+        document.querySelectorAll('.delete-maintenance-btn').forEach(button => {
+            button.addEventListener('click', () => handleDeleteMaintenance(button.dataset.id));
+        });
+    }
+}
+
+// Function to fetch and display schedules
+async function fetchAndDisplaySchedules() {
+    const schedules = await fetchData('/schedules');
+    if (schedules) {
+        const container = document.getElementById('schedules-container');
+        container.innerHTML = ''; // Clear any existing content
+        schedules.forEach(schedule => {
+            console.log(schedule)
+            const scheduleDiv = document.createElement('div');
+            scheduleDiv.classList.add('schedule-item');
+
+            scheduleDiv.innerHTML = `
+                <h3>${schedule.courseId}</h3>
+                <p><strong>Room ID:</strong> ${schedule.roomId}</p>
+                <p><strong>Start Date:</strong> ${schedule.startDate}</p>
+                <p><strong>End Date:</strong> ${schedule.endDate}</p>
+                <p><strong>Time:</strong> ${schedule.startTime} - ${schedule.endTime}</p>
+                <p><strong>Days of Week:</strong> ${schedule.daysOfWeek}</p>
+                <p><strong>Recurring:</strong> ${schedule.recurring}</p>
+                <p><strong>User ID:</strong> ${schedule.userId}</p>
+                <button class="update-schedule-btn bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600" data-id="${schedule.id}">Update</button>
+                <button class="delete-schedule-btn bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600" data-id="${schedule.id}">Delete</button>
+            `;
+
+            container.appendChild(scheduleDiv);
+        });
+
+        // Add event listeners to the update and delete buttons
+        document.querySelectorAll('.update-schedule-btn').forEach(button => {
+            button.addEventListener('click', () => handleUpdateSchedule(button.dataset.id));
+        });
+        document.querySelectorAll('.delete-schedule-btn').forEach(button => {
+            button.addEventListener('click', () => handleDeleteSchedule(button.dataset.id));
+        });
+    }
+}
+
+// Event listeners for venue management buttons
+document.getElementById('add-venue-btn').addEventListener('click', () => handleVenueManagement('add'));
+document.getElementById('update-venue-btn').addEventListener('click', () => handleVenueManagement('update'));
+
+// Event listener for create schedule button
+document.getElementById('create-schedule-btn').addEventListener('click', () => {
+    document.getElementById('schedule-id').value = '';
+    document.getElementById('schedule-room-id').value = '';
+    document.getElementById('course-id').value = '';
+    document.getElementById('start-time').value = '';
+    document.getElementById('end-time').value = '';
+    document.getElementById('days-of-week').value = '';
+    document.getElementById('start-date').value = '';
+    document.getElementById('end-date').value = '';
+    document.getElementById('recurring').checked = false;
+
+    document.getElementById('schedule-popup-title').textContent = 'Create Schedule';
+    document.getElementById('schedule-submit-btn').textContent = 'Create';
+    document.getElementById('schedule-popup').style.display = 'block';
+});
+
+// Event listener for create maintenance button
+document.getElementById('create-maintenance-btn').addEventListener('click', () => {
+    document.getElementById('maintenance-id').value = '';
+    document.getElementById('issue-type').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('room-id').value = '';
+    document.getElementById('status').value = 'Pending';
+    document.getElementById('assigned-to').value = '';
+
+    document.getElementById('maintenance-popup-title').textContent = 'Create Maintenance';
+    document.getElementById('maintenance-submit-btn').textContent = 'Create';
+    document.getElementById('maintenance-popup').style.display = 'block';
+});
+
+// Call the functions to fetch and display bookings, maintenance, and schedules
+fetchAndDisplayBookings();
+fetchAndDisplayMaintenance();
+fetchAndDisplaySchedules();
+
+</script>
+</body>
+</html>

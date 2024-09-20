@@ -53,12 +53,7 @@ bookingsRouter.get('/Bookings/user/:userId', async (req, res) => {
             }
         });
 
-        if (users.length === 0) {
-            res.status(404).json({ message: 'No bookings found for this user' });
-        } else {
-            res.status(200).json(users);
-        }
-
+        res.status(200).json(users);
     } catch (error) {
         res.status(500).send('Cannot get bookings');
     }
@@ -79,12 +74,7 @@ bookingsRouter.get('/Bookings/date/:date', async (req, res) => {
             }
         });
 
-        if (dates.length === 0) {
-            res.status(404).json({ message: 'No bookings found for this date' });
-        } else {
-            res.status(200).json(dates);
-        }
-
+        res.status(200).json(dates);
     } catch (error) {
         res.status(500).send('Cannot get bookings');
     }
@@ -112,24 +102,7 @@ bookingsRouter.post('/Bookings', async (req, res) => {
     }
 });
 
-bookingsRouter.delete('/bookings/:bookingId', async (req, res) => {
-    const { bookingId } = req.params;
 
-    try {
-
-        const bookingDocRef= doc(db, 'Bookings',bookingId);
-        const bookingDoc= await getDoc(bookingDocRef);
-
-        await deleteDoc(bookingDocRef);
-        res.status(200).json({ message: 'Booking deleted successfully.' });
-    } catch (error) {
-        console.error('Error deleting booking:', error);
-        res.status(500).send('Error deleting booking');
-    }
-});
-
-
-//update booking
 bookingsRouter.put('/bookings/:bookingId', async (req, res) => {
     const { bookingId } = req.params;
     const updates = req.body;
@@ -158,4 +131,21 @@ bookingsRouter.put('/bookings/:bookingId', async (req, res) => {
 });
 
 
-module.exports = bookingsRouter;
+bookingsRouter.delete('/bookings/:bookingId', async (req, res) => {
+    const { bookingId } = req.params;
+
+    try {
+
+        const bookingDocRef= doc(db, 'Bookings',bookingId);
+        const bookingDoc= await getDoc(bookingDocRef);
+
+        await deleteDoc(bookingDocRef);
+        res.status(200).json({ message: 'Booking deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting booking:', error);
+        res.status(500).send('Error deleting booking');
+    }
+});
+
+
+module.exports=bookingsRouter;
