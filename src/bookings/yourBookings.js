@@ -17,6 +17,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+
+
 function showLoading() {
     const scheduledContent = document.getElementById('scheduled-content');
     scheduledContent.innerHTML = '<p>Loading bookings...</p>';
@@ -28,9 +30,9 @@ function showLoading() {
     if (timestamp && timestamp.seconds) {
       const date = new Date(timestamp.seconds * 1000);
       const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-      const year = date.getFullYear().toString().slice(-2); // Get last 2 digits of year
-      return `${day}/${month}/${year}`; // Format as dd/mm/yy
+      const month = String(date.getMonth() + 1).padStart(2, '0'); 
+      const year = date.getFullYear().toString().slice(-2); 
+      return `${day}/${month}/${year}`; 
     }
     return 'Invalid date';
   }
@@ -40,7 +42,7 @@ function showLoading() {
       const date = new Date(timestamp.seconds * 1000);
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`; // Format as HH:MM
+      return `${hours}:${minutes}`;
     }
     return 'Invalid time';
   }
@@ -53,7 +55,7 @@ function showLoading() {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+          'x-api-key': api_key,
           'Content-Type': 'application/json'
         }
       });
@@ -107,7 +109,7 @@ async function displayBookings(bookings, userId) {
   const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
   const mobilePastContent = document.getElementById('mobile-in-progress-content');
 
-  // Clear any existing bookings content
+ 
   scheduledContent.innerHTML = '';
   pastContent.innerHTML = '';
   mobileScheduledContent.innerHTML = '';
@@ -133,11 +135,13 @@ async function displayBookings(bookings, userId) {
     return startA - startB;
   });
 
-  const paginatedUpcomingDesktop = paginateBookings(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop);
-  const paginatedPastDesktop = paginateBookings(pastBookings, currentPagePastDesktop, itemsPerPageDesktop);
+  const paginatedUpcomingDesktop = paginateBookings(upcomingBookings, currentPageUpcomingDesktop, 4);  // 4 items per page for desktop
+  const paginatedPastDesktop = paginateBookings(pastBookings, currentPagePastDesktop, 4);  // Same for past bookings
+
   
-  const paginatedUpcomingMobile = paginateBookings(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile);
-  const paginatedPastMobile = paginateBookings(pastBookings, currentPagePastMobile, itemsPerPageMobile);
+  const paginatedUpcomingMobile = paginateBookings(upcomingBookings, currentPageUpcomingMobile, 2);  // 2 items per page for mobile
+const paginatedPastMobile = paginateBookings(pastBookings, currentPagePastMobile, 2);  // Same for past bookings
+
 
   
   renderDesktopBookings(paginatedUpcomingDesktop, scheduledContent, 'upcoming', userId);
@@ -163,7 +167,7 @@ function paginateBookings(bookings, page, itemsPerPage) {
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
-        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+        'x-api-key': api_key,
         'Content-Type': 'application/json'
       }
     });
@@ -172,38 +176,31 @@ function paginateBookings(bookings, page, itemsPerPage) {
       throw new Error('Failed to delete booking, please try again.');
     }
 
-    alert(`Booking with ID ${bookingId} cancelled successfully.`);
+    alert(`Booking cancelled successfully.`);
   } catch (error) {
     console.error('Error cancelling booking:', error);
     alert('Error cancelling booking: ' + error.message);
   }
 }
 
-window.bookAgain = async function(userId, venueId) {
-
+window.bookAgain = function(venueId, venueName) {
   try {
-    const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingId}`;
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-        'Content-Type': 'application/json'
-      }
-    });
+    
+    localStorage.setItem('bookingId', venueId);
+    localStorage.setItem('venueName', venueName);
 
-    if (!response.ok) {
-      throw new Error('Failed to delete booking, please try again.');
-    }
-
-    alert(`Booking with ID ${bookingId} cancelled successfully.`);
+    const bookingDetailsUrl = `../make-booking/booking-details.html?bookingId=${venueId}&venueName=${encodeURIComponent(venueName)}`;
+    window.location.href = bookingDetailsUrl;
   } catch (error) {
-    console.error('Error cancelling booking:', error);
-    alert('Error cancelling booking: ' + error.message);
+    console.error('Error storing booking info:', error);
+    alert('Error: ' + error.message);
   }
-
-
-  
 }
+
+
+
+
+
 
 async function renderDesktopBookings(bookings, container, type, userId) {
   const bookingsSection = document.createElement('div');
@@ -233,7 +230,7 @@ async function renderDesktopBookings(bookings, container, type, userId) {
           </div>
           ${type === 'upcoming' 
             ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${userId}', '${booking.id}')">Cancel</button>`
-            : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.id}')">Book Again</button>`}
+            : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venueId}', '${venueName}')">Book Again</button>`}
         </div>
       `;
       
@@ -274,7 +271,7 @@ async function renderMobileBookings(bookings, container, type, userId) {
           </div>
           ${type === 'upcoming' 
             ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${userId}', '${booking.id}')">Cancel</button>`
-            : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.id}')">Book Again</button>`}
+            : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venueId}', '${venueName}')">Book Again</button>`}
         </div>
       `;
       
@@ -299,16 +296,18 @@ async function fetchVenueName(venueId) {
 
 function renderPaginationControls(bookings, currentPage, itemsPerPage, container, deviceType, bookingType) {
   const totalPages = Math.ceil(bookings.length / itemsPerPage);
-  
-  if (totalPages <= 1) return;
 
+  // Always show pagination controls, even if there is only one page
   const paginationControls = document.createElement('div');
   paginationControls.classList.add('pagination-controls', 'mt-4', 'flex', 'justify-between');
 
   const prevButton = document.createElement('button');
   prevButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
   prevButton.innerText = 'Previous';
+
+  // Disable the 'Previous' button on the first page
   prevButton.disabled = currentPage === 1;
+
   prevButton.onclick = () => {
     if (deviceType === 'desktop') {
       if (bookingType === 'upcoming') currentPageUpcomingDesktop--;
@@ -317,13 +316,16 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
       if (bookingType === 'upcoming') currentPageUpcomingMobile--;
       else currentPagePastMobile--;
     }
-    displayBookings(bookings);
+    displayBookings(bookings);  // Re-render the bookings with the new page
   };
 
   const nextButton = document.createElement('button');
   nextButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
   nextButton.innerText = 'Next';
+
+  // Disable the 'Next' button only if on the last page
   nextButton.disabled = currentPage === totalPages;
+
   nextButton.onclick = () => {
     if (deviceType === 'desktop') {
       if (bookingType === 'upcoming') currentPageUpcomingDesktop++;
@@ -332,7 +334,7 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
       if (bookingType === 'upcoming') currentPageUpcomingMobile++;
       else currentPagePastMobile++;
     }
-    displayBookings(bookings);
+    displayBookings(bookings);  // Re-render the bookings with the new page
   };
 
   paginationControls.appendChild(prevButton);
@@ -340,6 +342,8 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
 
   container.appendChild(paginationControls);
 }
+
+
 
 
   async function loadUserBookings(userEmail) {
@@ -367,3 +371,5 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
       console.log("No user is signed in.");
     }
   });
+
+  const api_key = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW'
