@@ -43,3 +43,7 @@ service cloud.firestore {
 Invoke-RestMethod -Uri http://localhost:3000/api/user -Method Post -Headers @{ "Content-Type" = "application/json" } -Body '{"name": "John Doe", "email": "john.doe@example.com", "password": "yourpassword"}'
 
 https://rollout.com/integration-guides/firestore/sdk/step-by-step-guide-to-building-a-firestore-api-integration-in-js
+
+
+
+(`${type}-bookings-mobile`, 'mb-4'
