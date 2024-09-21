@@ -172,4 +172,5 @@ module.exports = {
   cancelBooking,
   acceptBooking,
   rejectBooking,
+  venues,
 }

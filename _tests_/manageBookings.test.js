@@ -8,6 +8,7 @@ const {
     cancelBooking,
     acceptBooking,
     rejectBooking,
+    venues,
   } = require('./copies/manageBookingsCopy.js'); 
   
   describe('Booking Functions', () => {
