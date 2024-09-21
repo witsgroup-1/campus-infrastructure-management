@@ -47,9 +47,6 @@ describe('Maintenance Request Form', () => {
 
        
         const apiKey = process.env.API_KEY_1;
-        // const reportType = document.querySelector('#reportType').value;
-        // const description = document.querySelector('textarea[placeholder="Enter description"]').value;
-        // const venue = document.querySelector('input[placeholder="Venue"]').value;
 
         //get mock data for our fetch request
         const timestampNow = new Date().toISOString();

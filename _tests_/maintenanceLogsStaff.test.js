@@ -1,17 +1,19 @@
 import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup,  setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from './copies/maintenanceLogsCopy'; 
 import { fireEvent, waitFor } from '@testing-library/dom';  
 import '@testing-library/jest-dom';  
-
+//const fetch = require('node-fetch');
 
 document.body.innerHTML = `
   <input id="assigned-to" />
   <select id="staff-dropdown" class="hidden"></select>
 `;
 
-// fetch.mockResolvedValueOnce({
-//     ok: true,
-//     json: async () => mockStaffData,
-//   });
+
+global.fetch = jest.fn();
+fetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => mockStaffData,
+  });
 
 
 const mockStaffData = [
