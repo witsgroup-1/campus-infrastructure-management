@@ -1,10 +1,12 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const scheduleForm = document.getElementById('schedule_form');
     const recurringSelect = document.getElementById('recurring-select');
-    const lastDate = document.getElementById('last-date'); // Assuming this contains 'end-date'
+    const lastDate = document.getElementById('last-date'); 
+    const venue = document.getElementById('venue');
+    const search = document.getElementById('search-results');
 
     // Event listener to show/hide the last date field based on 'Recurring' selection
-    recurringSelect.addEventListener('change', function() {
+    recurringSelect.addEventListener('change', function () {
         if (this.value === 'true') {
             lastDate.style.display = 'flex';
         } else {
@@ -12,8 +14,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    /*venue.addEventListener('input', async function(){
+        const room = this.value;
+        search.innerHTML = '';
+
+        try {
+            const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues/search?q=${room}`, {
+                method: 'GET',
+                headers: {
+                    'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            // Display search results
+            data.results.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.name; // Customize based on API response
+                searchResults.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Error fetching venue data:', error);
+        }
+    });*/
+
     // Attach event listener to the form submission
-    scheduleForm.addEventListener('submit', async function(event) {
+    scheduleForm.addEventListener('submit', async function (event) {
         event.preventDefault();
 
         // Gather form values
@@ -38,16 +66,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const date = document.getElementById('date').value;
-        const start_time = document.getElementById('time_from').value;
-        const end_time = document.getElementById('time_to').value;
-        const purpose = document.getElementById('course').value;
-
         try {
             // Use Promise.all to handle both POST requests simultaneously
             await Promise.all([
                 createSchedule(userId, courseId, roomId, daysOfWeek, startDate, endDate, startTime, recurring, endTime),
-                createBooking(userId, roomId, date, start_time, end_time, purpose)
+                createBookingsForRecurring(userId, roomId, startDate, startTime, endTime, courseId, recurring, endDate)
             ]);
 
             alert('Schedule and booking successfully created!');
@@ -89,7 +112,28 @@ async function createSchedule(userId, courseId, roomId, daysOfWeek, startDate, e
     return await response.json();
 }
 
-// POST bookings
+async function createBookingsForRecurring(userId, roomId, startDate, startTime, endTime, purpose, recurring, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    // Create only a single booking if not recurring
+    if (recurring === 'false') {
+        await createBooking(userId, roomId, startDate, startTime, endTime, purpose);
+        return;
+    }
+    
+    // Create bookings for each week if recurring is true
+    else{
+        let currentDate = start;
+        while (currentDate <= end) {
+            const date = currentDate.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
+            await createBooking(userId, roomId, date, startTime, endTime, purpose);
+            currentDate.setDate(currentDate.getDate() + 7); // Move to the next week
+        }
+    }
+}
+
+// POST single booking
 async function createBooking(userId, roomId, date, start_time, end_time, purpose) {
     const bookingData = {
         userId,
@@ -97,8 +141,12 @@ async function createBooking(userId, roomId, date, start_time, end_time, purpose
         start_time,
         end_time,
         date,
-        purpose
+        purpose,
+        status: 'Pending', // Add status if necessary
+        venueId: roomId // Assuming venueId and roomId are the same
     };
+
+    console.log(bookingData); // Log booking data for debugging
 
     try {
         const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
@@ -111,12 +159,11 @@ async function createBooking(userId, roomId, date, start_time, end_time, purpose
         });
 
         if (!response.ok) {
-            // Try to parse the response as JSON, if that fails, treat it as text
             let errorData;
             try {
                 errorData = await response.json();
             } catch (jsonError) {
-                errorData = await response.text();  // Handle plain text response
+                errorData = await response.text();
             }
             console.error(`Booking creation failed with status ${response.status}:`, errorData);
             throw new Error(`Error creating booking: ${response.statusText}`);
@@ -124,10 +171,8 @@ async function createBooking(userId, roomId, date, start_time, end_time, purpose
 
         const result = await response.json();
         console.log(`Booking created successfully:`, result);
-        return result;
     } catch (error) {
         console.error('Error occurred during booking creation:', error);
-        throw error;
     }
 }
 
