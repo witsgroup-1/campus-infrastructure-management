@@ -57,6 +57,12 @@ const {
     });
   
     
+           // Test getRoomInfo function
+    test('getRoomInfo should return correct venue based on venueId', () => {
+        venues.push({ id: 'venue1', Name: 'Venue One' });
+        expect(getRoomInfo('venue1')).toEqual({ id: 'venue1', Name: 'Venue One' });
+    });
+
     // Test error handling in fetchVenues
     test('fetchVenues should handle errors correctly', async () => {
       fetch.mockImplementation(() => Promise.reject(new Error('API error')));
@@ -153,11 +159,6 @@ const {
         expect(fetchedBookings).toEqual(mockBookings);
       });
   
-       // Test getRoomInfo function
-  test('getRoomInfo should return correct venue based on venueId', () => {
-    venues.push({ id: 'venue1', Name: 'Venue One' });
-    expect(getRoomInfo('venue1')).toEqual({ id: 'venue1', Name: 'Venue One' });
-  });
 
 
 
