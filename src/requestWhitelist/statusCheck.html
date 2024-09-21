@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Whitelist Request Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+    /* Tailwind CSS for styling */
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .step {
+        margin-top: 20px;
+    }
+
+    .form-block {
+        position: relative;
+        padding: 2rem;
+        margin: auto;
+        width: 100%;
+        max-width: 400px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .relative-content {
+        position: relative;
+    }
+
+    .logo-container img {
+        opacity: 0.1;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        z-index: 0;
+    }
+
+    .block {
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        color: #003B5C;
+    }
+
+    input[type="email"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        color: #003B5C;
+    }
+
+    button {
+        background-color: #917248;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        display: block;
+        margin: 20px auto;
+        font-size: 1rem;
+    }
+
+    button:hover {
+        background-color: #7A5D37;
+    }
+
+    #statusResult {
+        display: none;
+        margin-top: 1rem;
+    }
+
+    #statusResult h3 {
+        font-size: 1.2rem;
+        color: #003B5C;
+    }
+
+    #statusText {
+        font-size: 1rem;
+        color: #003B5C;
+    }
+</style>
+</head>
+<body>
+
+    <header class="p-4 bg-[#003B5C] text-white text-center relative">
+        <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.history.back()" >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+    </header>
+
+<!-- Section 1 - Email for Status Check -->
+<section id="status-check-section" class="step mt-20">
+    <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md mx-auto md:w-3/4 w-full max-w-md">
+        <!-- Transparent Logo (Behind Content) -->
+        <div class="logo-container">
+            <img src="../images/WitsTransparent.png" alt="Logo">
+        </div>
+        <!-- Form Content (Above the Logo) -->
+        <div class="relative-content">
+            <label class="block text-[#003B5C]" for="email">Enter Your Email to Check Status:</label>
+            <input type="email" id="email" class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" required>
+        </div>
+    </div>
+
+    <button id="checkStatusBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Check Status</button>
+
+    <!-- Status Result Display -->
+    <div id="statusResult">
+        <h3>Status:</h3>
+        <p id="statusText"></p>
+    </div>
+</section>
+<script type = "module" src = "statusCheck.js"></script>
+</body>
+</html>
