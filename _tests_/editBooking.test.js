@@ -247,20 +247,43 @@ describe('editBookingCopy', () => {
       }
     });
     
-    document.getElementById = jest.fn((id) => {
-      switch(id) {
-        case 'venueSelector': return { value: 'venue1' };
-        case 'bookingDate': return { value: '2024-09-20' };
-        case 'timeSlot': return { value: '8:00 AM - 09:45 AM' };
-        case 'statusSelection': return { value: 'Confirmed' };
-        default: return null;
-      }
-    });
-    
-    test('should save changes with valid inputs', async () => {
+
+    test('saveChanges should send a PUT request and alert success message without API key', async () => {
+      // Mock the fetch response for the PUT request
+      fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue({
+          message: 'Booking edited successfully'
+        })
+      });
+  
+      // Mock the API key to prevent real exposure
+      const mockApiKey = 'mock-api-key';
+  
+      // Mock headers function to simulate API key being passed
+      const mockHeaders = {
+        'x-api-key': mockApiKey,
+        'Content-Type': 'application/json'
+      };
+  
+      // Call the saveChanges function
       await saveChanges('booking1');
-      expect(fetch).toHaveBeenCalledTimes(1);
+  
+      // Expect fetch to have been called with correct URL and method
+      expect(fetch).toHaveBeenCalledWith(expect.any(String), {
+        method: 'PUT',
+        headers: expect.objectContaining(mockHeaders), // Check that mock headers contain the API key and content type
+        body: JSON.stringify({
+          start_time: '9:00 AM',
+          end_time: '11:00 AM',
+          date: '20 September 2024',
+          venueId: 'venue1',
+          status: 'Confirmed'
+        })
+      });
+  
+      // Check that the alert function was called with the success message
+      expect(global.alert).toHaveBeenCalledWith('Booking edited successfully');
     });
-    
+
 
 });
