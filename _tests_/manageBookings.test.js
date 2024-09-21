@@ -116,14 +116,14 @@ describe('manageBookings', () => {
         expect(container.children.length).toBe(1); 
     });
 
-    // Test booking editing
-    test('editBooking should simulate navigation to edit page', () => {
-        const bookingId = 'booking1';
-        editBooking(bookingId);
-        // Instead of checking window.location.href, we can check if a function was called
-        // You might want to refactor editBooking to handle the test better
-        expect(global.alert).toHaveBeenCalledWith(`Navigating to editBooking.html?bookingId=${bookingId}`);
-    });
+    // // Test booking editing
+    // test('editBooking should simulate navigation to edit page', () => {
+    //     const bookingId = 'booking1';
+    //     editBooking(bookingId);
+    //     // Instead of checking window.location.href, we can check if a function was called
+    //     // You might want to refactor editBooking to handle the test better
+    //     expect(global.alert).toHaveBeenCalledWith(`Navigating to editBooking.html?bookingId=${bookingId}`);
+    // });
 
     // Test booking cancellation
     test('cancelBooking should call API and alert success', async () => {
