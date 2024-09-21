@@ -151,5 +151,37 @@ const {
         expect(fetchedBookings).toEqual(mockBookings);
       });
   
+       // Test getRoomInfo function
+  test('getRoomInfo should return correct venue based on venueId', () => {
+    venues.push({ id: 'venue1', Name: 'Venue One' });
+    expect(getRoomInfo('venue1')).toEqual({ id: 'venue1', Name: 'Venue One' });
+  });
+
+  // Test getBooking function
+  test('getBooking should return correct booking based on bookingId', () => {
+    bookings.push({
+      id: 'booking1',
+      date: '20 September 2024',
+      start_time: '9:00 AM',
+      end_time: '11:00 AM',
+      purpose: 'Meeting',
+      roomId: 'venue1',
+      status: 'Confirmed',
+      userId: 'user1',
+      venueId: 'venue1'
+    });
+    expect(getBooking('booking1')).toEqual({
+      id: 'booking1',
+      date: '20 September 2024',
+      start_time: '9:00 AM',
+      end_time: '11:00 AM',
+      purpose: 'Meeting',
+      roomId: 'venue1',
+      status: 'Confirmed',
+      userId: 'user1',
+      venueId: 'venue1'
+    });
+  });
+
   });
   
