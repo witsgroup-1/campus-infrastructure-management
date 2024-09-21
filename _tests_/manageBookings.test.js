@@ -16,8 +16,8 @@ global.alert = jest.fn();
 describe('manageBookings', () => {
     let mockVenues;
     let mockBookings;
-    let venues; // Defined to avoid ReferenceError
-    let bookings; // Defined to avoid ReferenceError
+    let venues; // For storing fetched venues
+    let bookings; // For storing fetched bookings
 
     beforeEach(() => {
         // Set up the mock venues and bookings data
@@ -116,21 +116,19 @@ describe('manageBookings', () => {
         expect(container.children.length).toBe(1); 
     });
 
-    // // Test booking editing
-    // test('editBooking should simulate navigation to edit page', () => {
-    //     const bookingId = 'booking1';
-    //     editBooking(bookingId);
-    //     // Instead of checking window.location.href, we can check if a function was called
-    //     // You might want to refactor editBooking to handle the test better
-    //     expect(global.alert).toHaveBeenCalledWith(`Navigating to editBooking.html?bookingId=${bookingId}`);
-    // });
+    // Test booking editing
+    test('editBooking should simulate navigation to edit page', () => {
+        const bookingId = 'booking1';
+        editBooking(bookingId);
+        expect(global.alert).toBeCalledWith(`Navigating to editBooking.html?bookingId=${bookingId}`);
+    });
 
     // Test booking cancellation
     test('cancelBooking should call API and alert success', async () => {
         const bookingId = 'booking1';
         await cancelBooking(bookingId);
         expect(fetch).toHaveBeenCalledWith(expect.stringContaining(`bookings/${bookingId}`), expect.anything());
-        expect(global.alert).toHaveBeenCalledWith(`Booking cancelled successfully`);
+        expect(global.alert).toBeCalledWith(`Booking cancelled successfully`);
     });
 
     // Test booking acceptance
@@ -138,7 +136,7 @@ describe('manageBookings', () => {
         const bookingId = 'booking2';
         await acceptBooking(bookingId);
         expect(fetch).toHaveBeenCalledWith(expect.stringContaining(`bookings/${bookingId}`), expect.anything());
-        expect(global.alert).toHaveBeenCalledWith(`Booking successfully confirmed`);
+        expect(global.alert).toBeCalledWith(`Booking successfully confirmed`);
     });
 
     // Test booking rejection
@@ -146,6 +144,6 @@ describe('manageBookings', () => {
         const bookingId = 'booking1';
         await rejectBooking(bookingId);
         expect(fetch).toHaveBeenCalledWith(expect.stringContaining(`bookings/${bookingId}`), expect.anything());
-        expect(global.alert).toHaveBeenCalledWith(`Booking rejected`);
+        expect(global.alert).toBeCalledWith(`Booking rejected`);
     });
 });
