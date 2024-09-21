@@ -24,49 +24,70 @@ const {
     let mockBookings;
   
     beforeEach(() => {
-      mockVenues = [
-        { id: 'venue1', Name: 'Venue One', Building: 'Building One', Category: 'Hall' },
-        { id: 'venue2', Name: 'Venue Two', Building: 'Building Two', Category: 'Room' },
-      ];
+        // Set up the mock venues and bookings data
+        mockVenues = [
+          { id: 'venue1', Name: 'Venue One', Building: 'Building One', Category: 'Hall' },
+          { id: 'venue2', Name: 'Venue Two', Building: 'Building Two', Category: 'Room' },
+        ];
+          
+        mockBookings = [
+          {
+            id: 'booking1',
+            date: '20 September 2024',
+            start_time: '9:00 AM',
+            end_time: '11:00 AM',
+            purpose: 'Meeting',
+            roomId: 'venue1',
+            status: 'Confirmed',
+            userId: 'user1',
+            venueId: 'venue1',
+          },
+          {
+            id: 'booking2',
+            date: '21 September 2024',
+            start_time: '10:00 AM',
+            end_time: '12:00 PM',
+            purpose: 'Lecture',
+            roomId: 'venue2',
+            status: 'Pending',
+            userId: 'user2',
+            venueId: 'venue2',
+          },
+        ];
       
-      mockBookings = [
-        {
-          id: 'booking1',
-          date: '20 September 2024',
-          start_time: '9:00 AM',
-          end_time: '11:00 AM',
-          purpose: 'Meeting',
-          roomId: 'venue1',
-          status: 'Confirmed',
-          userId: 'user1',
-          venueId: 'venue1',
-        },
-        {
-          id: 'booking2',
-          date: '21 September 2024',
-          start_time: '10:00 AM',
-          end_time: '12:00 PM',
-          purpose: 'Lecture',
-          roomId: 'venue2',
-          status: 'Pending',
-          userId: 'user2',
-          venueId: 'venue2',
-        },
-      ];
-  
-      fetch.mockClear();
-      fetch.mockImplementation((url) => {
-        if (url.includes('venues')) {
-          return Promise.resolve({
-            json: jest.fn().mockResolvedValue(mockVenues),
-          });
-        } else if (url.includes('bookings')) {
-          return Promise.resolve({
-            json: jest.fn().mockResolvedValue(mockBookings),
-          });
-        }
+        fetch.mockClear();
+        fetch.mockImplementation((url) => {
+          if (url.includes('venues')) {
+            return Promise.resolve({
+              json: jest.fn().mockResolvedValue(mockVenues),
+            });
+          } else if (url.includes('bookings')) {
+            return Promise.resolve({
+              json: jest.fn().mockResolvedValue(mockBookings),
+            });
+          }
+        });
+      
+        // Create mock HTML elements for event listeners
+        document.body.innerHTML = `
+          <select id="statusFilter">
+            <option value="">All</option>
+            <option value="confirmed">Confirmed</option>
+          </select>
+          <select id="roomFilter">
+            <option value="">All</option>
+            <option value="Hall">Hall</option>
+          </select>
+          <input id="searchInput" type="text" />
+          <div id="bookingsContainer"></div>
+        `;
+      
+        // Re-attach event listeners after setting up the DOM
+        document.getElementById('statusFilter').addEventListener('change', renderBookings);
+        document.getElementById('roomFilter').addEventListener('change', renderBookings);
+        document.getElementById('searchInput').addEventListener('input', renderBookings);
       });
-    });
+      
   
     // Test fetching venues
     test('fetchVenues should fetch venues from API', async () => {
