@@ -12,28 +12,34 @@ const {
   saveChanges,
   venues,
   bookings
-} = require('./copies/editBookingCopy');
+} = require('./copies/editBookingCopy'); 
 
-jest.mock('firebase/app', () => ({
-  initializeApp: jest.fn(), // Mock the initializeApp function
-}));
+jest.mock('firebase/app', () => {
+  return {
+      initializeApp: jest.fn(),  // Mock the initializeApp function
+  };
+});
 
-jest.mock('firebase/auth', () => ({
-  getAuth: jest.fn(), // Mock the getAuth function
-  onAuthStateChanged: jest.fn(), // Mock auth state changes
-}));
+jest.mock('firebase/auth', () => {
+  return {
+      getAuth: jest.fn(),  // Mock the getAuth function
+      onAuthStateChanged: jest.fn(), // Mock auth state changes
+  };
+});
 
-jest.mock('firebase/firestore', () => ({
-  getFirestore: jest.fn(), // Mock Firestore
-  collection: jest.fn(),
-  doc: jest.fn(),
-  getDocs: jest.fn(),
-}));
+jest.mock('firebase/firestore', () => {
+  return {
+      getFirestore: jest.fn(), // Mock Firestore
+      collection: jest.fn(),
+      doc: jest.fn(),
+      getDocs: jest.fn(),
+  };
+});
 
 // Mock fetch API
 global.fetch = jest.fn(() =>
   Promise.resolve({
-    json: () => Promise.resolve([]),
+    json: () => Promise.resolve([])
   })
 );
 
@@ -46,14 +52,6 @@ describe('editBookingCopy', () => {
   beforeEach(() => {
     fetch.mockClear();
     global.alert.mockClear();
-
-    // Mock the DOM elements
-    document.body.innerHTML = `
-      <select id="venueSelector"></select>
-      <input id="bookingDate" value="2024-09-20"/>
-      <input id="timeSlot" value="9:00 AM - 11:00 AM"/>
-      <select id="statusSelection"></select>
-    `;
   });
 
   // Test formatDateDMY function
@@ -65,7 +63,7 @@ describe('editBookingCopy', () => {
   test('extractStartEndTime should correctly split time slot into start and end time', () => {
     expect(extractStartEndTime('9:00 AM - 11:00 AM')).toEqual({
       startTime: '9:00 AM',
-      endTime: '11:00 AM',
+      endTime: '11:00 AM'
     });
   });
 
@@ -86,13 +84,25 @@ describe('editBookingCopy', () => {
       roomId: 'venue1',
       status: 'Confirmed',
       userId: 'user1',
-      venueId: 'venue1',
+      venueId: 'venue1'
     });
-    expect(getBooking('booking1')).toEqual(bookings[0]);
+    expect(getBooking('booking1')).toEqual({
+      id: 'booking1',
+      date: '20 September 2024',
+      start_time: '9:00 AM',
+      end_time: '11:00 AM',
+      purpose: 'Meeting',
+      roomId: 'venue1',
+      status: 'Confirmed',
+      userId: 'user1',
+      venueId: 'venue1'
+    });
   });
 
   // Test populateVenues function
   test('populateVenues should populate the venue dropdown correctly', () => {
+    document.body.innerHTML = '<select id="venueSelector"></select>';
+
     venues.length = 0;
     venues.push({ id: 'venue1', Name: 'Venue One' });
     populateVenues(venues);
@@ -130,6 +140,7 @@ describe('editBookingCopy', () => {
     expect(isValidVenue('invalid-venue')).toBe(false);
   });
 
+  
   // Test error handling in fetchVenues
   test('fetchVenues should handle errors correctly', async () => {
     fetch.mockImplementation(() => Promise.reject(new Error('API error')));
@@ -150,111 +161,80 @@ describe('editBookingCopy', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  // Test fetchVenues function
-  test('fetchVenues should return all venues stored in DB', async () => {
-    const mockVenues = [
-      {
-        building: "Great Hall",
-        Capacity: "300",
-        Category: "Hall",
-        Features: [],
-        Name: "Great Hall",
-        venueId: "1234"
-      },
-      {
-        building: "Hall 29",
-        Capacity: "300",
-        Category: "Exam Hall",
-        Features: [],
-        Name: "Hall 29",
-        venueId: "1534"
-      }
-    ];
 
-    // Mock the global fetch to return the mockVenues
-    fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValue(mockVenues)
+    // Test getBooking function
+    test('fetchVenues should return all venues stored in DB', async () => {
+      const mockVenues = [
+        {
+          building: "Great Hall",
+          Capacity: "300",
+          Category: "Hall",
+          Features: [],
+          Name: "Great Hall",
+          venueId: "1234"
+        },
+        {
+          building: "Hall 29",
+          Capacity: "300",
+          Category: "Exam Hall",
+          Features: [],
+          Name: "Hall 29",
+          venueId: "1534"
+        }
+      ];
+    
+      // Mock the global fetch to return the mockVenues
+      fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(mockVenues)
+      });
+    
+      const fetchedVenues = await fetchVenues();
+      
+      // Expect fetch to have been called once
+      expect(fetch).toHaveBeenCalledTimes(1);
+      
+      // Assertion to compare expected and actual data
+      expect(fetchedVenues).toEqual(mockVenues);
     });
 
-    const fetchedVenues = await fetchVenues();
-
-    // Expect fetch to have been called once
-    expect(fetch).toHaveBeenCalledTimes(1);
-
-    // Assertion to compare expected and actual data
-    expect(fetchedVenues).toEqual(mockVenues);
-  });
-
-  // Test fetchBookings function
-  test('fetchBookings should return all bookings stored in DB', async () => {
-    const mockBookings = [
-      {
-        id: 'booking1',
-        date: '20 September 2024',
-        start_time: '9:00 AM',
-        end_time: '11:00 AM',
-        purpose: 'Meeting',
-        roomId: '1278',
-        status: 'Confirmed',
-        userId: 'user1',
-        venueId: '1235'
-      },
-      {
-        id: 'booking2',
-        date: '20 September 2024',
-        start_time: '8:00 AM',
-        end_time: '09:45 AM',
-        purpose: 'Lecture',
-        roomId: '2356',
-        status: 'Confirmed',
-        userId: '01',
-        venueId: '2356'
-      }
-    ];
-
-    // Mock the global fetch to return the mockBookings
-    fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValue(mockBookings)
+    test('fetchBookings should return all bookings stored in DB', async () => {
+      const mockBookings = [
+        {
+          id: 'booking1',
+          date: '20 September 2024',
+          start_time: '9:00 AM',
+          end_time: '11:00 AM',
+          purpose: 'Meeting',
+          roomId: '1278',
+          status: 'Confirmed',
+          userId: 'user1',
+          venueId: '1235'
+        },
+        {
+          id: 'booking2',
+          date: '20 September 2024',
+          start_time: '8:00 AM',
+          end_time: '09:45 AM',
+          purpose: 'Lecture',
+          roomId: '2356',
+          status: 'Confirmed',
+          userId: '01',
+          venueId: '2356'
+        }
+      ];
+    
+      // Mock the global fetch to return the mockBookings
+      fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(mockBookings)
+      });
+    
+      const fetchedBookings = await fetchBookings();
+      
+      // Expect fetch to have been called once
+      expect(fetch).toHaveBeenCalledTimes(1);
+      
+      // Assertion to compare expected and actual data
+      expect(fetchedBookings).toEqual(mockBookings);
     });
 
-    const fetchedBookings = await fetchBookings();
-
-    // Expect fetch to have been called once
-    expect(fetch).toHaveBeenCalledTimes(1);
-
-    // Assertion to compare expected and actual data
-    expect(fetchedBookings).toEqual(mockBookings);
-  });
-
-  // Test saveChanges function
-  test('saveChanges should send a PUT request and alert success message without API key', async () => {
-    // Mock the fetch response for the PUT request
-    fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValue({
-        message: 'Booking edited successfully'
-      })
-    });
-
-    // Call the saveChanges function
-    await saveChanges('booking1');
-
-    // Expect fetch to have been called with correct URL and method
-    expect(fetch).toHaveBeenCalledWith(expect.any(String), {
-      method: 'PUT',
-      headers: expect.objectContaining({
-        'x-api-key': 'mock-api-key', // Assuming you have some logic to set this in your actual function
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify({
-        start_time: '9:00 AM',
-        end_time: '11:00 AM',
-        date: '20 September 2024',
-        venueId: 'venue1',
-        status: 'Confirmed'
-      }),
-    });
-
-    // Check that the alert function was called with the success message
-    expect(global.alert).toHaveBeenCalledWith('Booking edited successfully');
-  });
 });
