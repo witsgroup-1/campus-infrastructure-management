@@ -32,7 +32,7 @@ const {
         json: jest.fn().mockResolvedValueOnce(mockData),
       });
   
-      await fetchVenues('mockApiKey');
+      await fetchVenues();
       expect(fetch).toHaveBeenCalledWith(expect.anything(), expect.any(Object));
       expect(venues).toEqual(mockData);
     });
