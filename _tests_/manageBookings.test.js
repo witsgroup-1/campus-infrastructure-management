@@ -48,7 +48,7 @@ const {
     global.alert = jest.fn();
   });
   
-  describe('editBookingCopy', () => {
+  describe('manageBookingCopy', () => {
     beforeEach(() => {
       fetch.mockClear();
       global.alert.mockClear();
