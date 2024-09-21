@@ -218,3 +218,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+module.exports = {
+    fetchVenues,
+    fetchBookings,
+    getRoomInfo,
+    renderBookings,
+    editBooking,
+    cancelBooking,
+    acceptBooking,
+    rejectBooking,
+}
