@@ -8,7 +8,7 @@ const {
     cancelBooking,
     acceptBooking,
     rejectBooking,
-  } = require('./bookings'); 
+  } = require('./copies/manageBookingsCopy.js'); 
   
   describe('Booking Functions', () => {
     beforeEach(() => {
