@@ -66,10 +66,20 @@ describe('manageBookings', () => {
     });
 
 
-    test('fetchVenues should fetch venues from API', async () => {
-        await fetchVenues();
-        expect(fetch).toHaveBeenCalledWith(expect.stringContaining('venues'), expect.anything());
-        expect(venues).toEqual(mockVenues);
-    });
+    test('fetchVenues should return all venues stored in DB', async () => {
+      
+        // Mock the global fetch to return the mockVenues
+        fetch.mockResolvedValue({
+          json: jest.fn().mockResolvedValue(mockVenues)
+        });
+      
+        const fetchedVenues = await fetchVenues();
+        
+        // Expect fetch to have been called once
+        expect(fetch).toHaveBeenCalledTimes(1);
+        
+        // Assertion to compare expected and actual data
+        expect(fetchedVenues).toEqual(mockVenues);
+      });
 
 });
