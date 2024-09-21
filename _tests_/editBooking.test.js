@@ -236,6 +236,33 @@ describe('editBookingCopy', () => {
       // Assertion to compare expected and actual data
       expect(fetchedBookings).toEqual(mockBookings);
     });
+
+    document.getElementById = jest.fn((id) => {
+      switch(id) {
+        case 'venueSelector': return { value: 'venue1' };
+        case 'bookingDate': return { value: '2024-09-20' };
+        case 'timeSlot': return { value: '9:00 AM - 11:00 AM' };
+        case 'statusSelection': return { value: 'Confirmed' };
+        default: return null;
+      }
+    });
+    
+    test('should save changes with valid inputs', async () => {
+      await saveChanges('booking1');
+      expect(fetch).toHaveBeenCalledWith(
+        'https://campus-infrastructure-management.azurewebsites.net/api/bookings/booking1',
+        expect.objectContaining({
+          method: 'PUT',
+          body: JSON.stringify({
+            start_time: '9:00 AM',
+            end_time: '11:00 AM',
+            date: '20 September 2024',
+            venueId: 'venue1',
+            status: 'Confirmed'
+          })
+        })
+      );
+    });
     
 
 });
