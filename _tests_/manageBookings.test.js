@@ -52,6 +52,8 @@ const {
     beforeEach(() => {
       fetch.mockClear();
       global.alert.mockClear();
+
+      venues.length=0;
     });
   
     
