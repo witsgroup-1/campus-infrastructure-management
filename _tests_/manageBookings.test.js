@@ -73,7 +73,7 @@ describe('manageBookings', () => {
           json: jest.fn().mockResolvedValue(mockVenues)
         });
       
-        const fetchedVenues = await fetchVenues();
+        const fetchedVenues = fetchVenues();
         
         // Expect fetch to have been called once
         expect(fetch).toHaveBeenCalledTimes(1);
