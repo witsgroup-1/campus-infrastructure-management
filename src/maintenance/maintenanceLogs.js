@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayInitialRequestsForMobile(inProgressRequests, 'mobile-in-progress-content', 'show-more-in-progress');
     displayInitialRequestsForMobile(completedRequests, 'mobile-completed-content', 'show-more-completed');
 
-    setupStaffSearch(apiKey);
+    //setupStaffSearch(apiKey);
 
   } catch (error) {
     console.error('Error fetching maintenance requests:', error);

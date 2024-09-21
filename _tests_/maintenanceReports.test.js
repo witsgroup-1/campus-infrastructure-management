@@ -11,7 +11,7 @@ describe('Maintenance Request Form', () => {
   let form, reportType, description, venue, submitButton;
 
   beforeEach(() => {
-    // Set up the DOM structure
+    //mock the html
     document.body.innerHTML = `
       <form>
         <select id="reportType">
@@ -40,17 +40,18 @@ describe('Maintenance Request Form', () => {
       })
     );
 
-    // Add the event listener for the form submission (from your original code)
+    //mock the event listener
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelector("form").addEventListener("submit", async (e) => {
         e.preventDefault(); // Prevent the default form submission
 
        
         const apiKey = process.env.API_KEY_1;
-        const reportType = document.querySelector('#reportType').value;
-        const description = document.querySelector('textarea[placeholder="Enter description"]').value;
-        const venue = document.querySelector('input[placeholder="Venue"]').value;
+        // const reportType = document.querySelector('#reportType').value;
+        // const description = document.querySelector('textarea[placeholder="Enter description"]').value;
+        // const venue = document.querySelector('input[placeholder="Venue"]').value;
 
+        //get mock data for our fetch request
         const timestampNow = new Date().toISOString();
 
         const requestData = {
@@ -63,7 +64,7 @@ describe('Maintenance Request Form', () => {
           timestamp: timestampNow,
           userId: '12345'
         };
-
+        //try the fetch - mock it with data
         try {
           const response = await fetch('http://localhost:3000/api/maintenanceRequests', {
             method: 'POST',
