@@ -247,6 +247,16 @@ describe('editBookingCopy', () => {
       }
     });
     
+    document.getElementById = jest.fn((id) => {
+      switch(id) {
+        case 'venueSelector': return { value: 'venue1' };
+        case 'bookingDate': return { value: '2024-09-20' };
+        case 'timeSlot': return { value: '8:00 AM - 09:45 AM' };
+        case 'statusSelection': return { value: 'Confirmed' };
+        default: return null;
+      }
+    });
+    
     test('should save changes with valid inputs', async () => {
       await saveChanges('booking1');
       expect(fetch).toHaveBeenCalledWith(
@@ -254,11 +264,11 @@ describe('editBookingCopy', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({
-            start_time: '9:00 AM',
-            end_time: '11:00 AM',
-            date: '20 September 2024',
+            start_time: '8:00 AM',
+            end_time: '09:45 AM',
+            date: '2024-09-20',
             venueId: 'venue1',
-            status: 'Confirmed'
+            status: 'Confirmed',
           })
         })
       );
