@@ -61,13 +61,25 @@ h2:hover {
   color: var(--witsGold); 
 }
 
+#bookings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 5px; 
+  min-height: 200px; 
+  max-width: 100%; 
+}
 
 .booking-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; 
-    width: 100%; 
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Aligns items evenly */
+  background-color: #f0f0f0; 
+  border-radius: 8px; 
+  padding: 10px;
+  box-shadow: 0 2px 4px var(--witsGold); /* Subtle shadow for depth */
+}
+
   
   .booking-info {
     flex: 1;
@@ -78,19 +90,36 @@ h2:hover {
   }
 
   #see-more-button {
-    position: center;
     color: #003B5C;
     margin-left: -20px;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 20px 20px 20px 20px;
     cursor: pointer;
     font-size: 14px;
+    
+
   }
   
   #see-more-button:hover{
     text-decoration: underline;
     color: var(--witsGold)
   }
+
+  #userEmailDisplay{
+    color: var(--witsBlue);
+    margin-left: 40px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 768px) { /* Adjust this breakpoint as needed */
+    #bookings-container {
+      flex-direction: column; /* Stacks items vertically */
+    }
+  
+    .booking-container {
+      width: 100%; /* Full width for mobile */
+    }
+  }
+  
   
 
 
