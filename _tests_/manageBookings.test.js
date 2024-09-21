@@ -97,7 +97,7 @@ describe('manageBookings', () => {
 
     // Test room info retrieval
   test('getRoomInfo should return correct venue based on venueId', () => {
-    expect(getRoomInfo('venue1')).toEqual(mockVenues[0]);
+    expect(getRoomInfo("venue1")).toEqual(mockVenues[0]);
   });
 
 
