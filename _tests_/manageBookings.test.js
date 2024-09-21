@@ -13,7 +13,7 @@ const {
 global.fetch = jest.fn();
 global.alert = jest.fn();
 
-describe('Booking Management', () => {
+describe('manageBookings', () => {
     let mockVenues;
     let mockBookings;
 
@@ -76,10 +76,6 @@ describe('Booking Management', () => {
             <div id="bookingsContainer"></div>
         `;
 
-        // Re-attach event listeners after setting up the DOM
-        document.getElementById('statusFilter').addEventListener('change', renderBookings);
-        document.getElementById('roomFilter').addEventListener('change', renderBookings);
-        document.getElementById('searchInput').addEventListener('input', renderBookings);
     });
 
     // Test fetching venues
