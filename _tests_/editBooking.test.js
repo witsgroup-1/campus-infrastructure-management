@@ -225,7 +225,7 @@ describe('editBookingCopy', () => {
     
       // Mock the global fetch to return the mockBookings
       fetch.mockResolvedValue({
-        json: jest.fn().mockResolvedValue(mockVenues)
+        json: jest.fn().mockResolvedValue(mockBookings)
       });
     
       const fetchedBookings = await fetchBookings();
