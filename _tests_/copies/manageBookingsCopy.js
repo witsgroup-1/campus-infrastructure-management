@@ -1,40 +1,37 @@
 let bookings = [];
 let venues = [];
-
-// API URLs
 const bookingsUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/bookings';  
 const venuesUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';  
 
 // Fetch venues from the API
-async function fetchVenues(apiKey) {
+async function fetchVenues() {
   try {
     const response = await fetch(venuesUrl, {
       method: 'GET',
       headers: {
-        'x-api-key': apiKey,
+        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
         'Content-Type': 'application/json'
       }
     });
-    venues = await response.json();
-    console.log(venues); // Store fetched venues
+    venues = await response.json(); 
+    return venues;  // Return fetched venues for testing
   } catch (error) {
     console.error('Error fetching venues:', error);
   }
 }
 
 // Fetch bookings from the API
-async function fetchBookings(apiKey) {
+async function fetchBookings() {
   try {
     const response = await fetch(bookingsUrl, {
       method: 'GET',
       headers: {
-        'x-api-key': apiKey,
+        'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
         'Content-Type': 'application/json'
       }
     });
     bookings = await response.json();
-    console.log(bookings);  // Store fetched bookings
-    renderBookings();  // Render bookings after fetching data
+    return bookings;  // Return fetched bookings for testing
   } catch (error) {
     console.error('Error fetching bookings:', error);
   }
@@ -46,8 +43,12 @@ function getRoomInfo(venueId) {
 }
 
 // Function to render bookings based on current filters
-function renderBookings() {
-  const container = document.getElementById('bookingsContainer');
+function renderBookings(container) {
+  if (!container) {
+    console.error('Container element is not defined.');
+    return;
+  }
+
   container.innerHTML = ''; // Clear existing bookings
 
   const statusFilter = document.getElementById('statusFilter').value;
@@ -71,7 +72,6 @@ function renderBookings() {
   // Create booking boxes
   filteredBookings.forEach(booking => {
     const roomInfo = getRoomInfo(booking.venueId); // Get room info
-
     if (roomInfo) {
       const bookingBox = document.createElement('div');
       bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
@@ -80,29 +80,25 @@ function renderBookings() {
       const roomDetails = document.createElement('div');
       roomDetails.className = 'flex-shrink-0';
       roomDetails.innerHTML = `
-        <h2 class="text-lg font-semibold">${roomInfo.Name}</h2>
-        <p class="text-sm text-gray-600">Type: ${roomInfo.Category}</p>
-        <p class="text-sm text-gray-600">Date: ${booking.date}</p>
-        <p class="text-sm text-gray-600">Time: ${booking.start_time} - ${booking.end_time}</p>
-        <p class="text-sm text-gray-600">Status: ${booking.status}</p>
+          <h2 class="text-lg font-semibold">${roomInfo.Name}</h2>
+          <p class="text-sm text-gray-600">Type: ${roomInfo.Category}</p>
+          <p class="text-sm text-gray-600">Date: ${booking.date}</p>
+          <p class="text-sm text-gray-600">Time: ${booking.start_time} - ${booking.end_time}</p>
+          <p class="text-sm text-gray-600">Status: ${booking.status}</p>
       `;
       bookingBox.appendChild(roomDetails);
 
       const actionButtons = document.createElement('div');
       actionButtons.className = 'flex flex-row space-x-2';
 
-      const buttonHandlers = {
-        confirmed: () => {
-          actionButtons.appendChild(createButton('Edit', 'bg-blue-500', () => editBooking(booking.id)));
-          actionButtons.appendChild(createButton('Cancel', 'bg-red-500', () => cancelBooking(booking.id)));
-        },
-        pending: () => {
-          actionButtons.appendChild(createButton('Accept', 'bg-green-500', () => acceptBooking(booking.id)));
-          actionButtons.appendChild(createButton('Reject', 'bg-red-500', () => rejectBooking(booking.id)));
-        }
-      };
-
-      (buttonHandlers[booking.status.toLowerCase()] || function(){} )(); // Call appropriate button handler
+      // Action buttons based on booking status
+      if (booking.status.toLowerCase() === 'confirmed') {
+        actionButtons.appendChild(createButton('Edit', 'bg-blue-500', () => editBooking(booking.id)));
+        actionButtons.appendChild(createButton('Cancel', 'bg-red-500', () => cancelBooking(booking.id)));
+      } else if (booking.status.toLowerCase() === 'pending') {
+        actionButtons.appendChild(createButton('Accept', 'bg-green-500', () => acceptBooking(booking.id)));
+        actionButtons.appendChild(createButton('Reject', 'bg-red-500', () => rejectBooking(booking.id)));
+      }
 
       bookingBox.appendChild(actionButtons);
       container.appendChild(bookingBox);
@@ -110,10 +106,9 @@ function renderBookings() {
   });
 }
 
-// Helper function to create buttons
-function createButton(text, bgClass, onClick) {
+function createButton(text, bgColor, onClick) {
   const button = document.createElement('button');
-  button.className = `${bgClass} text-white px-3 py-1 rounded hover:bg-opacity-80 focus:outline-none`;
+  button.className = `${bgColor} text-white px-3 py-1 rounded hover:bg-opacity-80 focus:outline-none`;
   button.textContent = text;
   button.onclick = onClick;
   return button;
@@ -126,43 +121,42 @@ function editBooking(id) {
 
 async function cancelBooking(id) {
   await updateBookingStatus(id, 'cancelled');
-  alert('Booking cancelled successfully');
+  alert(`Booking cancelled successfully`);
 }
 
 async function acceptBooking(id) {
   await updateBookingStatus(id, 'confirmed');
-  alert('Booking successfully confirmed');
+  alert(`Booking successfully confirmed`);
 }
 
 async function rejectBooking(id) {
   await updateBookingStatus(id, 'rejected');
-  alert('Booking rejected');
+  alert(`Booking rejected`);
 }
 
-// Function to update booking status
 async function updateBookingStatus(id, status) {
-  const url = `${bookingsUrl}/${id}`;
+  const url = `https://campus-infrastructure-management.azurewebsites.net/api/bookings/${id}`; 
   try {
-    const response = await fetch(url, {
+    await fetch(url, {
       method: 'PUT',
       headers: {
-        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+        'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ status })
     });
-    return await response.json();
   } catch (error) {
     console.error('Error updating booking status:', error);
   }
 }
 
 // Initial fetch for venues and bookings
-document.addEventListener('DOMContentLoaded', () => {
-  const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-  fetchVenues(apiKey).then(() => fetchBookings(apiKey));  // Fetch venues first, then fetch bookings
+document.addEventListener('DOMContentLoaded', async () => {
+  await fetchVenues();
+  await fetchBookings();  // Fetch bookings after fetching venues
 });
 
+// Export for testing
 module.exports = {
   fetchVenues,
   fetchBookings,
@@ -172,5 +166,4 @@ module.exports = {
   cancelBooking,
   acceptBooking,
   rejectBooking,
-  venues,
-}
+};
