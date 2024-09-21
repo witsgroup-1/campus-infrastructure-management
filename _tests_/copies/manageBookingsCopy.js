@@ -166,6 +166,7 @@ module.exports = {
   cancelBooking,
   acceptBooking,
   rejectBooking,
+  updateBookingStatus,
   venues,
   bookings,
 };
