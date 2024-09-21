@@ -148,4 +148,5 @@ describe('manageBookings', () => {
 //         expect(fetch).toHaveBeenCalledWith(expect.stringContaining(`bookings/${bookingId}`), expect.anything());
 //         expect(global.alert).toBeCalledWith(`Booking rejected`);
 //     });
-// });
+// 
+}); 
