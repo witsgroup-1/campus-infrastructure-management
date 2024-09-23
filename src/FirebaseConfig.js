@@ -13,18 +13,16 @@ export class FirebaseConfig {
             measurementId: "G-Y95YE5ZDRY"
         };
         
-        this.app = null;  // To store the initialized app
-        this.db = null;   // To store Firestore instance
+        this.app = null;
+        this.db = null; 
     }
 
-    // Initialize Firebase App
     initializeFirebase() {
         if (!this.app) {
             this.app = initializeApp(this.firebaseConfig);
         }
     }
 
-    // Get Firestore Instance
     getFirestoreInstance() {
         if (!this.db) {
             if (!this.app) {
@@ -41,7 +39,7 @@ export class FirebaseConfig {
         try {
             const docRef = await addDoc(collection(db, collectionName), data);
             console.log("Document written with ID: ", docRef.id);
-            return docRef.id;  // Return the document ID
+            return docRef.id;
         } catch (error) {
             console.error("Error adding document: ", error);
             throw new Error("Error adding document");
@@ -55,9 +53,9 @@ export class FirebaseConfig {
             const querySnapshot = await getDocs(q);
             const results = [];
             querySnapshot.forEach((doc) => {
-                results.push({ id: doc.id, ...doc.data() });  // Store each document's data along with its ID
+                results.push({ id: doc.id, ...doc.data() });
             });
-            return results;  // Return an array of documents
+            return results;
         } catch (error) {
             console.error("Error getting documents: ", error);
             throw new Error("Error getting documents");

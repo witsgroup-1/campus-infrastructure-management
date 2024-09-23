@@ -16,12 +16,20 @@ document.getElementById('checkStatusBtn')?.addEventListener('click', async () =>
 
         if (results.length === 0) {
             alert('No request found for this email.');
+            document.getElementById('statusResult').style.display = 'none'; // Hide status result if no request
         } else {
             const requestData = results[0];
             document.getElementById('statusText').textContent = `Request is currently: ${requestData.status}`;
             document.getElementById('statusResult').style.display = 'block';
+
+            if (requestData.status === 'accepted'){
+                document.getElementById('loginLink').style.display = 'block';
+            } else {
+                document.getElementById('loginLink').style.display = 'none';
+            }
         }
     } catch (error) {
         alert('There was an issue checking the status. Please try again.');
     }
 });
+

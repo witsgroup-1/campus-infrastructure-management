@@ -21,13 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const name = document.getElementById('name').value;
         const surname = document.getElementById('surname').value;
-        const faculty = document.getElementById('faculty').value;
-        const role = document.getElementById('role').value;
-        const isTutor = document.getElementById('tutorCheckbox').checked;
-        const isLecturer = document.getElementById('lecturerCheckbox').checked;
         const email = document.getElementById('email').value;
 
-        if (!name || !surname || !faculty || !role || !email) {
+        if (!name || !surname  || !email) {
             alert('Please fill in all required fields.');
             return;
         }
@@ -35,10 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const requestData = {
             name,
             surname,
-            faculty,
-            role,
-            isTutor,
-            isLecturer,
             email,
             status: 'pending',
             createdAt: new Date()
