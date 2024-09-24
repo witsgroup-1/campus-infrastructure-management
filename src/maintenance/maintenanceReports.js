@@ -31,7 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         //Call API to create new maintenance requests
         //https://campus-infrastructure-management.azurewebsites.net
-        const response = await fetch('http://localhost:3000/api/maintenanceRequests', {
+        //http://localhost:3000
+        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ venueInput.addEventListener('input', async (event) => {
 
     if (query.length >= 2) {
         try {
-            const response = await fetch(`http://localhost:3000/api/venues?name=${query}`, {
+            const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

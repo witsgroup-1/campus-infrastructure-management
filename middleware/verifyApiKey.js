@@ -40,7 +40,7 @@ const verifyApiKey = async (req, res, next) => {
   
     try {
         // Send a POST request to increment the count for the correct API key log
-        await axios.post(`http://localhost:3000/api/APILogs/${apiLogId}`, {
+        await axios.post(`https://campus-infrastructure-management.azurewebsites.net/api/APILogs/${apiLogId}`, {
             count: 1 // Increment count by 1
         }, {
             headers: { 'x-api-key': loggingApiKey } 

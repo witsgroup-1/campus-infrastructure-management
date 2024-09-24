@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    
     //https://campus-infrastructure-management.azurewebsites.net
     //http://localhost:3000
-    const response = await fetch('http://localhost:3000/api/maintenanceRequests', {
+    const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
       method: 'GET',
       headers: {
         'x-api-key': apiKey,
@@ -69,7 +69,7 @@ async function setupStaffSearch(apiKey) {
 
       if (query.length >= 2) {
         try {
-          const response = await fetch(`http://localhost:3000/api/users/?isLecturer=false&isTutor=false&role=Staff&?name=${query}`, {
+          const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/users/?isLecturer=false&isTutor=false&role=Staff&?name=${query}`, {
             method: 'GET',
             headers: {
               'x-api-key': apiKey,
