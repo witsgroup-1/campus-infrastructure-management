@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="requestWhitelist.js" type="module"></script>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1;
+        }
+       
+        .form-block {
+            min-height: 300px; 
+            width: 100%; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            position: relative; 
+        }
+
+        .logo-container img {
+            width: 100%;
+            max-width: 600px;
+            opacity: 0.1;
+        }
+       
+        .relative-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .form-block {
+                width: 85%;
+            }
+        }
+        @media (max-width: 640px) {
+            .form-block {
+                width: 95%;
+                padding: 15px;
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <main class="flex-grow max-w-4xl mx-auto p-4">
+        <header class="flex justify-between items-center w-full bg-[#003B5C] p-4 h-16 fixed left-0 top-0 right-0 z-10">
+            <button id="backBtn" class="text-6xl text-[#917248] font-bold">&larr;</button>
+            <div class="flex-grow text-center">
+                <h1 id="step-title" class="text-xl text-white font-bold">Welcome</h1>
+            </div>
+            <img id="progress-icon" src="../images/Progress1.svg" alt="Progress" class="w-12 h-12">
+        </header>
+
+        <!-- Step 1: Welcome Page -->
+        <section id="step-1" class="step active mt-20">
+            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md">
+                <div class="logo-container">
+                    <img src="../images/WitsTransparent.png" alt="Logo">
+                </div>
+                <div class="relative-content">
+                    <h2 class="text-2xl text-center text-[#003B5C]">Before you can join us, please spend a moment to tell us more about yourself.</h2>
+                </div>
+            </div>
+            <button id="startBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Get Started</button>
+        </section>
+
+        <!-- Step 2: Form with Name, Surname, and Email -->
+        <section id="step-2" class="step hidden mt-20">
+            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md mx-auto md:w-3/4 w-full max-w-md">
+                <div class="logo-container">
+                    <img src="../images/WitsTransparent.png" alt="Logo">
+                </div>
+                <div class="relative-content">
+                    <label class="block text-[#003B5C]">Name</label>
+                    <input type="text" class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" id="name" required>
+                    <label class="block text-[#003B5C]">Surname</label>
+                    <input type="text" class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" id="surname" required>
+                    <label class="block text-[#003B5C]">Email</label>
+                    <input type="email" class="w-full border border-gray-300 text-[#003B5C] rounded p-2 mb-4" id="email" required>
+                </div>
+            </div>
+            <button id="nextBtn1" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Next</button>
+        </section>
+
+        <!-- Step 3: Finish -->
+        <section id="step-3" class="step hidden mt-20">
+            <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md mx-auto md:w-3/4 w-full max-w-md">
+                <div class="relative-content text-center">
+                    <h2 class="text-2xl text-[#003B5C]">You are ready to submit your information!</h2>
+                    <button id="requestBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg">Finish</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#003B5C] text-white text-center p-4 w-full">
+        <p>&copy; 2024 Group -1. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const sections = document.querySelectorAll('.step');
+        let currentStep = 0;
+
+        const titles = ["Welcome", "Enter your name", "Ready to Submit"];
+        const icons = ["../images/Progress1.svg", "../images/Progress2.svg", "../images/Progress3.svg"];
+
+        function showStep(step) {
+            sections.forEach((section, index) => {
+                section.classList.toggle('hidden', index !== step);
+            });
+
+            document.getElementById('step-title').textContent = titles[step];
+            document.getElementById('progress-icon').src = icons[step];
+        }
+
+        function validateStep2() {
+            const name = document.getElementById('name').value;
+            const surname = document.getElementById('surname').value;
+            const email = document.getElementById('email').value;
+            return name.trim() !== '' && surname.trim() !== '' && email.trim() !== '';
+        }
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            currentStep = 1;
+            showStep(currentStep);
+        });
+
+        document.getElementById('nextBtn1').addEventListener('click', () => {
+            if (validateStep2()) {
+                currentStep = 2;
+                showStep(currentStep);
+            } else {
+                alert('Please fill out all required fields.');
+            }
+        });
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        document.getElementById('requestBtn').addEventListener('click', () => {
+            alert('Form submitted successfully!');
+        });
+
+        showStep(currentStep);
+    </script>
+</body>
+</html>

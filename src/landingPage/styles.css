@@ -81,6 +81,10 @@ a{
 }
 
 #whitelist{
+    font-size: 18px;
+}
+
+#statuscheck{
     font-size: 14px;
 }
 
