@@ -107,3 +107,21 @@ button:hover {
 label {
     color: var(--witsBlue);
 }
+
+.button {
+    position: absolute; /* Allow positioning */
+    top: 10px; /* Distance from the top */
+    left: 10px; /* Distance from the left */
+    background-color: var(--witsBlue); /* White background */
+    border: none; /* No border */
+    border-radius: 50%; /* Circular button */
+    padding: 10px; /* Padding around the icon */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    cursor: pointer; /* Change cursor to pointer */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+.button:hover {
+    background-color:var(--witsGold);
+}
+

@@ -39,8 +39,6 @@
         <nav class="flex flex-col items-center justify-center h-full p-4 space-y-4">
             <a href="../schedule/timetable.html" >Schedules</a>
             <a href="../bookings/yourBookings.html" >Bookings</a>
-            <a href ="../manage-bookings/manageBookings.html">Manage Bookings</a>
-            <a href="../maintenance/maintenanceLogs.html" >Maintenance</a>
             <a href="../maintenance/maintenanceReports.html" >Report</a>
             <a href="viewAllVenues.html" >Venues</a>
             <a href="../make-reservation/makeReservation.html">Make Reservation</a>
@@ -60,13 +58,12 @@
         </section>
 
         <section class="mt-8">
-           <a href="../bookings/yourBookings.html">
             <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Your upcoming bookings...</h2>
-           </a>
             <div id="bookings-container" class="space-y-4">
               <!-- Bookings will be dynamically inserted here -->
             </div>
-            <a id="see-more-button" href="../bookings/yourBookings.html">See More</a>
+            <br>
+            <a id="see-more-button" href="../bookings/yourBookings.html" class = "hidden">See More</a>
             <!-- This section will be shown when there are no bookings -->
             <div id="no-bookings-message" class="hidden text-center">
               <!--<img id="no-bookings-image" src="img/noBookings.png" alt="No bookings" class="mx-auto w-48 h-48">-->

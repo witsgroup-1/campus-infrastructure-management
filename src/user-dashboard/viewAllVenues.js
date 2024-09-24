@@ -45,7 +45,7 @@ function renderBookings() {
     });
 
     if (filteredBookings.length === 0) {
-        container.innerHTML = '<p class="text-center text-gray-500">No bookings found.</p>';
+        container.innerHTML = '<p class="text-center text-gray-500">No venues found.</p>';
         return;
     }
 

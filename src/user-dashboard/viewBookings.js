@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -12,30 +12,31 @@ const firebaseConfig = {
   measurementId: "G-Y95YE5ZDRY"
 };
 
-// Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-function formatDate(date) {
-  const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear().toString().slice(-2); // Get last 2 digits of year
-  return `${day}/${month}/${year}`;
+function formatFirestoreTimestamp(timestamp) {
+  if (timestamp && timestamp.seconds) {
+    const date = new Date(timestamp.seconds * 1000);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = date.getFullYear().toString().slice(-2); // Get last 2 digits of year
+    return `${day}/${month}/${year}`; // Format as dd/mm/yy
+  }
+  return 'Invalid date';
 }
 
-function formatTimeSlot(startTime, endTime) {
-  const start = new Date(startTime);
-  const end = new Date(endTime);
-  const formatTime = (date) => {
+function formatTime(timestamp) {
+  if (timestamp && timestamp.seconds) {
+    const date = new Date(timestamp.seconds * 1000);
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
-  return `${formatTime(start)}-${formatTime(end)}`;
+    return `${hours}:${minutes}`; // Format as HH:MM
+  }
+  return 'Invalid time';
 }
-
 
 // Function to show a loading state
 function showLoading() {
@@ -51,25 +52,37 @@ function hideLoading() {
 
 async function getFirestoreUserIdByEmail(email) {
   try {
-    // Query the Firestore 'users' collection where the 'email' field equals the Firebase Auth email
+    
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      // Retrieve the document ID (which is the Firestore userId)
+      
       const userDoc = querySnapshot.docs[0];
-      const firestoreUserId = userDoc.id; // The document ID is the userId
+      const firestoreUserId = userDoc.id;
       return firestoreUserId;
     } else {
       throw new Error('No matching user document found in Firestore.');
     }
   } catch (error) {
     console.error('Error fetching Firestore userId by email:', error);
-    return null; // Handle the error
+    return null;
   }
 }
-// Function to fetch user bookings from the API
+
+async function fetchVenueName(venueId) {
+  try {
+    const venueRef = doc(db, 'venues', venueId);  
+    const venueDoc = await getDoc(venueRef); 
+    return venueDoc;
+    
+  } catch (error) {
+    console.error('Error fetching venue:', error);
+    return null;  // Handle error case
+  }
+}
+
 async function fetchUserBookings(userId) {
   try {
     const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings`;
@@ -86,71 +99,90 @@ async function fetchUserBookings(userId) {
     }
 
     const bookings = await response.json();
-    console.log('Bookings fetched:', bookings); // Log the response to inspect it
     return bookings;
   } catch (error) {
     console.error('Error fetching bookings:', error);
-    return []; // Return an empty array in case of an error
+    return [];
   }
 }
 
-function displayBookings(bookings) {
-  //console.log("Displaying bookings:", bookings);
-
+async function displayBookings(bookings) {
   const bookingsContainer = document.getElementById('bookings-container');
   const noBookingsMessage = document.getElementById('no-bookings-message');
+  const seeMoreButton = document.getElementById('see-more-button');
 
   bookingsContainer.innerHTML = '';
-
   const now = new Date();
 
-  // Filter only upcoming bookings (where start_time is in the future)
-  const upcomingBookings = bookings.filter(booking => new Date(booking.start_time) > now);
+  const upcomingBookings = bookings.filter(booking => {
+    const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
+    return startTime && startTime > now;
+  }).sort((a, b) => {
+    const startA = new Date(a.startTime.seconds * 1000);
+    const startB = new Date(b.startTime.seconds * 1000);
+    return startA - startB; 
+  });
 
   if (!upcomingBookings.length) {
-    // No upcoming bookings, show the "no upcoming bookings" message and hide the container
     bookingsContainer.classList.add('hidden');
     noBookingsMessage.classList.remove('hidden');
   } else {
-    // Limit to 3 bookings
-    const bookingsToDisplay = upcomingBookings.slice(0, 3);
-
     bookingsContainer.classList.remove('hidden');
     noBookingsMessage.classList.add('hidden');
 
-    bookingsToDisplay.forEach(booking => {
+    const isMobile = window.innerWidth <= 768; 
+    const bookingsToDisplay = isMobile ? upcomingBookings.slice(0, 1) : upcomingBookings.slice(0, 3); // Show 1 on mobile, 3 on others
+
+    if(isMobile){
+      
+    }
+
+    for (let booking of bookingsToDisplay) {
+      const formattedStartTime = formatFirestoreTimestamp(booking.startTime);
+      const formattedStartHour = formatTime(booking.startTime);
+      const formattedEndHour = formatTime(booking.endTime);
+
       const bookingElement = document.createElement('div');
-      bookingElement.classList.add('w-11/12', 'h-16', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-2');
+      bookingElement.classList.add('w-11/12', 'h-16', 'rounded-lg', 'mb-2', 'p-2');
+
+      const venueDoc = await fetchVenueName(booking.venueId);
+      const venueName = venueDoc.exists() ? venueDoc.data().Name : 'Venue not found';
 
       bookingElement.innerHTML = `
         <div class="booking-container flex items-center">
           <div class="booking-info flex-1">
-            <div><strong>Name:</strong> ${booking.name}</div>
-            <div><strong>Venue:</strong> ${booking.venue_name}</div>
+            <div><strong>Venue:</strong> ${venueName}</div>
+            <div><strong>Purpose:</strong> ${booking.purpose}</div>
           </div>
           <div class="separator w-px bg-[#003B5C] h-12 mx-4"></div>
           <div class="booking-times flex-1 text-right">
-            <div><strong>Date:</strong> ${formatDate(booking.start_time)}</div>
-            <div><strong>Slot:</strong> ${formatTimeSlot(booking.start_time, booking.end_time)}</div>
+            <div><strong>Date:</strong> ${formattedStartTime}</div>
+            <div><strong>Slot:</strong> ${formattedStartHour} - ${formattedEndHour}</div>
           </div>
         </div>
       `;
 
       bookingsContainer.appendChild(bookingElement);
-    });
+    }
+
+    if ((isMobile && upcomingBookings.length > 1) || (!isMobile && upcomingBookings.length > 3)) {
+      seeMoreButton.classList.remove('hidden');
+    } else {
+      seeMoreButton.classList.add('hidden');
+    }
   }
 }
 
-// Function to load and display user bookings
-async function loadUserBookings(userEmail) {
-  showLoading(); // Show loading message
 
-  // Fetch the corresponding Firestore userId using Firebase Auth email
+
+async function loadUserBookings(userEmail) {
+  showLoading();
+
+  
   const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
   console.log(firestoreUserId)
 
   if (firestoreUserId) {
-    // Use the Firestore userId to fetch bookings
     const bookings = await fetchUserBookings(firestoreUserId);
     displayBookings(bookings);
   } else {
