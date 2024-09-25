@@ -15,26 +15,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("User is signed in with id:", user.userId);
-
-  } else {
-    console.log("No user is signed in.");
-  }
-});
-
-
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
     //add the event listener for the submit button
     document.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault(); //prevent the default form submission
   
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("User is signed in with id:", user.userId);
+          
+        } else {
+          console.log("No user is signed in.");
+        }
+      });
+
+
+
       const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
       //collect the data that we need from the form
       //const reportType = document.querySelector('select[placeholder="Report Type"]').value;
@@ -46,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
       //generate the timestamp
       const timestampNow = new Date().toISOString();
       //console.log(timestampNow);
-  
+      
       //data to be sent to the API
       const requestData = {
         assignedTo: 'none', // Default assigned value
