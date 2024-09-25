@@ -1,11 +1,11 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage lines-valid="444" lines-covered="339" line-rate="0.7635" branches-valid="104" branches-covered="47" branch-rate="0.45189999999999997" timestamp="1727287067249" complexity="0" version="0.1">
+<coverage lines-valid="443" lines-covered="338" line-rate="0.7629" branches-valid="104" branches-covered="47" branch-rate="0.45189999999999997" timestamp="1727296266930" complexity="0" version="0.1">
   <sources>
     <source>C:\Users\Skitt\campus-infrastructure-management</source>
   </sources>
   <packages>
-    <package name="_tests_.copies" line-rate="0.8323999999999999" branch-rate="0.5166">
+    <package name="_tests_.copies" line-rate="0.8315" branch-rate="0.5166">
       <classes>
         <class name="editBookingCopy.js" filename="_tests_\copies\editBookingCopy.js" line-rate="0.7222" branch-rate="0.35710000000000003">
           <methods>
@@ -411,9 +411,8 @@
             <line number="44" hits="1" branch="false"/>
             <line number="48" hits="1" branch="false"/>
             <line number="50" hits="1" branch="false"/>
-            <line number="52" hits="1" branch="false"/>
-            <line number="56" hits="1" branch="false"/>
-            <line number="58" hits="1" branch="false"/>
+            <line number="55" hits="1" branch="false"/>
+            <line number="57" hits="1" branch="false"/>
           </lines>
         </class>
       </classes>
