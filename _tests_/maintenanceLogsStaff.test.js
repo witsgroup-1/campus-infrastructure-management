@@ -83,69 +83,50 @@ describe('setupStaffSearch', () => {
     expect(dropdown.classList).toContain('hidden');
   });
 
+  
   test('handles API error gracefully', async () => {
-    // Mock failed fetch response
+    //Mock failed fetch response
     fetch.mockResolvedValueOnce({
       ok: false,
     });
 
     setupStaffSearch(apiKey);
-
+    // console.log("search");
     const searchInput = document.getElementById('assigned-to');
     searchInput.value = 'Jo';
     searchInput.dispatchEvent(inputEvent);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    // Verify dropdown is cleared and hidden on error
+    //Verify dropdown is cleared and hidden on error
     const dropdown = document.getElementById('staff-dropdown');
     expect(dropdown.children.length).toBe(0);
     expect(dropdown.classList).toContain('hidden');
   });
 
-//   test('handles staff selection from dropdown', () => {
-//     setupStaffSearch(apiKey);
-
-//     const searchInput = document.getElementById('assigned-to');
-//     const dropdown = document.getElementById('staff-dropdown');
-
-//     // Populate dropdown with options
-//     dropdown.innerHTML = `<option data-staff-name="Jane Doe" data-staff-id="1">Jane Doe</option>`;
-//     dropdown.classList.remove('hidden');
-
-//     // Simulate a click event on the dropdown
-//     const option = dropdown.querySelector('option');
-//     option.dispatchEvent(new Event('click'));
-
-//     // Verify that input value and data attributes are updated
-//     expect(searchInput.value).toBe('Jane Doe');
-//     expect(searchInput.dataset.staffId).toBe('1');
-//     expect(dropdown.classList).toContain('hidden');
-//   });
 test('handles staff selection from dropdown', () => {
-    setupStaffSearch(apiKey);
-  
-    const searchInput = document.getElementById('assigned-to');
-    const dropdown = document.getElementById('staff-dropdown');
-  
-    // Populate dropdown with an option
-    const option = document.createElement('option');
-    option.dataset.staffName = 'Jane Doe';
-    option.dataset.staffId = '1';
-    option.textContent = 'Jane Doe';
-    dropdown.appendChild(option);
-    
-    dropdown.classList.remove('hidden');
-  
-    // Simulate a click event on the option
-    option.dispatchEvent(new Event('click'));
-  
-    // Verify that input value and data attributes are updated
-    expect(searchInput.value).toBe('Jane Doe');
-    expect(searchInput.dataset.staffId).toBe('1');
-    expect(dropdown.classList).toContain('hidden');
-  });
+  setupStaffSearch(apiKey); // Ensure this is called first
 
+  const searchInput = document.getElementById('assigned-to');
+  const dropdown = document.getElementById('staff-dropdown');
+
+  // Populate dropdown with an option 
+  const option = document.createElement('option');
+  option.dataset.staffName = 'Jane Doe';
+  option.dataset.staffId = '1';
+  option.textContent = 'Jane Doe';
+  dropdown.appendChild(option);
+ 
+  dropdown.classList.remove('hidden');
+
+  // Simulate a click event on the option
+  option.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+  // Verify that input value and data attributes are updated
+  expect(searchInput.value).toBe('Jane Doe');
+  expect(searchInput.dataset.staffId).toBe('1');
+  expect(dropdown.classList).toContain('hidden');
+});
 
 
 });
