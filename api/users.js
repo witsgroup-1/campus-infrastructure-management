@@ -1,23 +1,68 @@
 require('dotenv').config();
 const express = require('express');
 const { app, db, auth,createUserWithEmailAndPassword } = require("../src/firebaseInit.js");
-const { collection, addDoc, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc } = require("firebase/firestore");
+const { collection, addDoc, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc, query, where } = require("firebase/firestore");
 const usersRouter = express.Router();
 
 // get all users.
+// usersRouter.get('/users', async (req, res) => {
+//     try {
+//         const snapshot = await getDocs(collection(db, 'users'));
+//         const users = [];
+//         snapshot.forEach((doc) => {
+//             users.push({ id: doc.id, ...doc.data() });
+//         });
+//         res.status(200).json(users);
+//     } catch (error) {
+//         console.error('Error getting users:', error);
+//         res.status(500).send('Error getting users');
+//     }
+// });
+
 usersRouter.get('/users', async (req, res) => {
     try {
-        const snapshot = await getDocs(collection(db, 'users'));
+        const usersRef = collection(db, 'users');
+        let q = usersRef; // Start with the reference, without any filters
+
+        const { role, isLecturer, isTutor, name, surname } = req.query;
+
+        // Apply filters only if the corresponding query parameters are present
+        if (role) {
+            q = query(q, where('role', '==', role));
+        }
+
+        if (isLecturer) {
+            q = query(q, where('isLecturer', '==', isLecturer === 'true')); // Convert string to boolean
+        }
+
+        if (isTutor) {
+            q = query(q, where('isTutor', '==', isTutor === 'true')); // Convert string to boolean
+        }
+
+        // Name or surname search (case-insensitive search can be implemented if required)
+        if (name) {
+            q = query(q, where('name', '>=', name), where('name', '<=', name + '\uf8ff')); // Filters names starting with 'name'
+        }
+
+        if (surname) {
+            q = query(q, where('surname', '>=', surname), where('surname', '<=', surname + '\uf8ff')); // Filters surnames starting with 'surname'
+        }
+
+        // Get the filtered snapshot or all users if no query filters were applied
+        const snapshot = await getDocs(q);
         const users = [];
         snapshot.forEach((doc) => {
             users.push({ id: doc.id, ...doc.data() });
         });
-        res.status(200).json(users);
+
+        res.status(200).json(users); // Return filtered or full list of users
     } catch (error) {
         console.error('Error getting users:', error);
         res.status(500).send('Error getting users');
     }
 });
+
+
 
 // creating a new user via signup
 usersRouter.post('/users/signup', async (req, res) => {

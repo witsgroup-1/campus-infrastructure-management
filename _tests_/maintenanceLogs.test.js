@@ -1,6 +1,7 @@
 
 // Import functions to test
-import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup } from './copies/maintenanceLogsCopy'; 
+import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup,  setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from './copies/maintenanceLogsCopy'; 
+import '@testing-library/jest-dom';  
 
 // Mock the DOM methods and fetch
 global.fetch = jest.fn();
@@ -22,16 +23,6 @@ document.body.innerHTML = `
 // Mock data
 const mockData = [
  
-  // { 
-  //   assignedTo: 'John Doe',
-  //   createdAt: { seconds: Math.floor(Date.now() / 1000) - 3600 },
-  //   description: 'Test Description',
-  //   issueType: 'Test Issue',
-  //   roomId: 'Room 1',
-  //   status: 'Scheduled',
-  //   timestamp: { seconds: Math.floor(Date.now() / 1000) },
-  //   userID: 'userTest'
-  //   }
     {
       roomId: 'Room 1',
       createdAt: { seconds: 1609459200 },
@@ -47,18 +38,10 @@ const mockData = [
 
 describe('Script tests', () => {
   beforeEach(() => {
-    //location.reload = jest.fn();
-    // Object.defineProperty(window.location, 'reload', {
-    //   value: jest.fn(),
-    //   writable: true // Ensure it's writable
-    // });
+
     document.getElementById('scheduled-content').innerHTML = '';
     document.getElementById('mobile-scheduled-content').innerHTML = '';
   });
-  //after restore all mocks
-  // afterEach(() => {
-  //   jest.restoreAllMocks();
-  // });
 
   test('fetches maintenance requests and displays them', async () => {
     fetch.mockResolvedValueOnce({
@@ -129,8 +112,7 @@ describe('Script tests', () => {
       })
     });
 
-    //mock this
-    //expect(location.reload).toHaveBeenCalled();
+
     // Additional checks to ensure the popup closes and page reloads
     expect(document.getElementById('detailsModal').classList.contains('hidden')).toBe(true);
   });
@@ -139,4 +121,9 @@ describe('Script tests', () => {
     closePopup();
     expect(document.getElementById('detailsModal').classList.contains('hidden')).toBe(true);
   });
+
+
 });
+
+
+
