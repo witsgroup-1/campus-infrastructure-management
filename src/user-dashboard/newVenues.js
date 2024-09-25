@@ -14,12 +14,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
-function getCurrentDateTime() {
-    const today = new Date();
-    return new Date(today.getTime() + 2 * 60 * 60 * 1000); 
-}
-
 function getCurrentDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -28,33 +22,42 @@ function getCurrentDate() {
     return `${year}-${month}-${day}`;
 }
 
+const venuesPerPage = 10; 
+let currentPage = 1; 
+let availableVenues = [];
+
 async function fetchAvailableVenues() {
     try {
         const venuesCollectionRef = collection(db, 'venues');
         const venuesSnapshot = await getDocs(venuesCollectionRef);
         const availableVenues = [];
+        const currentDate = getCurrentDate();
+        const venuePromises = [];
 
         for (const venueDoc of venuesSnapshot.docs) {
             const venueData = venueDoc.data();
-            const bookingsCollectionRef = collection(db, 'venues', venueDoc.id, getCurrentDate());
-            const bookingsSnapshot = await getDocs(bookingsCollectionRef);
-
-            const isBooked = bookingsSnapshot.docs.some(doc => {
-                const booking = doc.data();
-                const startTime = new Date(booking.startTime.seconds * 1000);
-                const endTime = new Date(booking.endTime.seconds * 1000);
-                const currentDateTime = new Date();
-                
-                return currentDateTime >= startTime && currentDateTime <= endTime;
-            });
-
-            if (!isBooked) {
-                availableVenues.push({
-                    Name: venueData.Name,
-                    Capacity: venueData.Capacity
+            const bookingsCollectionRef = collection(db, 'venues', venueDoc.id, currentDate);
+            venuePromises.push(getDocs(bookingsCollectionRef).then(bookingsSnapshot => {
+                const isBooked = bookingsSnapshot.docs.some(doc => {
+                    const booking = doc.data();
+                    const startTime = new Date(booking.startTime.seconds * 1000);
+                    const endTime = new Date(booking.endTime.seconds * 1000);
+                    const currentDateTime = new Date();
+                    
+                    return currentDateTime >= startTime && currentDateTime <= endTime;
                 });
-            }
+
+                if (!isBooked) {
+                    availableVenues.push({
+                        Name: venueData.Name,
+                        Capacity: venueData.Capacity,
+                        Features: venueData.Features || [], 
+                        Building: venueData.Building 
+                    });
+                }
+            }));
         }
+        await Promise.all(venuePromises);
 
         return availableVenues;
     } catch (error) {
@@ -63,6 +66,8 @@ async function fetchAvailableVenues() {
     }
 }
 
+
+
 function createVenueElement(venue) {
     const venueElement = document.createElement('div');
     venueElement.classList.add('bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow');
@@ -70,28 +75,95 @@ function createVenueElement(venue) {
     venueElement.innerHTML = `
         <p class="font-semibold">${venue.Name}</p>
         <p>Capacity: ${venue.Capacity}</p>
+        <button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>
     `;
+
+   
+    const infoButton = venueElement.querySelector('.info-button');
+    infoButton.addEventListener('click', () => {
+        showVenueInfo(venue); 
+    });
 
     return venueElement;
 }
 
-async function populateVenues() {
-    console.log("Populating venues...");
-    const bookingsContainer = document.getElementById('bookingsContainer');
-    const availableVenues = await fetchAvailableVenues();
+function showVenueInfo(venue) {
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
 
-    bookingsContainer.innerHTML = ''; // Clear existing content
+    modalTitle.innerText = venue.Name;
 
-    availableVenues.forEach(venue => {
-        bookingsContainer.appendChild(createVenueElement(venue));
-    });
+    let content = `<strong>Building:</strong> ${venue.Building || 'N/A'}`;
+
+    if (venue.Features && venue.Features.length > 0) {
+        content += `<br><strong>Features:</strong> <ul>${venue.Features.map(feature => `<li>${feature}</li>`).join('')}</ul>`;
+    }
+    modalContent.innerHTML = content;
+
+   
+    const venueModal = document.getElementById('venueModal');
+    venueModal.classList.remove('hidden');
 }
 
-const availableVenues = await fetchAvailableVenues();
-console.log("Available Venues:", availableVenues);
+function closeModal() {
+    const venueModal = document.getElementById('venueModal');
+    venueModal.classList.add('hidden');
+}
 
+
+
+function displayVenues(page) {
+    const bookingsContainer = document.getElementById('bookingsContainer');
+    bookingsContainer.innerHTML = ''; // Clear existing content
+
+    const start = (page - 1) * venuesPerPage;
+    const end = start + venuesPerPage;
+    const venuesToDisplay = availableVenues.slice(start, end);
+
+    if (venuesToDisplay.length === 0) {
+        bookingsContainer.innerHTML = '<p>No available venues at this time.</p>';
+        return;
+    }
+
+    venuesToDisplay.forEach(venue => {
+        bookingsContainer.appendChild(createVenueElement(venue));
+    });
+
+   
+    document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
+    document.getElementById('prevPage').disabled = currentPage === 1;
+    document.getElementById('nextPage').disabled = end >= availableVenues.length;
+}
+
+async function populateVenues() {
+    const loader = document.getElementById('loader');
+    loader.style.display = "block";
+
+    availableVenues = await fetchAvailableVenues();
+    loader.style.display = "none";
+
+  
+    currentPage = 1;
+    displayVenues(currentPage);
+}
+
+
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayVenues(currentPage);
+    }
+});
+
+document.getElementById('nextPage').addEventListener('click', () => {
+    if (currentPage * venuesPerPage < availableVenues.length) {
+        currentPage++;
+        displayVenues(currentPage);
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     populateVenues();
+    const closeButton = document.getElementById('closeButton');
+    closeButton.onclick = closeModal;
 });
-
