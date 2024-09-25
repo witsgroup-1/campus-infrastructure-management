@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getFirestore,collection, getDocs} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -12,66 +11,87 @@ const firebaseConfig = {
   measurementId: "G-Y95YE5ZDRY"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
-//access the venues db, get from there 
-//if the venues category === something, use img number 1 
-//load only 3 available venues 
-//the last image when you click on it, should navigate you to view all venues.
-
-//the venues should have a booked booelan attribute
-//if booked then true
-//if not booked then false
-//this code should then access venues>>venue>>if booked == false, show the venue on the dashboard
-//also have venues>>venue>>category >> show specific image
-//also get the name of the venue so that when we hover we can see the name of the venue.
 
 
-// Function to fetch venue data from the API
-// Function to fetch venue data from the API
+//the venues should have a bookings sub collection labelled yyyy-mm-dd, we should access these colections and thne iterate 
+//thru each id in there to find which venues are booked, these ids contain venue name, start time and end time
 
 const categoryToImage = {
-    "Exam Venue": "img/examHall.jpg",
-    "Lecture Room": "img/lectureRooms.jpeg",
-    "Tutorial Room": "img/tutorialRoom.png",
-    "Lab Room": "img/labRooms0.jpg",
-    "Boardroom": "img/witsBoardroom.png"
+    "Exam Venue": ["img/examHall.jpg", "img/examHall2.jpg"],
+    "Lecture Room": ["img/lectureRooms.jpeg"],
+    "Tutorial Room": ["img/tutorialRoom.png", "img/libraryStudyRoom.jpg"],
+    "Lab Room": ["img/labRooms0.jpg", "img/labRooms1.jpg"],
+    "Boardroom": ["img/witsBoardroom.png"],
+    "Study Room": ["img/libraryStudyRoom.jpg"]
 };
 
-async function fetchVenues() {
+function getRandomImage(category) {
+    const images = categoryToImage[category];
+    if (images && images.length > 0) {
+        const randomIndex = Math.floor(Math.random() * images.length);
+        return images[randomIndex];
+    }
+    return 'img/default.jpg'; 
+}
+
+
+function getCurrentDateTime() {
+    const today = new Date();
+    return new Date(today.getTime() + 2 * 60 * 60 * 1000); 
+}
+
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+async function fetchVenuesWithBookings(date) {
     try {
-        const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-                'Content-Type': 'application/json'
-            }
+        const venuesCollectionRef = collection(db, 'venues');
+        const venuesSnapshot = await getDocs(venuesCollectionRef);
+        const venues = [];
+        const currentDateTime = getCurrentDateTime();
+
+        // Collect promises for bookings fetching
+        const bookingsPromises = venuesSnapshot.docs.map(async venueDoc => {
+            const venueData = venueDoc.data();
+            const bookingsCollectionRef = collection(db, 'venues', venueDoc.id, date);
+            const bookingsSnapshot = await getDocs(bookingsCollectionRef);
+            
+            const bookings = bookingsSnapshot.docs.map(doc => doc.data());
+            const isBooked = bookings.some(booking => {
+                const startTime = new Date(booking.startTime.seconds * 1000);
+                const endTime = new Date(booking.endTime.seconds * 1000);
+                
+                return currentDateTime >= startTime && currentDateTime <= endTime; 
+            });
+
+            return {
+                ...venueData,
+                imgSrc: getRandomImage(venueData.Category),
+                isBooked,
+                bookings
+            };
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch venues, please try again.');
-        }
+        const venuesWithBookings = await Promise.all(bookingsPromises);
+        return venuesWithBookings;
 
-        const venues = await response.json();
-        //console.log('Venues fetched:', venues); 
-
-        return venues.map(venue => ({
-            ...venue,
-            imgSrc: categoryToImage[venue.Category] || 'img/default.jpg'
-        }));
     } catch (error) {
-        console.error('Error fetching venues:', error);
+        console.error('Error fetching venues with bookings:', error);
         return [];
     }
 }
 
+
 function createVenueElement(venue) {
     const venueElement = document.createElement('div');
-    venueElement.classList.add('relative', 'group');
-
+    venueElement.classList.add('relative', 'group', 'venue-item');
 
     const imgElement = document.createElement('img');
     imgElement.classList.add('w-full', 'h-40', 'object-cover');
@@ -83,7 +103,11 @@ function createVenueElement(venue) {
 
     const infoElement = document.createElement('div');
     infoElement.classList.add('text-white', 'text-center');
-    infoElement.innerHTML = `<p><strong>${venue.Name}</strong></p><p>Capacity: ${venue.Capacity}</p>`;
+    infoElement.innerHTML = `
+        <p><strong>${venue.Name}</strong></p>
+        <p>Capacity: ${venue.Capacity}</p>
+        <p>Status: ${venue.isBooked ? 'Booked' : 'Available'}</p>
+    `;
 
     overlayElement.appendChild(infoElement);
     venueElement.appendChild(imgElement);
@@ -93,21 +117,20 @@ function createVenueElement(venue) {
 }
 
 
+
 async function populateVenues() {
     try {
-        const venues = await fetchVenues();
-        const gridContainer = document.querySelector('#venue-grid'); // Select the container by id
+        const venues = await fetchVenuesWithBookings(getCurrentDate());
+        const gridContainer = document.querySelector('#venue-grid');
 
         if (!gridContainer) {
             console.error('Element with id "venue-grid" not found.');
             return;
         }
 
-        
-        gridContainer.innerHTML = '';
+        gridContainer.innerHTML = ''; 
 
         const venuesToDisplay = venues.slice(0, 3);
-
         venuesToDisplay.forEach(venue => {
             gridContainer.appendChild(createVenueElement(venue));
         });
@@ -116,48 +139,42 @@ async function populateVenues() {
         if (lastVenue) {
             const lastVenueElement = document.createElement('div');
             lastVenueElement.classList.add('relative');
-        
-            // Create and configure the last image element
+
             const lastImgElement = document.createElement('img');
             lastImgElement.classList.add('w-full', 'h-40', 'object-cover');
             lastImgElement.src = lastVenue.imgSrc;
             lastImgElement.alt = lastVenue.Name;
-        
-            // Create and configure the overlay element
+
             const lastOverlayElement = document.createElement('div');
             lastOverlayElement.classList.add('absolute', 'inset-0', 'bg-[#003B5C]', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'opacity-0', 'hover:opacity-100', 'transition-opacity', 'duration-300', 'cursor-pointer');
-        
-            // Create and configure the link element
+
             const lastLinkElement = document.createElement('a');
-            lastLinkElement.href = 'viewAllVenues.html';
-            lastLinkElement.classList.add('flex', 'items-center', 'justify-center'); // Centering arrow
-        
-            // Create and configure the SVG element
+            lastLinkElement.href = 'availVenues.html'; 
+            lastLinkElement.classList.add('flex', 'items-center', 'justify-center');
+
+            // SVG for the arrow
             const arrowSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             arrowSvg.classList.add('w-6', 'h-6', 'text-white');
             arrowSvg.setAttribute('fill', 'none');
             arrowSvg.setAttribute('stroke', 'currentColor');
             arrowSvg.setAttribute('viewBox', '0 0 24 24');
             arrowSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        
+
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute('stroke-linecap', 'round');
             path.setAttribute('stroke-linejoin', 'round');
             path.setAttribute('stroke-width', '2');
             path.setAttribute('d', 'M12 19l7-7-7-7m-5 7h12');
-        
+
             arrowSvg.appendChild(path);
             lastLinkElement.appendChild(arrowSvg);
             lastOverlayElement.appendChild(lastLinkElement);
-        
-            // Append the image and overlay to the venue element
             lastVenueElement.appendChild(lastImgElement);
             lastVenueElement.appendChild(lastOverlayElement);
-        
-            // Append the venue element to the grid container
+
             gridContainer.appendChild(lastVenueElement);
         }
-        
+
     } catch (error) {
         console.error('Error in populateVenues:', error);
     }
@@ -166,6 +183,14 @@ async function populateVenues() {
 document.addEventListener('DOMContentLoaded', () => {
     populateVenues();
 });
+
+
+
+
+
+  
+
+
 
 
 
