@@ -1,3 +1,34 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
+  authDomain: "campusinfrastructuremanagement.firebaseapp.com",
+  projectId: "campusinfrastructuremanagement",
+  storageBucket: "campusinfrastructuremanagement.appspot.com",
+  messagingSenderId: "981921503275",
+  appId: "1:981921503275:web:78ce66a89f233a5c14f26e",
+  measurementId: "G-Y95YE5ZDRY"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is signed in with id:", user.userId);
+
+  } else {
+    console.log("No user is signed in.");
+  }
+});
+
+
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     //add the event listener for the submit button
@@ -25,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         roomId: venue,
         status: 'Scheduled', //status starts as Scheduled 
         timestamp: timestampNow, //default status
-        userId: '12345' //we will replace with the user data
+        userId: user.userId //we will replace with the user data
       };
   
       try {
