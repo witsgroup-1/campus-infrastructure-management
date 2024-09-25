@@ -12,12 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (userEmail) {
         console.log('User email:', userEmail);
-        // Use the email (e.g., display it, use it in queries, etc.)
         document.getElementById('userEmailDisplay').textContent = `Logged in as: ${userEmail}`;
     } else {
         console.log('No email found');
     }
-    
 
     const getSidebarWidth = () => {
         const screenWidth = window.innerWidth;
@@ -30,16 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    sidebar.style.width = '0';
+
     menuIcon.addEventListener('click', () => {
-        sidebar.style.width = getSidebarWidth(); 
+        if (sidebar.style.width === '0px' || sidebar.style.width === '0') {
+            sidebar.style.width = getSidebarWidth();
+        } else {
+            sidebar.style.width = '0';
+        }
     });
 
     closeBtn.addEventListener('click', () => {
-        sidebar.style.width = '0'; 
+        sidebar.style.width = '0';
     });
 
     window.addEventListener('resize', () => {
-        if (sidebar.style.width !== '0') {
+        if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
             sidebar.style.width = getSidebarWidth();
         }
     });
@@ -68,13 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    reportButton.addEventListener('click', ()=>{
-        window.location.href = '../maintenance/maintenanceReports.html'
-    })
+    reportButton.addEventListener('click', () => {
+        window.location.href = '../maintenance/maintenanceReports.html';
+    });
 
-    bookButton.addEventListener('click', ()=>{
-        window.location.href = '../make-booking/book-venue.html'
-    })
+    bookButton.addEventListener('click', () => {
+        window.location.href = '../make-booking/book-venue.html';
+    });
 });
+
 
 
