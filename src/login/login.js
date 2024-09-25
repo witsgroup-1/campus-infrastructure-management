@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut,createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { setPersistence,  browserSessionPersistence, getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut,createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs,doc,getDoc} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,6 +52,8 @@ async function searchUserByEmail(email) {
     }
 }
 
+
+// Inside the event listener for the login form submission
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault(); // Prevent the default form submission
 
@@ -59,25 +61,27 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     const password = e.target.password.value;
 
     try {
-       
         if (await isEmailWhitelisted(email)) {
+            // Set session persistence to 'session-only'
+            await setPersistence(auth, browserSessionPersistence);
+
             try {
-               
+                // Proceed with sign-in after setting session persistence
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                console.log("User signed in:", user);
-                
-                
+                console.log("User signed in: session bs btw:", user);
+
+                // Store the user's email in localStorage
                 localStorage.setItem('userEmail', user.email);
 
-
+                // Redirect to the user dashboard
                 window.location.href = "../user-dashboard/dashboard.html";
             } catch (error) {
                 if (error.code === 'auth/invalid-login-credentials') {
                     try {
                         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                         const user = userCredential.user;
-                        
+
                         localStorage.setItem('userEmail', user.email);
                         window.location.href = "../onboarding/onboarding.html";
                     } catch (signUpError) {
@@ -90,7 +94,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
                 }
             }
         } else {
-            alert("This email is not whitelisted.Sorry.");
+            alert("This email is not whitelisted. Sorry.");
         }
     } catch (error) {
         console.error("Error checking whitelist:", error.message);
@@ -98,10 +102,15 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     }
 });
 
+
 const googleProvider = new GoogleAuthProvider();
 document.getElementById('googleLogin').addEventListener('click', async (e) => {
     e.preventDefault();
+
     try {
+        // Set session persistence for Google sign-in as well
+        await setPersistence(auth, browserSessionPersistence);
+
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         console.log("User signed in with Google: ", user);
@@ -111,8 +120,8 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
 
         // Search for the user in Firestore
         const userEmail = user.email;
-        console.log(`This is the user email that we are checking ${userEmail}`);
-        
+        console.log(`This is the user email that we are checking: ${userEmail}`);
+
         // Check if the email ends with "wits.ac.za"
         if (userEmail.endsWith("wits.ac.za")) {
             // Proceed with searching the user by email
