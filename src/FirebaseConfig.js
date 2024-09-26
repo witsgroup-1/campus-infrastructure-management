@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getFirestore,collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getFirestore,collection, addDoc, getDocs, query, where, orderBy} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 export class FirebaseConfig {
     constructor() {
@@ -62,4 +62,31 @@ export class FirebaseConfig {
         }
 
     }
+
+    async queryDocuments(collectionPath, orderByField, orderByValue) {
+        const db = this.getFirestoreInstance();
+        
+        // Construct the collection reference and query
+        const collectionRef = collection(db, collectionPath);
+        let q;
+    
+        // If you want to apply filtering
+        if (orderByField && orderByValue) {
+            q = query(collectionRef, where(orderByField, '==', orderByValue));
+        } else {
+            q = collectionRef; // No filtering, just the collection
+        }
+    
+        console.log("Fetching documents from:", collectionPath, "with order by:", orderByField);
+        
+        try {
+            const snapshot = await getDocs(q); // Use getDocs to retrieve documents
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Return documents as an array
+        } catch (error) {
+            console.error("Error fetching documents from Firestore:", error);
+            throw error; // Rethrow error for handling
+        }
+
+    }
+    
 }
