@@ -19,13 +19,15 @@
                   </svg>
 
                    <!-- Notification Panel -->
-                <div id="notificationPanel" class="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 hidden">
+                   <div id="notificationPanel" class="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 hidden">
                     <h3 class="font-semibold text-[#003B5C]">Notifications</h3>
                     <ul class="mt-2 space-y-2">
-                        <li class="text-[#917248]">No new notifications</li>
+                        <li class="notification-item">
+                            No new notifications
+                        </li>
                     </ul>
                 </div>
-            </div>
+                
            
               <svg id = "menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#003B5C" class="size-6 cursor-pointer" >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -104,7 +106,7 @@
             <p>&copy; 2024 Infrastructure Management</p>
         </section>
     </footer>
-    <script src = "dashboard.js"></script>
+    <script type="module" src = "dashboard.js"></script>
     <script type = "module" src = "viewBookings.js"></script>
     <script type = "module" src = "../login/login.js"></script>
     <script type = "module" src = "viewAllVenues.js"></script>
