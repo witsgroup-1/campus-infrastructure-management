@@ -11,34 +11,58 @@ const firebaseConfig = {
   measurementId: "G-Y95YE5ZDRY"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is signed in with id:", user.email);
+    
+  } else {
+    console.log("No user is signed in.");
+  }
+});
+
+async function getFirestoreUserIdByEmail(email) {
+  try {
+    
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      
+      const userDoc = querySnapshot.docs[0];
+      const firestoreUserId = userDoc.id;
+      return firestoreUserId;
+    } else {
+      throw new Error('No matching user document found in Firestore.');
+    }
+  } catch (error) {
+    console.error('Error fetching Firestore userId by email:', error);
+    return null;
+  }
+}
+
+const venueInput = document.querySelector('input[placeholder="Venue"]'); // Ensure it's the right input field
 
 document.addEventListener("DOMContentLoaded", () => {
     //add the event listener for the submit button
     document.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault(); //prevent the default form submission
-  
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("User is signed in with id:", user.userId);
-          
-        } else {
-          console.log("No user is signed in.");
-        }
-      });
-
-
 
       const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
       //collect the data that we need from the form
       //const reportType = document.querySelector('select[placeholder="Report Type"]').value;
       const reportType = document.querySelector('#reportType').value;
       const description = document.querySelector('textarea[placeholder="Enter description"]').value;
-      const venue = document.querySelector('input[placeholder="Venue"]').value;
+      // const venueId = document.querySelector('input[placeholder="Venue"]').dataset.venueId; // Get venue ID from dataset
+      // const venueName = document.querySelector('input[placeholder="Venue"]').value;
+      const venueId = venueInput.dataset.venueId; // Get the selected venue ID from the dataset
+      const venueName = venueInput.value; // Get the venue name from the input field
   
-      
+      const userId = getFirestoreUserIdByEmail(user.email);
       //generate the timestamp
       const timestampNow = new Date().toISOString();
       //console.log(timestampNow);
@@ -49,10 +73,11 @@ document.addEventListener("DOMContentLoaded", () => {
         createdAt: timestampNow, // Generated timestamp
         description: description,
         issueType: reportType,
-        roomId: venue,
+        roomId: venueId, // Use the selected venue ID
+        roomName: venueName,
         status: 'Scheduled', //status starts as Scheduled 
         timestamp: timestampNow, //default status
-        userId: user.userId //we will replace with the user data
+        userId: '123' //we will replace with the user data
       };
   
       try {
@@ -90,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("DOMContentLoaded", () => {
     const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
-    const venueInput = document.querySelector('input[placeholder="Venue"]');
+    //const venueInput = document.querySelector('input[placeholder="Venue"]');
     //const suggestionsList = document.getElementById('suggestionsList');
     const venueDropdown = document.getElementById('venue-dropdown');
 
@@ -122,6 +147,7 @@ venueInput.addEventListener('input', async (event) => {
 
 function updateVenueDropdown(venues) {
   clearVenueDropdown(); // Clear previous options
+  
   const defaultOption = document.createElement('option');
   defaultOption.textContent = 'Select a venue...';
   defaultOption.disabled = true;
@@ -131,8 +157,8 @@ function updateVenueDropdown(venues) {
   if (venues.length > 0) {
       venues.forEach(venue => {
           const option = document.createElement('option');
-          option.value = venue.Name; // Set value to the venue name
-          option.textContent = venue.Name; // Display the venue name
+          option.textContent = venue.Name; // Set the option's text to the venue name
+          option.setAttribute('id', venue.id); // Store the venue ID as a data attribute
           venueDropdown.appendChild(option);
       });
       venueDropdown.classList.remove('hidden'); // Show the dropdown
@@ -141,13 +167,19 @@ function updateVenueDropdown(venues) {
   }
 }
 
-// Handle selection from the dropdown
 venueDropdown.addEventListener('change', () => {
-  venueInput.value = venueDropdown.value; // Set input value to selected option
-  //clearVenueDropdown(); // Hide dropdown after selection
+  // Get the selected option
+  const selectedOption = venueDropdown.options[venueDropdown.selectedIndex];
+
+  // get id and name
+  const venueId = selectedOption.getAttribute('id');  
+  const venueName = selectedOption.textContent;  
+  // Set the input field to display the venue's name
+  venueInput.value = venueName;
+  // Store the venue id
+  venueInput.dataset.venueId = venueId;
+
 });
-
-
 
 
 function clearVenueDropdown() {
@@ -155,7 +187,6 @@ function clearVenueDropdown() {
     venueDropdown.classList.add('hidden'); // Hide dropdown
 }
 
-// Optional: Handle selection from the dropdown
 venueDropdown.addEventListener('change', () => {
     venueInput.value = venueDropdown.value; // Set input value to selected option
     clearVenueDropdown(); // Hide dropdown after selection

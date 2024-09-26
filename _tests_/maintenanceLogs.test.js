@@ -20,25 +20,22 @@ document.body.innerHTML = `
   </div>
 `;
 
-// Mock data
+// Mock data with roomName instead of roomId
 const mockData = [
- 
-    {
-      roomId: 'Room 1',
-      createdAt: { seconds: 1609459200 },
-      timestamp: { seconds: 1609545600 },
-      status: 'Scheduled',
-      id: '1',
-      description: 'Test Description',
-      issueType: 'Test Issue',
-      assignedTo: 'John Doe'
-    }
-
+  {
+    roomName: 'Room 1',
+    createdAt: { seconds: 1609459200 },
+    timestamp: { seconds: 1609545600 },
+    status: 'Scheduled',
+    id: '1',
+    description: 'Test Description',
+    issueType: 'Test Issue',
+    assignedTo: 'John Doe'
+  }
 ];
 
 describe('Script tests', () => {
   beforeEach(() => {
-
     document.getElementById('scheduled-content').innerHTML = '';
     document.getElementById('mobile-scheduled-content').innerHTML = '';
   });
@@ -51,12 +48,11 @@ describe('Script tests', () => {
 
     await require('./copies/maintenanceLogsCopy');
 
-      // Trigger the DOMContentLoaded event
+    // Trigger the DOMContentLoaded event
     document.dispatchEvent(new Event('DOMContentLoaded'));
 
     // Allow some time for async operations to complete
     await new Promise((resolve) => setTimeout(resolve, 0));
-
 
     expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/maintenanceRequests', {
       method: 'GET',
@@ -79,7 +75,7 @@ describe('Script tests', () => {
   test('displays initial request for mobile and handles Show More button', () => {
     displayInitialRequestsForMobile(mockData, 'mobile-scheduled-content', 'show-more-scheduled');
     expect(document.getElementById('mobile-scheduled-content').children.length).toBe(1);
-    
+
     // Simulate button click to show more requests
     document.getElementById('show-more-scheduled').click();
     expect(document.getElementById('mobile-scheduled-content').children.length).toBe(mockData.length);
@@ -112,7 +108,6 @@ describe('Script tests', () => {
       })
     });
 
-
     // Additional checks to ensure the popup closes and page reloads
     expect(document.getElementById('detailsModal').classList.contains('hidden')).toBe(true);
   });
@@ -121,9 +116,4 @@ describe('Script tests', () => {
     closePopup();
     expect(document.getElementById('detailsModal').classList.contains('hidden')).toBe(true);
   });
-
-
 });
-
-
-

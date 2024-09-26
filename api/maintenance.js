@@ -57,7 +57,7 @@ maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {
 
 //post a request
  maintenanceRouter.post('/maintenanceRequests', async (req,res)=> {
-    const {assignedTo, createdAt, description, issueType, roomId, status,timestamp, userId} = req.body;
+    const {assignedTo, createdAt, description, issueType, roomId, roomName, status,timestamp, userId} = req.body;
 
     try{
         const timestampNow = Timestamp.fromDate(new Date(createdAt));
@@ -69,6 +69,7 @@ maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {
             description,
             issueType,
             roomId,
+            roomName,
             status,
             timestamp: timestampTime,
             userId

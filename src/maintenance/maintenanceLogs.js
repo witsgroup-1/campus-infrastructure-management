@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 function displayRequestsForDesktop(requests, containerId) {
   const container = document.getElementById(containerId);
   requests.forEach(request => {
-    const block = createRequestBlock(request.roomId, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
+    const block = createRequestBlock(request.roomName, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
     container.appendChild(block);
   });
 }
@@ -140,13 +140,13 @@ function displayInitialRequestsForMobile(requests, containerId, buttonId) {
   if (requests.length > 0) {
     // Display only the first item initially
     const firstRequest = requests[0];
-    const block = createRequestBlock(firstRequest.roomId, new Date(firstRequest.createdAt.seconds * 1000).toLocaleString(), new Date(firstRequest.timestamp.seconds * 1000).toLocaleString(), firstRequest.status, firstRequest.id, firstRequest);
+    const block = createRequestBlock(firstRequest.roomName, new Date(firstRequest.createdAt.seconds * 1000).toLocaleString(), new Date(firstRequest.timestamp.seconds * 1000).toLocaleString(), firstRequest.status, firstRequest.id, firstRequest);
     container.appendChild(block);
 
     // Add event listener for the Show More button
     document.getElementById(buttonId).addEventListener('click', () => {
       requests.slice(1).forEach(request => {
-        const block = createRequestBlock(request.roomId, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
+        const block = createRequestBlock(request.roomName, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
         container.appendChild(block);
       });
       // Hide the button after expanding
@@ -157,13 +157,13 @@ function displayInitialRequestsForMobile(requests, containerId, buttonId) {
 
 
 
-function createRequestBlock(roomId, createdAt, timestamp, status, id, request) {
+function createRequestBlock(roomName, createdAt, timestamp, status, id, request) {
   const displayDate = status === "Scheduled" ? createdAt : timestamp;
 
   const block = document.createElement('div');
   block.classList.add('bg-gray-200', 'p-4', 'rounded-md', 'mb-2', 'cursor-pointer');
   block.innerHTML = `
-    <strong class="text-[#003B5C]">Venue: ${roomId}</strong><br> 
+    <strong class="text-[#003B5C]">Venue: ${roomName}</strong><br> 
     <small class="text-gray-500">${displayDate}</small> 
   `;
   block.addEventListener('click', () => openPopup(id, request));
@@ -173,14 +173,14 @@ function createRequestBlock(roomId, createdAt, timestamp, status, id, request) {
 
 //openPopup function
 function openPopup(id, request) {
-  const { roomId, description, issueType, assignedTo, status, createdAt, timestamp } = request;
+  const { roomName, description, issueType, assignedTo, status, createdAt, timestamp } = request;
 
   const displayDate = status === "Scheduled"
       ? new Date(createdAt.seconds * 1000).toLocaleString()
       : timestamp ? new Date(timestamp.seconds * 1000).toLocaleString() : 'Not Set';
 
   document.getElementById('modal-content').innerHTML = `
-    <p><strong>Room ID:</strong> ${roomId}</p>
+    <p><strong>Room ID:</strong> ${roomName}</p>
     <p><strong>Description:</strong> ${description}</p>
     <p><strong>Issue Type:</strong> ${issueType}</p>
     <label><strong>Status:</strong>
@@ -227,7 +227,7 @@ async function saveChanges(id) {
  //https://campus-infrastructure-management.azurewebsites.net
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-    const response = await fetch(`http://localhost:3000/api/maintenanceRequests/${id}`, {
+    const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/${id}`, {
       method: 'PUT',
       headers: {
         'x-api-key': apiKey,
@@ -253,5 +253,3 @@ function closePopup() {
   document.getElementById('detailsModal').classList.add('hidden');
 }
 
-
-//module.exports = {closePopup,saveChanges,openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop};
