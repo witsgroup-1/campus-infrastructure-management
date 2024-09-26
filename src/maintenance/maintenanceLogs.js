@@ -227,7 +227,7 @@ async function saveChanges(id) {
  //https://campus-infrastructure-management.azurewebsites.net
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-    const response = await fetch(`http://localhost:3000/api/maintenanceRequests/${id}`, {
+    const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/${id}`, {
       method: 'PUT',
       headers: {
         'x-api-key': apiKey,
