@@ -169,7 +169,7 @@ venuesRouter.delete('/venues/:venueId', async (req, res) => {
 });
 
 // Get venue by ID
-venuesRouter.get('/venues//:venueId', async (req, res) => {
+venuesRouter.get('/venues/:venueId', async (req, res) => {
     const { venueId } = req.params;
 
     try {
