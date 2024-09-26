@@ -46,4 +46,10 @@ https://rollout.com/integration-guides/firestore/sdk/step-by-step-guide-to-build
 
 
 
-(`${type}-bookings-mobile`, 'mb-4'
+`${type}-bookings-mobile`, 'mb-4'
+
+//so we can know what venues are available/venues under maintenance.
+        //if under maintenance === true -> then show pop up or something.
+        const statusButton = document.createElement('button');
+        statusButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-[#003B5C] focus:outline-none';
+        statusButton.textContent = 'Status';

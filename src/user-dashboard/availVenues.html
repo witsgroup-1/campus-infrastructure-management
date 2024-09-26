@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Venues</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1;
+        }
+        /* Loader styles */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #917248; 
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            display: none; 
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #back-to-top {
+          display: none;
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 50;
+          background-color: #917248;
+          color: white;
+          padding: 10px 15px;
+          border-radius: 50%;
+          font-size: 20px;
+          cursor: pointer;
+        }
+        
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+<main class="wrapper content">
+    <header class="p-4 bg-[#003B5C] text-white text-center relative">
+        <h1 class="text-xl">Available Venues</h1>
+        <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.history.length > 1 ? window.history.back() : window.location.href='../user-dashboard/dashboard.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+    </header>
+
+
+    <!-- Loader -->
+    <div class="loader" id="loader"></div>
+
+    <!-- Box with venue info -->
+    <section id="bookingsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <!-- Booking boxes will be updated dynamically here -->
+    </section>
+
+    <div id="paginationControls" class="flex justify-center mt-4">
+        <button id="prevPage" class="px-4 py-2 text-[#003B5C] rounded-lg" disabled>Previous</button>
+        <span id="pageInfo" class="mx-2">Page 1</span>
+        <button id="nextPage" class="px-4 py-2  text-[#003B5C] rounded-lg">Next</button>
+    </div>
+</main>
+
+<footer class="mt-8 p-4 bg-[#003B5C] text-white text-center">
+    <p>&copy; 2024 Group -1. All rights reserved.</p>
+</footer>
+
+
+<button id="back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 20px; right: 20px; background-color: #003B5C; color: white; border: none; border-radius: 5px; padding: 10px 15px;">Back to Top</button>
+<div id="venueModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
+        <h2 id="modalTitle" class="text-xl font-semibold mb-4">Venue Info</h2>
+        <p id="modalContent"></p>
+        <button id = "closeButton" onclick="closeModal()" class="mt-4 px-4 py-2 bg-[#917248] text-white rounded">Close</button>
+      </div>
+    </div>
+  </div>
+  
+<script type="module" src="newVenues.js"></script>
+<script>
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.onscroll = function() {
+        var backToTopButton = document.getElementById("back-to-top");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none";
+        }
+    };
+</script>
+</body>
+</html>
