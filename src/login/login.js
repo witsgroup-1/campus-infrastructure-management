@@ -70,9 +70,6 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 const userData = await searchUserByEmail(email);
-                console.log(userData)
-                console.log(userData.isLecturer); // should log 'boolean'
-                console.log(userData.isTutor); // should log 'boolean'
 
                 console.log("User signed in: session bs btw:", user);
 
@@ -134,7 +131,6 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
         if (userEmail.endsWith("wits.ac.za")) {
             // Proceed with searching the user by email
             const userData = await searchUserByEmail(userEmail);
-            console.log(userData)
 
             if (userData) {
                 // Redirect to user dashboard if email is found
