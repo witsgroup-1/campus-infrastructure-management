@@ -49,8 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.querySelector("form").reset();
         //document.querySelector("form").reset();
-        console.log(document.querySelector("#reportType").value); // Should log an empty string
-
+       
 
       } catch (error) {
         console.error(error);
@@ -59,4 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+  
+
   

@@ -1,26 +1,52 @@
-const { collection, addDoc ,doc, getDoc, getDocs, setDoc, updateDoc, Timestamp, deleteDoc} = require("firebase/firestore"); 
+const { collection, addDoc ,doc, getDoc, getDocs, setDoc, updateDoc, Timestamp, deleteDoc, query, where} = require("firebase/firestore"); 
 const express = require('express');
 const { app, db, auth } = require("../src/firebaseInit.js");
 const venuesRouter = express.Router();
 
 //get all venues
-venuesRouter.get('/venues', async (req,res)=>{
-    try{
-        const snapshot=await getDocs(collection(db, 'venues'));
-        const venues=[];
+// venuesRouter.get('/venues', async (req,res)=>{
+//     try{
+//         const snapshot=await getDocs(collection(db, 'venues'));
+//         const venues=[];
         
-        for(const doc of snapshot.docs){
-            venues.push({id:doc.id, ...doc.data()});
+//         for(const doc of snapshot.docs){
+//             venues.push({id:doc.id, ...doc.data()});
+//         }
+
+//         res.json(venues);
+
+//     }
+
+//     catch (error){
+//         res.status(500).send('Cannot get venues')
+//     }
+// })
+
+
+venuesRouter.get('/venues', async (req, res) => {
+    const { name } = req.query; // Use query instead of params
+
+    try {
+        const docRef = collection(db, 'venues');
+        const docs = await getDocs(docRef);
+        const venues = [];
+
+        docs.forEach((doc) => {
+            if (!name || doc.data().Name.toLowerCase().includes(name.toLowerCase())) {
+                venues.push({ id: doc.id, ...doc.data() });
+            }
+        });
+
+        if (venues.length === 0) {
+            return res.status(200).send("No venues found for this name");
         }
 
-        res.json(venues);
-
+        res.status(200).json(venues);
+    } catch (error) {
+        res.status(500).send('Cannot get venues');
     }
+});
 
-    catch (error){
-        res.status(500).send('Cannot get venues')
-    }
-})
 
 // Get venue by category
 venuesRouter.get('/venues/:Category', async (req, res) => {
@@ -46,6 +72,35 @@ venuesRouter.get('/venues/:Category', async (req, res) => {
         res.status(500).send('Cannot get venues');
     }
 });
+
+
+//get venue by name
+// venuesRouter.get('/venues/:name', async (req, res) => {
+//     const { name } = req.params;
+
+//     try {
+//         const docRef = collection(db, 'venues');
+//         const docs = await getDocs(docRef);
+//         const Name = [];
+
+//         docs.forEach((doc) => {
+//             if (doc.data().name === name) {
+//                 Name.push({ id: doc.id, ...doc.data() });
+//             }
+//         });
+
+//         if(Name.length==0){
+//             res.status(200).send("No venues found for this name");
+//         }
+
+//         res.status(200).json(Name);
+//     } catch (error) {
+//         res.status(500).send('Cannot get venues');
+//     }
+// });
+
+
+
 
 //create new venue
 venuesRouter.post('/venues', async(req,res)=>{
