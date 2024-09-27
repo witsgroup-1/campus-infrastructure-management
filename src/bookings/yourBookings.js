@@ -24,6 +24,10 @@ function showLoading() {
     scheduledContent.innerHTML = '<p>Loading bookings...</p>';
     const pastContent = document.getElementById('in-progress-content');
     pastContent.innerHTML = '<p>Loading bookings...</p>';
+    const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
+    mobileScheduledContent.innerHTML = '<p>Loading bookings...</p>';
+    const mobilePastContent = document.getElementById('mobile-in-progress-content');
+    mobilePastContent.innerHTML = '<p>Loading bookings...</p>';
   }
 
   function formatFirestoreTimestamp(timestamp) {
@@ -80,7 +84,7 @@ function showLoading() {
       const querySnapshot = await getDocs(q);
   
       if (!querySnapshot.empty) {
-        // Retrieve the document ID (which is the Firestore userId)
+       
         const userDoc = querySnapshot.docs[0];
         const firestoreUserId = userDoc.id; // The document ID is the userId
         return firestoreUserId;
@@ -89,7 +93,7 @@ function showLoading() {
       }
     } catch (error) {
       console.error('Error fetching Firestore userId by email:', error);
-      return null; // Handle the error
+      return null; 
     }
   }
 
@@ -102,7 +106,7 @@ function showLoading() {
   const itemsPerPageDesktop = 4;
   const itemsPerPageMobile = 2;
   
-  let venueCache = {}; // Simple cache for venue names
+  let venueCache = {}; 
   
   async function displayBookings(bookings, userId) {
     const now = new Date();
@@ -117,7 +121,6 @@ function showLoading() {
       return startTime && startTime <= now;
     }).sort((a, b) => new Date(a.startTime.seconds * 1000) - new Date(b.startTime.seconds * 1000));
   
-    // Render both upcoming and past bookings
     displayUpcomingBookings(upcomingBookings, userId);
     displayPastBookings(pastBookings, userId);
   }
@@ -216,11 +219,10 @@ function showLoading() {
     const paginationContainer = document.createElement('div');
     paginationContainer.classList.add('pagination-controls');
   
-    // Create Previous button
     const prevButton = document.createElement('button');
     prevButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
     prevButton.innerText = 'Previous';
-    prevButton.disabled = currentPage === 1;  // Disable if already on the first page
+    prevButton.disabled = currentPage === 1; 
     prevButton.setAttribute('aria-label', 'Previous Page');
     prevButton.onclick = () => {
       const newPage = currentPage - 1;
@@ -237,7 +239,7 @@ function showLoading() {
     for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement('button');
       pageButton.textContent = i;
-      pageButton.classList.add('px-3', 'py-1', 'mx-1', currentPage === i ? 'bg-blue-500' : 'bg-gray-300', 'rounded');
+      pageButton.classList.add('px-3', 'py-1', 'mx-1', currentPage === i ? 'bg-[#917248]' : 'bg-gray-300', 'rounded');
       pageButton.setAttribute('aria-label', `Page ${i}`);
       pageButton.onclick = () => {
         updateCurrentPage(i, deviceType, bookingType);
@@ -250,11 +252,11 @@ function showLoading() {
       paginationContainer.appendChild(pageButton);
     }
   
-    // Create Next button
+   
     const nextButton = document.createElement('button');
     nextButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
     nextButton.innerText = 'Next';
-    nextButton.disabled = currentPage === totalPages;  // Disable if on the last page
+    nextButton.disabled = currentPage === totalPages; 
     nextButton.setAttribute('aria-label', 'Next Page');
     nextButton.onclick = () => {
       const newPage = currentPage + 1;
@@ -315,7 +317,7 @@ function showLoading() {
       const updatedBookings = await fetchUserBookings(userId);
       displayUpcomingBookings(updatedBookings.filter(booking => {
         const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
-        return startTime && startTime > new Date(); // Filter out past bookings
+        return startTime && startTime > new Date();
       }), userId);
   
     } catch (error) {
