@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Bookings</title>
+    <title>Venues</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -25,15 +25,13 @@
 <body class="bg-white text-gray-800">
 <main class="wrapper content">
     <header class="p-4 bg-[#003B5C] text-white text-center relative">
-        <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.location.href='../user-dashboard/dashboard.html'">
+        <h1 class="text-xl">All Venues</h1>
+        <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.history.length > 1 ? window.history.back() : window.location.href='../user-dashboard/dashboard.html'">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
         </button>
-        
-        <h1 class="text-xl">Book a Venue</h1>
     </header>
-    
 
 
     <!-- Search bar -->
@@ -49,37 +47,30 @@
         </section>
     </section>
 
+    <section class="p-4 w-full flex justify-center lg:justify-start">
+        <button onclick="window.location.href='addVenue.html'" class="bg-[#917248] text-white px-4 py-2 rounded-lg">
+            Add Venues
+        </button>
+    </section>
 
-<!-- Filter dropdown for desktop, filter buttons for mobile -->
-<section class="p-4 w-full flex justify-start md:pl-4">
-    <div class="relative max-w-xs">
-        <!-- Label with Filter Icon Before the Text -->
-        <label for="roomFilter" class="block text-gray-700 text-sm font-semibold mb-2 p-3 pr-2 flex items-center">
-            <!-- Filter Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14v6a1 1 0 01-1.447.894l-4-2A1 1 0 017 18v-4a1 1 0 00-.293-.707L3.293 6.707A1 1 0 013 6V4z" />
-            </svg>
-            Filters:
-        </label>
+
+    <!-- Filter dropdown for desktop, filter buttons for mobile -->
+    <section class="p-4 w-full flex justify-start  md:pl-4">
+
         
-        <!-- Dropdown with Filter Icon -->
-        <div class="relative">
-            <select id="roomFilter" class="block w-full bg-[#003B5C] text-white border border-gray-300 rounded-lg p-2 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Room type</option>
+
+        <div>
+            <label for="roomFilter" class="block text-gray-700 text-sm font-semibold mb-2">Filter</label>
+            <select id="roomFilter" class="block w-full max-w-xs bg-[#003B5C] text-white border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Filter by room type</option>
                 <option value="Lecture Hall">Lecture Hall</option>
                 <option value="Tutorial Room">Tutorial Room</option>
                 <option value="Boardroom">Boardroom</option>
                 <option value="Exam Venue">Exam Venue</option>
-                <option value="Study Room">Study Room</option>
             </select>
-            
         </div>
-    </div>
-</section>
 
-
-
-
+    </section>
 
     <!-- Box with booking info-->
 
@@ -97,6 +88,6 @@
     <p>&copy; 2024 Group -1. All rights reserved.</p>
 </footer>
 
-<script src="book-venue.js" type="module"></script>
+<script src="allVenues.js"></script>
 </body>
 </html>

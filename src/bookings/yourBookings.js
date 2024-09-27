@@ -24,6 +24,10 @@ function showLoading() {
     scheduledContent.innerHTML = '<p>Loading bookings...</p>';
     const pastContent = document.getElementById('in-progress-content');
     pastContent.innerHTML = '<p>Loading bookings...</p>';
+    const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
+    mobileScheduledContent.innerHTML = '<p>Loading bookings...</p>';
+    const mobilePastContent = document.getElementById('mobile-in-progress-content');
+    mobilePastContent.innerHTML = '<p>Loading bookings...</p>';
   }
 
   function formatFirestoreTimestamp(timestamp) {
@@ -80,7 +84,7 @@ function showLoading() {
       const querySnapshot = await getDocs(q);
   
       if (!querySnapshot.empty) {
-        // Retrieve the document ID (which is the Firestore userId)
+       
         const userDoc = querySnapshot.docs[0];
         const firestoreUserId = userDoc.id; // The document ID is the userId
         return firestoreUserId;
@@ -89,99 +93,243 @@ function showLoading() {
       }
     } catch (error) {
       console.error('Error fetching Firestore userId by email:', error);
-      return null; // Handle the error
+      return null; 
     }
   }
 
 
+  let currentPageUpcomingDesktop = 1;
+  let currentPagePastDesktop = 1;
+  let currentPageUpcomingMobile = 1;
+  let currentPagePastMobile = 1;
   
-let currentPageUpcomingDesktop = 1;
-let currentPagePastDesktop = 1;
-let currentPageUpcomingMobile = 1;
-let currentPagePastMobile = 1;
-
-const itemsPerPageDesktop = 4;
-const itemsPerPageMobile = 2;
-
-async function displayBookings(bookings, userId) {
-  const scheduledContent = document.getElementById('scheduled-content');
-  const pastContent = document.getElementById('in-progress-content');
-  const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
-  const mobilePastContent = document.getElementById('mobile-in-progress-content');
-
- 
-  scheduledContent.innerHTML = '';
-  pastContent.innerHTML = '';
-  mobileScheduledContent.innerHTML = '';
-  mobilePastContent.innerHTML = '';
-
-  const now = new Date();
-
-  const upcomingBookings = bookings.filter(booking => {
-    const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
-    return startTime && startTime > now;
-  }).sort((a, b) => {
-    const startA = new Date(a.startTime.seconds * 1000);
-    const startB = new Date(b.startTime.seconds * 1000);
-    return startA - startB;
-  });
-
-  const pastBookings = bookings.filter(booking => {
-    const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
-    return startTime && startTime <= now;
-  }).sort((a, b) => {
-    const startA = new Date(a.startTime.seconds * 1000);
-    const startB = new Date(b.startTime.seconds * 1000);
-    return startA - startB;
-  });
-
-  const paginatedUpcomingDesktop = paginateBookings(upcomingBookings, currentPageUpcomingDesktop, 4);  // 4 items per page for desktop
-  const paginatedPastDesktop = paginateBookings(pastBookings, currentPagePastDesktop, 4);  // Same for past bookings
-
+  const itemsPerPageDesktop = 4;
+  const itemsPerPageMobile = 2;
   
-  const paginatedUpcomingMobile = paginateBookings(upcomingBookings, currentPageUpcomingMobile, 2);  // 2 items per page for mobile
-const paginatedPastMobile = paginateBookings(pastBookings, currentPagePastMobile, 2);  // Same for past bookings
-
-
+  let venueCache = {}; 
   
-  renderDesktopBookings(paginatedUpcomingDesktop, scheduledContent, 'upcoming', userId);
-  renderDesktopBookings(paginatedPastDesktop, pastContent, 'past', userId);
-
-  renderMobileBookings(paginatedUpcomingMobile, mobileScheduledContent, 'upcoming', userId);
-  renderMobileBookings(paginatedPastMobile, mobilePastContent, 'past', userId);
-
-  renderPaginationControls(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop, scheduledContent, 'desktop', 'upcoming');
-  renderPaginationControls(pastBookings, currentPagePastDesktop, itemsPerPageDesktop, pastContent, 'desktop', 'past');
-  renderPaginationControls(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile, mobileScheduledContent, 'mobile', 'upcoming');
-  renderPaginationControls(pastBookings, currentPagePastMobile, itemsPerPageMobile, mobilePastContent, 'mobile', 'past');
-}
-function paginateBookings(bookings, page, itemsPerPage) {
-  const start = (page - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return bookings.slice(start, end);
-}
-
- window.cancelBooking = async function(userId, bookingId) {
-  try {
-    const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingId}`;
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'x-api-key': api_key,
-        'Content-Type': 'application/json'
+  async function displayBookings(bookings, userId) {
+    const now = new Date();
+  
+    const upcomingBookings = bookings.filter(booking => {
+      const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
+      return startTime && startTime > now;
+    }).sort((a, b) => new Date(a.startTime.seconds * 1000) - new Date(b.startTime.seconds * 1000));
+  
+    const pastBookings = bookings.filter(booking => {
+      const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
+      return startTime && startTime <= now;
+    }).sort((a, b) => new Date(a.startTime.seconds * 1000) - new Date(b.startTime.seconds * 1000));
+  
+    displayUpcomingBookings(upcomingBookings, userId);
+    displayPastBookings(pastBookings, userId);
+  }
+  
+  async function displayUpcomingBookings(upcomingBookings, userId) {
+    const scheduledContent = document.getElementById('scheduled-content');
+    const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
+  
+    scheduledContent.innerHTML = '';
+    mobileScheduledContent.innerHTML = '';
+  
+    const paginatedUpcomingDesktop = paginateBookings(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop);
+    const paginatedUpcomingMobile = paginateBookings(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile);
+  
+    renderBookings(paginatedUpcomingDesktop, scheduledContent, 'upcoming', userId, 'desktop');
+    renderBookings(paginatedUpcomingMobile, mobileScheduledContent, 'upcoming', userId, 'mobile');
+  
+    renderPaginationControls(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop, scheduledContent, 'desktop', 'upcoming', userId);
+    renderPaginationControls(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile, mobileScheduledContent, 'mobile', 'upcoming', userId);
+  }
+  
+  async function displayPastBookings(pastBookings, userId) {
+    const pastContent = document.getElementById('in-progress-content');
+    const mobilePastContent = document.getElementById('mobile-in-progress-content');
+  
+    pastContent.innerHTML = '';
+    mobilePastContent.innerHTML = '';
+  
+    const paginatedPastDesktop = paginateBookings(pastBookings, currentPagePastDesktop, itemsPerPageDesktop);
+    const paginatedPastMobile = paginateBookings(pastBookings, currentPagePastMobile, itemsPerPageMobile);
+  
+    renderBookings(paginatedPastDesktop, pastContent, 'past', userId, 'desktop');
+    renderBookings(paginatedPastMobile, mobilePastContent, 'past', userId, 'mobile');
+  
+    renderPaginationControls(pastBookings, currentPagePastDesktop, itemsPerPageDesktop, pastContent, 'desktop', 'past', userId);
+    renderPaginationControls(pastBookings, currentPagePastMobile, itemsPerPageMobile, mobilePastContent, 'mobile', 'past', userId);
+  }
+  
+  function paginateBookings(bookings, page, itemsPerPage) {
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return bookings.slice(start, end);
+  }
+  
+  async function renderBookings(bookings, container, type, userId, deviceType) {
+    const bookingsSection = document.createElement('div');
+    bookingsSection.classList.add(`${type}-bookings`, 'mb-4');
+  
+    if (bookings.length === 0) {
+      bookingsSection.innerHTML = `<p>No ${type} bookings.</p>`;
+    } else {
+      for (const booking of bookings) {
+        const venueName = await getCachedVenueName(booking.venueId);
+        const formattedStartTime = formatFirestoreTimestamp(booking.startTime);
+        const formattedStartHour = formatTime(booking.startTime);
+        const formattedEndHour = formatTime(booking.endTime);
+  
+        const bookingElement = document.createElement('div');
+        bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
+  
+        bookingElement.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <div><strong>Purpose:</strong> ${booking.purpose}</div>
+              <div><strong>Venue:</strong> ${venueName}</div>
+              <div><strong>Date:</strong> ${formattedStartTime}</div>
+              <div><strong>Slot:</strong> ${formattedStartHour} - ${formattedEndHour}</div>
+            </div>
+            ${type === 'upcoming'
+              ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${userId}', '${booking.id}')">Cancel</button>`
+              : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venueId}', '${venueName}')">Book Again</button>`}
+          </div>
+        `;
+  
+        bookingsSection.appendChild(bookingElement);
       }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete booking, please try again.');
     }
-
-    alert(`Booking cancelled successfully.`);
-  } catch (error) {
-    console.error('Error cancelling booking:', error);
-    alert('Error cancelling booking: ' + error.message);
+  
+    container.appendChild(bookingsSection);
   }
-}
+  
+  async function getCachedVenueName(venueId) {
+    if (venueCache[venueId]) {
+      return venueCache[venueId];
+    }
+    const venueDoc = await fetchVenueName(venueId);
+    const venueName = venueDoc.exists() ? venueDoc.data().Name : 'Venue not found';
+    venueCache[venueId] = venueName;
+    return venueName;
+  }
+  
+  function renderPaginationControls(bookings, currentPage, itemsPerPage, container, deviceType, bookingType, userId) {
+    const totalPages = Math.ceil(bookings.length / itemsPerPage);
+    if (totalPages <= 1) return; // No pagination if only one page
+    
+    const paginationContainer = document.createElement('div');
+    paginationContainer.classList.add('pagination-controls');
+  
+    const prevButton = document.createElement('button');
+    prevButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
+    prevButton.innerText = 'Previous';
+    prevButton.disabled = currentPage === 1; 
+    prevButton.setAttribute('aria-label', 'Previous Page');
+    prevButton.onclick = () => {
+      const newPage = currentPage - 1;
+      updateCurrentPage(newPage, deviceType, bookingType);
+      if (bookingType === 'upcoming') {
+        displayUpcomingBookings(bookings, userId);
+      } else {
+        displayPastBookings(bookings, userId);
+      }
+    };
+    paginationContainer.appendChild(prevButton);
+  
+    // Add page buttons
+    for (let i = 1; i <= totalPages; i++) {
+      const pageButton = document.createElement('button');
+      pageButton.textContent = i;
+      pageButton.classList.add('px-3', 'py-1', 'mx-1', currentPage === i ? 'bg-[#917248]' : 'bg-gray-300', 'rounded');
+      pageButton.setAttribute('aria-label', `Page ${i}`);
+      pageButton.onclick = () => {
+        updateCurrentPage(i, deviceType, bookingType);
+        if (bookingType === 'upcoming') {
+          displayUpcomingBookings(bookings, userId);
+        } else {
+          displayPastBookings(bookings, userId);
+        }
+      };
+      paginationContainer.appendChild(pageButton);
+    }
+  
+   
+    const nextButton = document.createElement('button');
+    nextButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
+    nextButton.innerText = 'Next';
+    nextButton.disabled = currentPage === totalPages; 
+    nextButton.setAttribute('aria-label', 'Next Page');
+    nextButton.onclick = () => {
+      const newPage = currentPage + 1;
+      updateCurrentPage(newPage, deviceType, bookingType);
+      if (bookingType === 'upcoming') {
+        displayUpcomingBookings(bookings, userId);
+      } else {
+        displayPastBookings(bookings, userId);
+      }
+    };
+    paginationContainer.appendChild(nextButton);
+  
+    // Append the pagination controls to the container
+    container.appendChild(paginationContainer);
+  }
+  
+  function updateCurrentPage(newPage, deviceType, bookingType) {
+    if (deviceType === 'desktop') {
+      if (bookingType === 'upcoming') {
+        currentPageUpcomingDesktop = newPage;
+      } else {
+        currentPagePastDesktop = newPage;
+      }
+    } else {
+      if (bookingType === 'upcoming') {
+        currentPageUpcomingMobile = newPage;
+      } else {
+        currentPagePastMobile = newPage;
+      }
+    }
+  }
+  
+  
+
+  window.cancelBooking = async function(userId, bookingId) {
+    try {
+      const cancelButton = document.querySelector(`button[onclick="cancelBooking('${userId}', '${bookingId}')"]`);
+      if (cancelButton) {
+        cancelButton.disabled = true;
+        cancelButton.innerHTML = 'Cancelling...'; 
+      }
+  
+      const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingId}`;
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'x-api-key': api_key,
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete booking, please try again.');
+      }
+  
+      alert(`Booking cancelled successfully.`);
+  
+      const updatedBookings = await fetchUserBookings(userId);
+      displayUpcomingBookings(updatedBookings.filter(booking => {
+        const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
+        return startTime && startTime > new Date();
+      }), userId);
+  
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      alert('Error cancelling booking: ' + error.message);
+    } finally {
+      if (cancelButton) {
+        cancelButton.disabled = false;
+        cancelButton.innerHTML = 'Cancel'; 
+      }
+    }
+  }
 
 window.bookAgain = function(venueId, venueName) {
   try {
@@ -198,90 +346,6 @@ window.bookAgain = function(venueId, venueName) {
 }
 
 
-
-
-
-
-async function renderDesktopBookings(bookings, container, type, userId) {
-  const bookingsSection = document.createElement('div');
-  bookingsSection.classList.add(`${type}-bookings`, 'mb-4');
-
-  if (bookings.length === 0) {
-    bookingsSection.innerHTML = `<p>No ${type} bookings.</p>`;
-  } else {
-    for (const booking of bookings) {
-      const venueDoc = await fetchVenueName(booking.venueId);
-      const venueName = venueDoc.exists() ? venueDoc.data().Name : 'Venue not found';
-      
-      const formattedStartTime = formatFirestoreTimestamp(booking.startTime);
-      const formattedStartHour = formatTime(booking.startTime);
-      const formattedEndHour = formatTime(booking.endTime);
-
-      const bookingElement = document.createElement('div');
-      bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
-
-      bookingElement.innerHTML = `
-        <div class="flex justify-between items-center">
-          <div>
-            <div><strong>Purpose:</strong> ${booking.purpose}</div>
-            <div><strong>Venue:</strong> ${venueName}</div>
-            <div><strong>Date:</strong> ${formattedStartTime}</div>
-            <div><strong>Slot:</strong> ${formattedStartHour} - ${formattedEndHour}</div>
-          </div>
-          ${type === 'upcoming' 
-            ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${userId}', '${booking.id}')">Cancel</button>`
-            : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venueId}', '${venueName}')">Book Again</button>`}
-        </div>
-      `;
-      
-      bookingsSection.appendChild(bookingElement);
-    }
-  }
-
-  container.appendChild(bookingsSection);
-}
-
-
-
-async function renderMobileBookings(bookings, container, type, userId) {
-  const bookingsSection = document.createElement('div');
-  bookingsSection.classList.add(`${type}-bookings`, 'mb-4');
-
-  if (bookings.length === 0) {
-    bookingsSection.innerHTML = `<p>No ${type} bookings.</p>`;
-  } else {
-    for (const booking of bookings) {
-      const venueDoc = await fetchVenueName(booking.venueId);
-      const venueName = venueDoc.exists() ? venueDoc.data().Name : 'Venue not found';
-      
-      const formattedStartTime = formatFirestoreTimestamp(booking.startTime);
-      const formattedStartHour = formatTime(booking.startTime);
-      const formattedEndHour = formatTime(booking.endTime);
-
-      const bookingElement = document.createElement('div');
-      bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
-
-      bookingElement.innerHTML = `
-        <div class="flex justify-between items-center">
-          <div>
-            <div><strong>Purpose:</strong> ${booking.purpose}</div>
-            <div><strong>Venue:</strong> ${venueName}</div>
-            <div><strong>Date:</strong> ${formattedStartTime}</div>
-            <div><strong>Slot:</strong> ${formattedStartHour} - ${formattedEndHour}</div>
-          </div>
-          ${type === 'upcoming' 
-            ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${userId}', '${booking.id}')">Cancel</button>`
-            : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venueId}', '${venueName}')">Book Again</button>`}
-        </div>
-      `;
-      
-      bookingsSection.appendChild(bookingElement);
-    }
-  }
-
-  container.appendChild(bookingsSection);
-}
-
 async function fetchVenueName(venueId) {
   try {
     const venueRef = doc(db, 'venues', venueId);  
@@ -290,72 +354,17 @@ async function fetchVenueName(venueId) {
     
   } catch (error) {
     console.error('Error fetching venue:', error);
-    return null;  // Handle error case
+    return null;
   }
 }
-
-function renderPaginationControls(bookings, currentPage, itemsPerPage, container, deviceType, bookingType) {
-  const totalPages = Math.ceil(bookings.length / itemsPerPage);
-
-  // Always show pagination controls, even if there is only one page
-  const paginationControls = document.createElement('div');
-  paginationControls.classList.add('pagination-controls', 'mt-4', 'flex', 'justify-between');
-
-  const prevButton = document.createElement('button');
-  prevButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
-  prevButton.innerText = 'Previous';
-
-  // Disable the 'Previous' button on the first page
-  prevButton.disabled = currentPage === 1;
-
-  prevButton.onclick = () => {
-    if (deviceType === 'desktop') {
-      if (bookingType === 'upcoming') currentPageUpcomingDesktop--;
-      else currentPagePastDesktop--;
-    } else {
-      if (bookingType === 'upcoming') currentPageUpcomingMobile--;
-      else currentPagePastMobile--;
-    }
-    displayBookings(bookings);  // Re-render the bookings with the new page
-  };
-
-  const nextButton = document.createElement('button');
-  nextButton.classList.add('bg-white', 'text-[#917248]', 'px-4', 'py-2', 'rounded');
-  nextButton.innerText = 'Next';
-
-  // Disable the 'Next' button only if on the last page
-  nextButton.disabled = currentPage === totalPages;
-
-  nextButton.onclick = () => {
-    if (deviceType === 'desktop') {
-      if (bookingType === 'upcoming') currentPageUpcomingDesktop++;
-      else currentPagePastDesktop++;
-    } else {
-      if (bookingType === 'upcoming') currentPageUpcomingMobile++;
-      else currentPagePastMobile++;
-    }
-    displayBookings(bookings);  // Re-render the bookings with the new page
-  };
-
-  paginationControls.appendChild(prevButton);
-  paginationControls.appendChild(nextButton);
-
-  container.appendChild(paginationControls);
-}
-
-
-
 
   async function loadUserBookings(userEmail) {
     showLoading();
   
     const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
-    console.log(firestoreUserId);
-  
+   
     if (firestoreUserId) {
       const bookings = await fetchUserBookings(firestoreUserId);
-      console.log(bookings);
-      // Pass firestoreUserId to displayBookings
       displayBookings(bookings, firestoreUserId);
     } else {
       console.error('Could not find Firestore userId for the given email.');
@@ -365,8 +374,7 @@ function renderPaginationControls(bookings, currentPage, itemsPerPage, container
   onAuthStateChanged(auth, (user) => {
     if (user) {
       console.log("User is signed in with email:", user.email);
-      loadUserBookings(user.email); // Load bookings based on the user's email
-      console.log(user.email)
+      loadUserBookings(user.email);
     } else {
       console.log("No user is signed in.");
     }

@@ -111,8 +111,7 @@ venuesRouter.post('/venues', async(req,res)=>{
             Features:req.body.Features,
             Building:req.body.Building,
             Name:req.body.Name,
-            //a boolean value that says if the venue is booked or not, it should change when a booking is made.
-            Booked:req.body.Booked
+          Booked:req.body.Booked
         };
         const docRef = await addDoc(collection(db, 'venues'), venue);
         res.status(201).send("Venue created successfully");
