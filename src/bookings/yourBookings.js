@@ -360,12 +360,9 @@ async function fetchVenueName(venueId) {
     showLoading();
   
     const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
-    console.log(firestoreUserId);
-  
+   
     if (firestoreUserId) {
       const bookings = await fetchUserBookings(firestoreUserId);
-      console.log(bookings);
-      // Pass firestoreUserId to displayBookings
       displayBookings(bookings, firestoreUserId);
     } else {
       console.error('Could not find Firestore userId for the given email.');
@@ -376,7 +373,6 @@ async function fetchVenueName(venueId) {
     if (user) {
       console.log("User is signed in with email:", user.email);
       loadUserBookings(user.email);
-      console.log(user.email)
     } else {
       console.log("No user is signed in.");
     }
