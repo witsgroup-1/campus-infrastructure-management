@@ -9,6 +9,7 @@ module.exports = {
       colors: {
         'button-bg': '#1c44ac',
         'button-border': '#b0b5fa',
+        'custom-gold': '#917248',
       },
       fontFamily: {
         'inter': ['Inter', 'sans-serif'],
