@@ -59,7 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Store user data in Firestore using the authenticated user's UID
                     await setDoc(doc(db, 'users', uid), userData);
                     alert('Onboarding Complete!');
-                    window.location.href = "../user-dashboard/dashboard.html";
+                    //window.location.href = "../user-dashboard/dashboard.html";
+                    if (role === "Staff" && !isTutorChecked && !isLecturerChecked) {
+                        // Redirect to a different page
+                        window.location.href = '../adminDashboard/adminDashboard.html';  
+                    } else {
+                        // Proceed as normal
+                        window.location.href = '../user-dashboard/dashboard.html';  
+                    }
 
                 } catch (error) {
                     console.error('Error adding user: ', error);
