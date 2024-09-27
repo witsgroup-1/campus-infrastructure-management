@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('User email:', userEmail);
         console.log("userId:",userId);
         // Use the email (e.g., display it, use it in queries, etc.)
-        document.getElementById('userEmailDisplay').textContent = `Logged in as: ${userEmail}`;
+        document.getElementById('userEmailDisplay').textContent = `Admin logged in as: ${userEmail}`;
     } else {
         console.log('No email found');
     }

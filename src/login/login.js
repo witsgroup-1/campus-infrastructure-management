@@ -41,16 +41,16 @@ async function searchUserByEmail(email) {
             return null;
         }
 
-        querySnapshot.forEach((doc) => {
-            console.log('Document data:', doc.data());
-        });
+        const userDoc = querySnapshot.docs[0];
+        console.log('Document data:', userDoc.data());
 
-        return querySnapshot.docs.map(doc => doc.data());
+        return userDoc.data();
     } catch (error) {
         console.error('Error searching for user:', error);
         return null;
     }
 }
+
 
 
 // Inside the event listener for the login form submission
@@ -69,13 +69,21 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
                 // Proceed with sign-in after setting session persistence
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                const userData = await searchUserByEmail(email);
+                console.log(userData)
+                console.log(userData.isLecturer); // should log 'boolean'
+                console.log(userData.isTutor); // should log 'boolean'
+
                 console.log("User signed in: session bs btw:", user);
 
                 // Store the user's email in localStorage
                 localStorage.setItem('userEmail', user.email);
 
-                // Redirect to the user dashboard
-                window.location.href = "../user-dashboard/dashboard.html";
+                if (userData.role === "Staff" && !userData.isTutor && !userData.isLecturer) {
+                    window.location.href = "../adminDashboard/adminDashboard.html";
+                   }else{
+                    window.location.href = "../user-dashboard/dashboard.html";
+                   }
             } catch (error) {
                 if (error.code === 'auth/invalid-login-credentials') {
                     try {
@@ -126,9 +134,11 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
         if (userEmail.endsWith("wits.ac.za")) {
             // Proceed with searching the user by email
             const userData = await searchUserByEmail(userEmail);
+            console.log(userData)
 
             if (userData) {
                 // Redirect to user dashboard if email is found
+               
                 window.location.href = "../user-dashboard/dashboard.html";
             } else {
                 // Redirect to onboarding page if email is not found
