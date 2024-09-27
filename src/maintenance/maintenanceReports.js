@@ -1,8 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -16,9 +13,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
-onAuthStateChanged(auth, async (user) => {
+
+onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("User is signed in with id:", user.email);
     
@@ -185,7 +182,6 @@ venueDropdown.addEventListener('change', () => {
 });
 
 
-
 function clearVenueDropdown() {
     venueDropdown.innerHTML = ''; // Clear dropdown options
     venueDropdown.classList.add('hidden'); // Hide dropdown
@@ -196,4 +192,3 @@ venueDropdown.addEventListener('change', () => {
     clearVenueDropdown(); // Hide dropdown after selection
 });
 });
-  

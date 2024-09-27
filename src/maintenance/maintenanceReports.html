@@ -44,14 +44,21 @@
       <!--Venue -->
       <label class="block text-lg text-[#003B5C] font-medium">
         Venue
-        <input type="text" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md"  required>
+        <input type="text" id="venue-input" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md"  required>
+        <select id="venue-dropdown" class="hidden w-full mt-1 p-2 border rounded-md"></select>
       </label>
 
       <!--Description -->
-      <label class="block text-lg text-[#003B5C] font-medium">
+      <!-- <label class="block text-lg text-[#003B5C] font-medium">
         Description
         <textarea placeholder="Enter description" class="block w-full mt-1 p-2 border rounded-md"  required></textarea>
-      </label>
+      </label> -->
+      <!-- Description -->
+<label class="block text-lg text-[#003B5C] font-medium">
+  Description
+  <textarea id="description" placeholder="Enter description" class="block w-full mt-1 p-2 border rounded-md" maxlength="200" required></textarea>
+  <p id="charCount" class="text-sm text-gray-500 mt-1">0 / 200 characters</p>
+</label>
 
       <!--Submit Button -->
       <button type="submit" class="block w-full bg-[#917248] text-white p-3 rounded-md font-semibold">Submit</button>
@@ -71,6 +78,14 @@
 
 
 <script type="module" src="maintenanceReports.js"></script>
+<script>
+  const textarea = document.getElementById('description');
+  const charCount = document.getElementById('charCount');
 
+  textarea.addEventListener('input', () => {
+      const currentLength = textarea.value.length;
+      charCount.textContent = `${currentLength} / 200 characters`;
+  });
+</script>
 
 </html>
