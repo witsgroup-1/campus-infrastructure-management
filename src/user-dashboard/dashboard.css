@@ -61,6 +61,7 @@ h2:hover {
   color: var(--witsGold); 
 }
 
+
 #bookings-container {
   display: flex;
   flex-direction: column;
@@ -163,7 +164,24 @@ h2:hover {
   }
   
   
+  .notification-item {
+    border: 1px solid #917248; /* Border color */
+    padding: 10px; /* Padding around the notification */
+    border-radius: 8px; /* Rounded corners */
+    background-color: white; /* Background color */
+    color: #003B5C; /* Text color */
+    margin-bottom: 10px; /* Space between notifications */
+    transition: background-color 0.2s ease-in-out; /* Smooth transition for background color */
+}
+#notificationPanel{
+  z-index: 9999;
+}
 
+/* Hover effect */
+.notification-item:hover {
+    background-color: #917248; /* Change background color on hover */
+    color: white; /* Change text color on hover */
+}
 
 
   
