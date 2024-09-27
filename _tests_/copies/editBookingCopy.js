@@ -21,6 +21,7 @@ async function fetchVenues() {
     });
     const data = await response.json();
     venues = data; 
+    return venues;
     populateVenues(venues);
   } catch (error) {
     console.error('Error fetching venues:', error);
