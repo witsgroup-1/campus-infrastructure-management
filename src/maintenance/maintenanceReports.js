@@ -191,4 +191,3 @@ venueDropdown.addEventListener('change', () => {
     venueInput.value = venueDropdown.value; // Set input value to selected option
     clearVenueDropdown(); // Hide dropdown after selection
 });
-})
