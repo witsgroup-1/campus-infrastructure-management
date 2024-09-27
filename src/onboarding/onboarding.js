@@ -21,7 +21,7 @@ const db = getFirestore(app);
 document.addEventListener('DOMContentLoaded', () => {
 
     // Validate Step 3
-   
+
 
     // Finish Button Event Listener
     document.getElementById('finishBtn')?.addEventListener('click', async () => {
@@ -53,7 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Post user data to Firestore
                 await addDoc(collection(db, 'users'), userData);
                 alert('Onboarding Complete!');
-                window.location.href = "../user-dashboard/dashboard.html";
+                //window.location.href = "../user-dashboard/dashboard.html";
+                if (role === "Staff" && !isTutor && !isLecturer) {
+                    // Redirect to a different page
+                    window.location.href = "../adminDashboard/adminDashboard.html";  
+                } else {
+                    // Proceed as normal
+                    window.location.href = "../user-dashboard/dashboard.html";
+                }
 
             } catch (error) {
                 console.error('Error adding user: ', error);

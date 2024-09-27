@@ -29,7 +29,11 @@
 
     <!--header-->
     <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-        <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4"><a href="../user-dashboard/dashboard.html">&larr;</a></button>
+      <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.location.href='../user-dashboard/dashboard.html'">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+    </button>
         <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Schedules</h1>
 
     </header>
@@ -98,8 +102,8 @@
 
         </section>
         <section class="flex justify-around mt-4">
-          <button id="update" class="px-4 py-2 bg-[#917248] text-white rounded-lg">Update</button>
-          <button id="close-modal" class="px-4 py-2 bg-[#917248] text-white rounded-lg">Close</button>
+          <button id="update" class="px-4 py-2 bg-[#917248] hover:bg-[#806541] text-white rounded-lg">Update</button>
+          <button id="close-modal" class="px-4 py-2 bg-[#917248] hover:bg-[#806541] text-white rounded-lg">Close</button>
         </section>
       </section>
     </article>
@@ -108,10 +112,9 @@
   
     </main>
 
-     <!--footer -->
-    <footer class="mt-8 bg-[#003B5C] text-white text-center p-4 bottom-0 w-full">
-        <p>&copy; 2024 Group -1. All rights reserved.</p>
-    </footer>
+    <footer class="mt-8 p-4 bg-[#003B5C] bottom-0 text-white text-center">
+      <p>&copy; 2024 Group -1. All rights reserved.</p>
+  </footer>
 
       <!--back to top button-->
   <button id="back-to-top" onclick="scrollToTop()">↑</button>
