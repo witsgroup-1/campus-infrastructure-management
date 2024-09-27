@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Schedules</title>
+    <title>Schedules</title>
     <script type = "module" src="timetable.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,8 +29,12 @@
 
     <!--header-->
     <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-        <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4"><a href="../user-dashboard/dashboard.html">&larr;</a></button>
-        <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Your Schedules</h1>
+      <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.location.href='../user-dashboard/dashboard.html'">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+    </button>
+        <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Schedules</h1>
 
     </header>
 
@@ -42,9 +46,7 @@
           <thead>
             <tr>
               <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Day</th>
-              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3 relative"> 
-                Dates
-              </th>
+              <th class="bg-[#917248] dark:bg-[#917248] text-white p-3 relative"> Dates</th>
               <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Course</th>
               <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Venue</th>
               <th class="bg-[#917248] dark:bg-[#917248] text-white p-3">Time</th>
@@ -63,14 +65,56 @@
           <a href="add_schedule.html">Add Schedule</a>
         </button>
     </section>
+
+    <!--Popup-->
+    <article id="edit-modal" class="bg-black bg-opacity-40 hidden fixed inset-0 flex items-center justify-center p-4">
+      <section class="bg-white p-4 rounded-lg shadow-lg max-w-sm w-full sm:max-w-md md:max-w-lg lg:max-w-lg">
+        <!-- Flex column to stack inputs vertically -->
+        <section class="flex flex-col space-y-2">
+          <h3 class="text-[#003B5C] text-2xl justify-center text-center mb-3">Edit Schedule</h3>
+          <div class="flex">
+            <label class="text-[#003B5C] justify-center m-3 text-xl w-32">Venue:</label>
+            <input id="venue" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter venue" /></div>
+
+          <div class="flex">
+            <label class="text-[#003B5C] justify-center m-3 text-xl w-32">Course:</label>
+          <input id="course" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter course" /></div>
+
+          <div class="flex">
+            <label class="text-[#003B5C] justify-center m-3 text-xl whitespace-nowrap w-32">Start Time:</label>
+          <input id="start-time" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter start time" /></div>
+
+          <div class="flex">
+            <h2 class="text-[#003B5C] justify-center m-3 text-xl whitespace-nowrap w-32">End Time:</h2>
+          <input id="end-time" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter end time" /></div>
+
+          <div class="flex">
+            <h2 class="text-[#003B5C] justify-center m-3 text-xl w-32">Day:</h2>
+          <input id="day" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter day" /></div>
+
+          <div class="flex">
+            <h2 class="text-[#003B5C] justify-center m-3 text-xl whitespace-nowrap w-32">Start Date:</h2>
+          <input id="start-date" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter start date" /></div>
+
+          <div class="flex">
+            <h2 class="text-[#003B5C] justify-center m-3 text-xl whitespace-nowrap w-32">End Date:</h2>
+          <input id="end-date" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter end date" /></div>
+
+        </section>
+        <section class="flex justify-around mt-4">
+          <button id="update" class="px-4 py-2 bg-[#917248] hover:bg-[#806541] text-white rounded-lg">Update</button>
+          <button id="close-modal" class="px-4 py-2 bg-[#917248] hover:bg-[#806541] text-white rounded-lg">Close</button>
+        </section>
+      </section>
+    </article>
+    
     
   
     </main>
 
-     <!--footer -->
-    <footer class="mt-8 bg-[#003B5C] text-white text-center p-4 bottom-0 w-full fixed">
-        <p>&copy; 2024 Group -1. All rights reserved.</p>
-    </footer>
+    <footer class="mt-8 p-4 bg-[#003B5C] bottom-0 text-white text-center">
+      <p>&copy; 2024 Group -1. All rights reserved.</p>
+  </footer>
 
       <!--back to top button-->
   <button id="back-to-top" onclick="scrollToTop()">↑</button>
@@ -101,7 +145,6 @@
         backToTopButton.style.display = "none";
       }
     };
-
 
 
   </script>

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // POST schedules
-async function createSchedule(userId, courseId, roomId, daysOfWeek, startDate, endDate, startTime, recurring, endTime) {
+export async function createSchedule(userId, courseId, roomId, daysOfWeek, startDate, endDate, startTime, recurring, endTime) {
     const scheduleData = {
         userId,
         courseId,
@@ -96,7 +96,7 @@ async function createSchedule(userId, courseId, roomId, daysOfWeek, startDate, e
         endDate
     };
 
-    const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules', {
+    const response = await fetch('http://localhost:3000/api/schedules', {
         method: 'POST',
         headers: {
             'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
@@ -108,11 +108,10 @@ async function createSchedule(userId, courseId, roomId, daysOfWeek, startDate, e
     if (!response.ok) {
         throw new Error('Error creating schedule');
     }
-
-    return await response.json();
+    return await response.json(); 
 }
 
-async function createBookingsForRecurring(userId, roomId, startDate, startTime, endTime, purpose, recurring, endDate) {
+export async function createBookingsForRecurring(userId, roomId, startDate, startTime, endTime, purpose, recurring, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
     
@@ -134,7 +133,7 @@ async function createBookingsForRecurring(userId, roomId, startDate, startTime, 
 }
 
 // POST single booking
-async function createBooking(userId, roomId, date, start_time, end_time, purpose) {
+export async function createBooking(userId, roomId, date, start_time, end_time, purpose) {
     const bookingData = {
         userId,
         roomId,
@@ -149,7 +148,7 @@ async function createBooking(userId, roomId, date, start_time, end_time, purpose
     console.log(bookingData); // Log booking data for debugging
 
     try {
-        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
+        const response = await fetch('http://localhost:3000/api/Bookings', {
             method: 'POST',
             headers: {
                 'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
