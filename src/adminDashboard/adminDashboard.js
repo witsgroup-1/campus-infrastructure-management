@@ -160,8 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuIcon = document.getElementById('menu-icon');
     const sidebar = document.getElementById('sidebar');
     const closeBtn = document.getElementById('close-btn');
-    const notifBell = document.getElementById('notif-bell');
-    const notificationPanel = document.getElementById('notificationPanel');
     const mainButton = document.getElementById('main-button');
     const reportButton = document.getElementById('report-button');
     const scheduleButton = document.getElementById('schedule-button');
@@ -171,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const userEmail = localStorage.getItem('userEmail');
     const userId= localStorage.getItem('userId');
-    const notificationsUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
 
     if (userEmail) {
         console.log('User email:', userEmail);
@@ -235,11 +232,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     reportButton.addEventListener('click', () => {
-        window.location.href = '../maintenance/maintenanceReports.html';
+        window.location.href = '../maintenance/maintenanceLogs.html';
     });
 
     bookButton.addEventListener('click', () => {
-        window.location.href = '../make-booking/book-venue.html';
+        window.location.href = '../manage-bookings/manageBookings.html';
     });
 
     scheduleButton.addEventListener('click', () => {
