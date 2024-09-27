@@ -12,11 +12,11 @@ document.getElementById('checkStatusBtn')?.addEventListener('click', async () =>
     }
 
     try {
-        const results = await firebaseConfig.getDocuments('whitelistRequests', 'email', email);
+        const results = await firebaseConfig.getDocuments('whitelistRequests', 'emailInput', email);
 
         if (results.length === 0) {
             alert('No request found for this email.');
-            document.getElementById('statusResult').style.display = 'none'; // Hide status result if no request
+            document.getElementById('statusResult').style.display = 'none';
         } else {
             const requestData = results[0];
             document.getElementById('statusText').textContent = `Request is currently: ${requestData.status}`;
