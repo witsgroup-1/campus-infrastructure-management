@@ -131,6 +131,9 @@ h2:hover {
     margin-bottom: 10px; /* Space between notifications */
     transition: background-color 0.2s ease-in-out; /* Smooth transition for background color */
 }
+#notificationPanel{
+  z-index: 9999;
+}
 
 /* Hover effect */
 .notification-item:hover {
