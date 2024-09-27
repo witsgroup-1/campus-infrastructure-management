@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await setDoc(doc(db, 'users', uid), userData);
                     alert('Onboarding Complete!');
                     //window.location.href = "../user-dashboard/dashboard.html";
-                    if (role === "Staff" && !isTutorChecked && !isLecturerChecked) {
+                    if (role === "Staff" && !isTutor && !isLecturer) {
                         // Redirect to a different page
                         window.location.href = '../adminDashboard/adminDashboard.html';  
                     } else {
