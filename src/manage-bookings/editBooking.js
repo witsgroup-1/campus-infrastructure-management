@@ -125,7 +125,33 @@ function saveChanges(id) {
   const bookingInfo=getBooking(id);
   const venueInfo=getRoomInfo(bookingInfo.venueId);
   const userId=bookingInfo.userId;
-  notificationMessage=`Your booking for ${venueInfo.Name} on ${bookingInfo.date} has been edited by administrators, please check your bookings for updates or changes made. If you are not happy with these changes please delete that booking and rebook for another available venue.`
+  
+  const url3 =`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingInfopurpose}`
+  const url4 =`https://campus-infrastructure-management.azurewebsites.net/api/venues/${bookingInfo.venueId}/date/bookings/${bookingInfo.purpose}`
+
+
+  const updateResponse = fetch(url2, {
+    method: 'PUT',
+    headers: {
+        'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        status: status
+    })
+});
+
+const updateResponse2 = fetch(url2, {
+  method: 'PUT',
+  headers: {
+      'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+      'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+      status: status
+  })
+});
+  notificationMessage=`Your booking for ${venueInfo.Name} has been edited by administrators, please check your bookings for updates or changes made. If you are not happy with these changes please delete that booking and rebook for another available venue.`
   const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
   fetch(userNotificationUrl, {
       method: 'POST',

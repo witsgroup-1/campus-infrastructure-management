@@ -126,7 +126,7 @@ function renderBookings() {
           }
 
           // Adding cancel, accept, and reject buttons based on booking status
-          if (booking.status.toLowerCase() === 'confirmed') {
+          if (booking.status.toLowerCase() === 'confirmed' || booking.status.toLowerCase()==='accepted' ||booking.status.toLowerCase()==='approved') {
               const cancelButton = document.createElement('button');
               cancelButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
               cancelButton.textContent = 'Cancel';
@@ -155,9 +155,9 @@ function renderBookings() {
 
 
     // Placeholder functions for button actions
-  function editBooking(id) {
+ async function editBooking(id) {
     window.location.href = `editBooking.html?bookingId=${id}`;
-   
+   await fetchBookings();
   }
 
 
@@ -166,6 +166,7 @@ function renderBookings() {
     const bookingId = id;  
     const url = `https://campus-infrastructure-management.azurewebsites.net/api/bookings/id/${bookingId}`;
     const url2 =`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${bookingId}`;
+    
     let bookingData = {};
 
     // Prompt admin for the reason for cancellation
@@ -182,6 +183,8 @@ function renderBookings() {
 
         // Destructure the necessary fields from bookingData
         const { userId, venueId, roomId, start_time, end_time, purpose, date } = bookingData;
+        const url3 =`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${purpose}`
+        const url4 =`https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}/date/bookings/${purpose}`
 
         // Update the booking status to 'cancelled'
         const updateResponse = await fetch(url2, {
@@ -191,9 +194,31 @@ function renderBookings() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                status: 'cancelled'
+                status: 'Cancelled'
             })
         });
+
+        const updateResponse2 = await fetch(url3, {
+          method: 'PUT',
+          headers: {
+              'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              status: 'Cancelled'
+          })
+      });
+
+      const updateResponse3 = await fetch(url4, {
+        method: 'PUT',
+        headers: {
+            'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            status: 'Cancelled'
+        })
+    });
 
         if (!updateResponse.ok) {
             throw new Error('Failed to update booking status');
@@ -205,7 +230,7 @@ function renderBookings() {
         const venueName = venueData.Name; // Assuming venueData contains a 'name' field
 
         // Create a notification message
-        const notificationMessage = `Your previously accepted booking for ${purpose} in room ${roomId} on ${date} from ${start_time} to ${end_time} at ${venueName} has been cancelled. Reason: ${reasonForCancellation}. We apologize for the inconvenience.`;
+        const notificationMessage = `Your previously accepted booking for ${purpose} on ${date} from ${start_time} to ${end_time} at ${venueName} has been cancelled. Reason: ${reasonForCancellation}. We apologize for the inconvenience.`;
 
         // Add the notification to the user's subcollection
         const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
@@ -223,6 +248,7 @@ function renderBookings() {
 
         alert('Booking cancelled and notification sent.');
 
+        await fetchBookings();
     } catch (error) {
         console.error('Error:', error);
         alert('An error occurred while cancelling the booking.');
@@ -244,6 +270,8 @@ async function acceptBooking(id) {
 
         // Destructure the necessary fields from bookingData
         const { userId, venueId, roomId, start_time, end_time, purpose, date } = bookingData;
+        const url3 =`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${purpose}`
+        const url4 =`https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}/date/bookings/${purpose}`
 
         // Update the booking status
         const updateResponse = await fetch(url2, {
@@ -253,9 +281,31 @@ async function acceptBooking(id) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                status: 'confirmed' // Change to 'confirmed' upon acceptance
+                status: 'Approved' // Change to 'confirmed' upon acceptance
             })
         });
+
+        const updateResponse2 = await fetch(url3, {
+          method: 'PUT',
+          headers: {
+              'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              status: 'Approved' // Change to 'confirmed' upon acceptance
+          })
+      });
+
+      const updateResponse3 = await fetch(url4, {
+        method: 'PUT',
+        headers: {
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            status: 'Approved' // Change to 'confirmed' upon acceptance
+        })
+    });
 
         if (!updateResponse.ok) {
             throw new Error('Failed to update booking status');
@@ -268,7 +318,7 @@ async function acceptBooking(id) {
         const venueName = venueData.Name; // Assuming venueData contains a 'Name' field
 
         // Create a notification message
-        const notificationMessage = `Your booking for ${purpose} on ${date} from ${start_time} to ${end_time} at ${venueName} has been successfully confirmed.`;
+        const notificationMessage = `Your booking for ${purpose} on ${bookingData.date} from ${start_time} to ${end_time} at ${venueName} has been successfully confirmed.`;
 
         // Ensure notifications subcollection exists
         const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
@@ -288,7 +338,7 @@ async function acceptBooking(id) {
         });
 
         alert('Booking successfully confirmed and notification sent.');
-
+        await fetchBookings();
     } catch (error) {
         console.error('Error:', error);
         alert('An error occurred while confirming the booking.');
@@ -311,6 +361,8 @@ async function rejectBooking(id) {
 
       // Destructure the necessary fields from bookingData
       const { userId, venueId, roomId, start_time, end_time, purpose, date } = bookingData;
+      const url3 =`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${purpose}`
+      const url4 =`https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}/date/bookings/${purpose}`
 
 
       // Update the booking status to 'rejected'
@@ -321,9 +373,31 @@ async function rejectBooking(id) {
               'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-              status: 'rejected' // Change to 'rejected'
+              status: 'Rejected' // Change to 'rejected'
           })
       });
+
+      const updateResponse2 = await fetch(url3, {
+        method: 'PUT',
+        headers: {
+            'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            status: 'Rejected' // Change to 'rejected'
+        })
+    });
+
+    const updateResponse3 = await fetch(url4, {
+      method: 'PUT',
+      headers: {
+          'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          status: 'Rejected' // Change to 'rejected'
+      })
+  });
 
       if (!updateResponse.ok) {
           throw new Error('Failed to update booking status');
@@ -352,6 +426,7 @@ async function rejectBooking(id) {
       });
 
       alert('Booking rejected.');
+      await fetchBookings();
 
   } catch (error) {
       console.error('Error:', error);
