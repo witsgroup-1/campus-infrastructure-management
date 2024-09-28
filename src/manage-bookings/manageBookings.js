@@ -18,7 +18,7 @@ function fetchVenues() {
   .then(response => response.json())
   .then(data => {
     venues = data; 
-    console.log(venues); // Store fetched venues
+    //console.log(venues); 
   })
   .catch(error => {
     console.error('Error fetching venues:', error);
@@ -37,7 +37,7 @@ function fetchBookings() {
   .then(response => response.json())
   .then(data => {
     bookings = data;
-    console.log(bookings);  // Store fetched bookings
+    //console.log(bookings); 
     renderBookings();  // Render bookings after fetching data
   })
   .catch(error => {
@@ -50,7 +50,7 @@ function getRoomInfo(venueId) {
 
   for(let i=0;i<venues.length;i++){
     if(venueId==venues[i].id){
-      console.log(venues[i]);
+      //console.log(venues[i]);
       return venues[i];
     }
     
@@ -61,7 +61,7 @@ function getBookingInfo(bookingId) {
 
     for(let i=0;i<bookings.length;i++){
       if(bookingId==bookings[i].id){
-        console.log(bookings[i]);
+        //console.log(bookings[i]);
         return bookings[i];
       }
       
@@ -77,7 +77,7 @@ function renderBookings() {
   const roomFilter = document.getElementById('roomFilter').value;
   const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
-  // Improved filtering logic
+
   const filteredBookings = bookings.filter(booking => {
       const roomInfo = getRoomInfo(booking.venueId); // Get room info
 
@@ -153,8 +153,6 @@ function renderBookings() {
 }
 
 
-
-    // Placeholder functions for button actions
  async function editBooking(id) {
     window.location.href = `editBooking.html?bookingId=${id}`;
    await fetchBookings();
@@ -408,7 +406,7 @@ async function rejectBooking(id) {
 
       const venueName = venueInfo.Name; 
       // Create a notification message
-      const notificationMessage = `We regret to inform you that your booking for ${purpose} in room ${roomId} on ${date} from ${start_time} to ${end_time} at ${venueName} has been rejected. We apologize for the inconvenience caused. Please consider booking another venue for your purpose.`;
+      const notificationMessage = `We regret to inform you that your booking for ${purpose} on ${date} from ${start_time} to ${end_time} at ${venueName} has been rejected. We apologize for the inconvenience caused. Please consider booking another venue for your purpose.`;
 
       // Add the notification to the user's subcollection
       const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;

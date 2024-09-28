@@ -21,7 +21,7 @@ function fetchVenues() {
   .then(response => response.json())
   .then(data => {
     venues = data; 
-    console.log(venues);
+   // console.log(venues);
     populateVenues(venues);
   })
   .catch(error => {
@@ -41,7 +41,7 @@ function fetchBookings() {
   .then(response => response.json())
   .then(data => {
     bookings = data;
-    console.log(bookings);
+   // console.log(bookings);
   })
   .catch(error => {
     console.error('Error fetching bookings:', error);
@@ -117,7 +117,7 @@ function saveChanges(id) {
   })
   .then(response => response.json())
   .then(data => {
-    console.log(data);
+   // console.log(data);
     alert('Booking edited successfully');
   })
   .catch(error => console.error('Error:', error));
