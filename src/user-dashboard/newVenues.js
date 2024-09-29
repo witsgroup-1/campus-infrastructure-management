@@ -93,10 +93,9 @@ async function fetchAvailableVenues() {
                 const nextSlotEndTime = new Date();
                 nextSlotEndTime.setHours(nextSlotEndHour, nextSlotEndMinute, 0, 0);
                 
-                // Check if the booking overlaps with the next slot
                 const isOverlap = (bookingStartTime < nextSlotEndTime && bookingEndTime > nextSlotStartTime);
 
-                
+                console.log(isOverlap)
                 return isOverlap; 
             });
 
