@@ -21,7 +21,7 @@ const db = getFirestore(app);
 const venueInput = document.querySelector('input[placeholder="Venue"]'); 
 
 document.addEventListener("DOMContentLoaded", () => {
-
+//auth get current user
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       console.log("User is signed in with id:", user.email);
