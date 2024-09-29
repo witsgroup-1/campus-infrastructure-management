@@ -18,6 +18,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 async function isEmailWhitelisted(email) {
+    const statusMessage = document.getElementById('status-message');
+    statusMessage.textContent = "Checking approval...";
     const whitelistCollection = collection(db, 'whitelist');
     const q = query(whitelistCollection, where('emailInput', '==', email));
     const querySnapshot = await getDocs(q);
@@ -25,6 +27,7 @@ async function isEmailWhitelisted(email) {
     if (!querySnapshot.empty) {
         return true;
     } else {
+        statusMessage.textContent = "";
         return false;
     }
 }
@@ -64,7 +67,6 @@ document.getElementById('login-form').addEventListener('submit', async function 
             // Set session persistence to 'session-only'
             await setPersistence(auth, browserSessionPersistence);
 
-            // Show the "Signing in..." message
             statusMessage.textContent = "Signing in...";
 
             try {
