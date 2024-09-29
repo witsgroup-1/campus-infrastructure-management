@@ -21,7 +21,7 @@ function fetchVenues() {
   .then(response => response.json())
   .then(data => {
     venues = data; 
-    console.log(venues);
+   // console.log(venues);
     populateVenues(venues);
   })
   .catch(error => {
@@ -41,7 +41,7 @@ function fetchBookings() {
   .then(response => response.json())
   .then(data => {
     bookings = data;
-    console.log(bookings);
+   // console.log(bookings);
   })
   .catch(error => {
     console.error('Error fetching bookings:', error);
@@ -117,7 +117,7 @@ function saveChanges(id) {
   })
   .then(response => response.json())
   .then(data => {
-    console.log(data);
+   // console.log(data);
     alert('Booking edited successfully');
   })
   .catch(error => console.error('Error:', error));
@@ -125,7 +125,33 @@ function saveChanges(id) {
   const bookingInfo=getBooking(id);
   const venueInfo=getRoomInfo(bookingInfo.venueId);
   const userId=bookingInfo.userId;
-  notificationMessage=`Your booking for ${venueInfo.Name} on ${bookingInfo.date} has been edited by administrators, please check your bookings for updates or changes made. If you are not happy with these changes please delete that booking and rebook for another available venue.`
+  
+  const url3 =`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingInfopurpose}`
+  const url4 =`https://campus-infrastructure-management.azurewebsites.net/api/venues/${bookingInfo.venueId}/date/bookings/${bookingInfo.purpose}`
+
+
+  const updateResponse = fetch(url2, {
+    method: 'PUT',
+    headers: {
+        'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        status: status
+    })
+});
+
+const updateResponse2 = fetch(url2, {
+  method: 'PUT',
+  headers: {
+      'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+      'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+      status: status
+  })
+});
+  notificationMessage=`Your booking for ${venueInfo.Name} has been edited by administrators, please check your bookings for updates or changes made. If you are not happy with these changes please delete that booking and rebook for another available venue.`
   const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
   fetch(userNotificationUrl, {
       method: 'POST',
