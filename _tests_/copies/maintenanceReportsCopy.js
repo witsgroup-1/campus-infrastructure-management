@@ -224,6 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
     venueDropdown.innerHTML = ''; 
     venueDropdown.classList.add('hidden'); 
   }
+
+  module.exports = {clearVenueDropdown, updateVenueDropdown};
+
 });
 
-// module.exports = {clearVenueDropdown, updateVenueDropdown};

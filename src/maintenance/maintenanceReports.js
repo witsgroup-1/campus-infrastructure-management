@@ -18,37 +18,37 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    console.log("User is signed in with id:", user.email);
-  } else {
-    console.log("No user is signed in.");
-  }
-});
-
-async function getFirestoreUserIdByEmail(email) {
-  try {
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      const userDoc = querySnapshot.docs[0];
-      const firestoreUserId = userDoc.id;
-      return firestoreUserId;
-    } else {
-      throw new Error('No matching user document found in Firestore.');
-    }
-  } catch (error) {
-    console.error('Error fetching Firestore userId by email:', error);
-    return null;
-  }
-}
-
 const venueInput = document.querySelector('input[placeholder="Venue"]'); 
 
-
 document.addEventListener("DOMContentLoaded", () => {
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      console.log("User is signed in with id:", user.email);
+    } else {
+      console.log("No user is signed in.");
+    }
+  });
+  
+  async function getFirestoreUserIdByEmail(email) {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('email', '==', email));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        const firestoreUserId = userDoc.id;
+        return firestoreUserId;
+      } else {
+        throw new Error('No matching user document found in Firestore.');
+      }
+    } catch (error) {
+      console.error('Error fetching Firestore userId by email:', error);
+      return null;
+    }
+  }
+
   const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
   const venueDropdown = document.getElementById('venue-dropdown');
   const venueInput = document.querySelector('input[placeholder="Venue"]');

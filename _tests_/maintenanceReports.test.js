@@ -562,46 +562,46 @@ test('Displays an alert if venue is not selected correctly', async () => {
 });
 
 
-// describe('Venue dropdown functionality', () => {
-//   let venueDropdown, venueInput;
+describe('Venue dropdown functionality', () => {
+  let venueDropdown, venueInput;
 
-//   beforeEach(() => {
-//     document.body.innerHTML = `
-//       <input id="venueInput" data-venue-id="" placeholder="Select a venue" />
-//       <div id="venue-dropdown" class="hidden"></div>
-//     `;
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <input id="venueInput" data-venue-id="" placeholder="Select a venue" />
+      <div id="venue-dropdown" class="hidden"></div>
+    `;
 
-//     venueDropdown = document.getElementById('venue-dropdown');
-//     venueInput = document.getElementById('venueInput');
-//   });
+    venueDropdown = document.getElementById('venue-dropdown');
+    venueInput = document.getElementById('venueInput');
+  });
 
-//   test('Populates venue dropdown with options and displays it', () => {
-//     const venues = [
-//       { id: '1', Name: 'Venue 1' },
-//       { id: '2', Name: 'Venue 2' },
-//     ];
+  test('Populates venue dropdown with options and displays it', () => {
+    const venues = [
+      { id: '1', Name: 'Venue 1' },
+      { id: '2', Name: 'Venue 2' },
+    ];
 
-//     updateVenueDropdown(venueDropdown, venues);
+    updateVenueDropdown(venueDropdown, venues);
 
-//     expect(venueDropdown.children.length).toBe(2); // Two options should be created
-//     expect(venueDropdown.children[0].textContent).toBe('Venue 1');
-//     expect(venueDropdown.children[1].textContent).toBe('Venue 2');
-//     expect(venueDropdown.classList.contains('hidden')).toBe(false); // Dropdown should be visible
-//   });
+    expect(venueDropdown.children.length).toBe(2); // Two options should be created
+    expect(venueDropdown.children[0].textContent).toBe('Venue 1');
+    expect(venueDropdown.children[1].textContent).toBe('Venue 2');
+    expect(venueDropdown.classList.contains('hidden')).toBe(false); // Dropdown should be visible
+  });
 
-//   test('Handles venue selection and populates input field', () => {
-//     const venues = [
-//       { id: '1', Name: 'Venue 1' },
-//       { id: '2', Name: 'Venue 2' },
-//     ];
+  test('Handles venue selection and populates input field', () => {
+    const venues = [
+      { id: '1', Name: 'Venue 1' },
+      { id: '2', Name: 'Venue 2' },
+    ];
 
-//     updateVenueDropdown(venueDropdown, venues);
-//     handleVenueSelection(venueDropdown, venueInput);
+    updateVenueDropdown(venueDropdown, venues);
+    handleVenueSelection(venueDropdown, venueInput);
 
-//     const secondOption = venueDropdown.children[1];
-//     fireEvent.click(secondOption);
+    const secondOption = venueDropdown.children[1];
+    fireEvent.click(secondOption);
 
-//     expect(venueInput.value).toBe('Venue 2');
-//     expect(venueInput.dataset.venueId).toBe('2');
-//   });
-// });
+    expect(venueInput.value).toBe('Venue 2');
+    expect(venueInput.dataset.venueId).toBe('2');
+  });
+});
