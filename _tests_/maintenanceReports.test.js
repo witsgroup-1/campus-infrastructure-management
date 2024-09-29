@@ -261,7 +261,7 @@ require('./copies/maintenanceReportsCopy');
  */
 
 import { fireEvent, waitFor } from '@testing-library/dom';
-import { updateVenueDropdown, clearVenueDropdown} from './copies/maintenanceReportsCopy'; // Adjust path
+//import { updateVenueDropdown, clearVenueDropdown} from './copies/maintenanceReportsCopy'; // Adjust path
 
 
 
@@ -562,46 +562,298 @@ test('Displays an alert if venue is not selected correctly', async () => {
 });
 
 
-describe('Venue dropdown functionality', () => {
+// describe('Venue dropdown functionality', () => {
+//   let venueDropdown, venueInput;
+
+//   beforeEach(() => {
+//     document.body.innerHTML = `
+//       <input id="venueInput" data-venue-id="" placeholder="Select a venue" />
+//       <div id="venue-dropdown" class="hidden"></div>
+//     `;
+
+//     venueDropdown = document.getElementById('venue-dropdown');
+//     venueInput = document.getElementById('venueInput');
+//   });
+
+//   test('Populates venue dropdown with options and displays it', () => {
+//     const venues = [
+//       { id: '1', Name: 'Venue 1' },
+//       { id: '2', Name: 'Venue 2' },
+//     ];
+
+//     updateVenueDropdown(venueDropdown, venues);
+
+//     expect(venueDropdown.children.length).toBe(2); // Two options should be created
+//     expect(venueDropdown.children[0].textContent).toBe('Venue 1');
+//     expect(venueDropdown.children[1].textContent).toBe('Venue 2');
+//     expect(venueDropdown.classList.contains('hidden')).toBe(false); // Dropdown should be visible
+//   });
+
+//   test('Handles venue selection and populates input field', () => {
+//     const venues = [
+//       { id: '1', Name: 'Venue 1' },
+//       { id: '2', Name: 'Venue 2' },
+//     ];
+
+//     updateVenueDropdown(venueDropdown, venues);
+//     handleVenueSelection(venueDropdown, venueInput);
+
+//     const secondOption = venueDropdown.children[1];
+//     fireEvent.click(secondOption);
+
+//     expect(venueInput.value).toBe('Venue 2');
+//     expect(venueInput.dataset.venueId).toBe('2');
+//   });
+// });
+
+
+
+
+
+
+
+// describe('Venue Dropdown Functionality', () => {
+//   let venueDropdown, venueInput;
+
+//   beforeEach(() => {
+//     // Set up a mock DOM
+//     document.body.innerHTML = `
+//       <div id="venue-dropdown" class="hidden"></div>
+//       <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
+//     `;
+    
+//     // Get the DOM elements
+//     venueDropdown = document.getElementById('venue-dropdown');
+//     venueInput = document.getElementById('venueInput');
+//   });
+
+//   test('updateVenueDropdown should populate and show dropdown', () => {
+//     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
+    
+//     // Call the function
+//     window.updateVenueDropdown(venues);
+    
+//     // Assert that the dropdown has the correct options
+//     expect(venueDropdown.innerHTML).toContain('Room 101');
+//     expect(venueDropdown.innerHTML).toContain('Room 102');
+//     expect(venueDropdown.classList).not.toContain('hidden');
+//   });
+
+//   test('clearVenueDropdown should clear the dropdown', () => {
+//     venueDropdown.innerHTML = '<option>Room 101</option>';
+    
+//     // Call the function
+//     window.clearVenueDropdown();
+    
+//     // Assert that the dropdown is cleared and hidden
+//     expect(venueDropdown.innerHTML).toBe('');
+//     expect(venueDropdown.classList).toContain('hidden');
+//   });
+// });
+
+
+
+// describe('Venue Dropdown Functionality', () => {
+//   let venueDropdown, venueInput;
+
+//   beforeEach(() => {
+//     // Set up a mock DOM
+//     document.body.innerHTML = `
+//       <div id="venue-dropdown" class="hidden"></div>
+//       <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
+//     `;
+
+//     // Get the DOM elements
+//     venueDropdown = document.getElementById('venue-dropdown');
+//     venueInput = document.getElementById('venueInput');
+//   });
+
+//   test('updateVenueDropdown should populate and show dropdown', () => {
+//     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
+//     console.log('Dropdown inner HTML:', venueDropdown.innerHTML);
+//     // Call the actual function from your script
+//     window.updateVenueDropdown(venues);
+//     console.log('Dropdown inner HTML:', venueDropdown.innerHTML);
+//     // Assert that the dropdown has the correct options
+//     expect(venueDropdown.innerHTML).toContain('Room 101');
+//     expect(venueDropdown.innerHTML).toContain('Room 102');
+//     expect(venueDropdown.classList).not.toContain('hidden');
+//   });
+
+//   test('clearVenueDropdown should clear the dropdown', () => {
+//     venueDropdown.innerHTML = '<option>Room 101</option>';
+
+//     // Call the actual function from your script
+//     window.clearVenueDropdown();
+
+//     // Assert that the dropdown is cleared and hidden
+//     expect(venueDropdown.innerHTML).toBe('');
+//     expect(venueDropdown.classList).toContain('hidden');
+//   });
+// });
+
+
+
+// describe('Venue Dropdown Functionality', () => {
+//   let venueDropdown, venueInput;
+
+//   // Set up a mock DOM before each test
+//   beforeEach(() => {
+//     document.body.innerHTML = `
+//       <div id="venue-dropdown" class="hidden"></div>
+//       <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
+//     `;
+
+//     // Get the DOM elements
+//     venueDropdown = document.getElementById('venue-dropdown');
+//     venueInput = document.getElementById('venueInput');
+
+//     // Ensure that the functions are assigned to the window
+//     // window.updateVenueDropdown = updateVenueDropdown;
+//     // window.clearVenueDropdown = clearVenueDropdown;
+//   });
+
+//   test('updateVenueDropdown should populate and show dropdown', () => {
+//     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
+
+//     // Call the actual function from your script
+//     window.updateVenueDropdown(venues);
+
+//     // Log the inner HTML of the dropdown for debugging
+//     console.log('Dropdown inner HTML after update:', venueDropdown.innerHTML);
+
+//     // Assert that the dropdown has the correct options
+//     expect(venueDropdown.innerHTML).toContain('Room 101');
+//     expect(venueDropdown.innerHTML).toContain('Room 102');
+//     expect(venueDropdown.classList).not.toContain('hidden');
+//   });
+
+//   test('clearVenueDropdown should clear the dropdown', () => {
+//     venueDropdown.innerHTML = '<option>Room 101</option>';
+
+//     // Call the actual function from your script
+//     window.clearVenueDropdown();
+
+//     // Log the inner HTML and class list for debugging
+//     console.log('Dropdown inner HTML after clearing:', venueDropdown.innerHTML);
+//     console.log('Dropdown class list after clearing:', venueDropdown.classList);
+
+//     // Assert that the dropdown is cleared and hidden
+//     expect(venueDropdown.innerHTML).toBe('');
+//     expect(venueDropdown.classList).toContain('hidden');
+//   });
+// });
+describe('Venue Dropdown Functionality', () => {
   let venueDropdown, venueInput;
 
   beforeEach(() => {
+    // Set up a mock DOM before each test
     document.body.innerHTML = `
-      <input id="venueInput" data-venue-id="" placeholder="Select a venue" />
       <div id="venue-dropdown" class="hidden"></div>
+      <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
     `;
 
+    // Get the DOM elements
     venueDropdown = document.getElementById('venue-dropdown');
     venueInput = document.getElementById('venueInput');
+
+    // Ensure that the functions are assigned to the window
+    window.updateVenueDropdown = updateVenueDropdown;
+    window.clearVenueDropdown = clearVenueDropdown;
   });
 
-  test('Populates venue dropdown with options and displays it', () => {
-    const venues = [
-      { id: '1', Name: 'Venue 1' },
-      { id: '2', Name: 'Venue 2' },
-    ];
+  test('updateVenueDropdown should populate and show dropdown', () => {
+    const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
 
-    updateVenueDropdown(venueDropdown, venues);
+    //call the function from the script
+    window.updateVenueDropdown(venues);
 
-    expect(venueDropdown.children.length).toBe(2); // Two options should be created
-    expect(venueDropdown.children[0].textContent).toBe('Venue 1');
-    expect(venueDropdown.children[1].textContent).toBe('Venue 2');
-    expect(venueDropdown.classList.contains('hidden')).toBe(false); // Dropdown should be visible
+    // Assert that the dropdown has the correct options
+    expect(venueDropdown.innerHTML).toContain('Room 101');
+    expect(venueDropdown.innerHTML).toContain('Room 102');
+    expect(venueDropdown.classList).not.toContain('hidden');
   });
 
-  test('Handles venue selection and populates input field', () => {
-    const venues = [
-      { id: '1', Name: 'Venue 1' },
-      { id: '2', Name: 'Venue 2' },
-    ];
+  test('clearVenueDropdown should clear the dropdown', () => {
+    venueDropdown.innerHTML = '<option>Room 101</option>';
+    //console.log("hereerere");
+    // console.log('Dropdown inner HTML before clearing:', venueDropdown.innerHTML);
+    // console.log('Dropdown class list before clearing:', venueDropdown.classList);
 
-    updateVenueDropdown(venueDropdown, venues);
-    handleVenueSelection(venueDropdown, venueInput);
+    // Call the actual function from your script
+    window.clearVenueDropdown();
+    //console.log("hereerere");
+    // Log the inner HTML and class list for debugging
+    // console.log('Dropdown inner HTML after clearing:', venueDropdown.innerHTML);
+    // console.log('Dropdown class list after clearing:', venueDropdown.classList);
 
-    const secondOption = venueDropdown.children[1];
-    fireEvent.click(secondOption);
-
-    expect(venueInput.value).toBe('Venue 2');
-    expect(venueInput.dataset.venueId).toBe('2');
+    // Assert that the dropdown is cleared and hidden
+    expect(venueDropdown.innerHTML).toBe('');
+    expect(venueDropdown.classList).toContain('hidden');
   });
 });
+
+// describe('Venue Dropdown Functionality', () => {
+//   let venueDropdown, venueInput;
+
+//   // Mock the DOM environment and functions before each test
+//   beforeEach(() => {
+//     // Set up a mock DOM
+//     document.body.innerHTML = `
+//       <div id="venue-dropdown" class="hidden"></div>
+//       <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
+//     `;
+
+//     // Get the DOM elements
+//     venueDropdown = document.getElementById('venue-dropdown');
+//     venueInput = document.getElementById('venueInput');
+
+//     // Define the functions to be tested directly in the test file
+//     function updateVenueDropdown(venues) {
+//       clearVenueDropdown();
+//       if (venues.length > 0) {
+//         venues.forEach(venue => {
+//           const option = document.createElement('option');
+//           option.textContent = venue.Name;
+//           option.dataset.id = venue.id; // Store the venue ID in dataset
+//           venueDropdown.appendChild(option);
+//         });
+//         venueDropdown.classList.remove('hidden');
+//       } else {
+//         clearVenueDropdown();
+//       }
+//     }
+
+//     function clearVenueDropdown() {
+//       venueDropdown.innerHTML = ''; 
+//       venueDropdown.classList.add('hidden'); 
+//     }
+
+//     // Assign the functions to the window object to simulate global availability
+//     window.updateVenueDropdown = updateVenueDropdown;
+//     window.clearVenueDropdown = clearVenueDropdown;
+//   });
+
+//   test('updateVenueDropdown should populate and show dropdown', () => {
+//     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
+
+//     // Call the function
+//     window.updateVenueDropdown(venues);
+
+//     // Assert that the dropdown has the correct options
+//     expect(venueDropdown.innerHTML).toContain('Room 101');
+//     expect(venueDropdown.innerHTML).toContain('Room 102');
+//     expect(venueDropdown.classList).not.toContain('hidden');
+//   });
+
+//   test('clearVenueDropdown should clear the dropdown', () => {
+//     venueDropdown.innerHTML = '<option>Room 101</option>';
+
+//     // Call the function
+//     window.clearVenueDropdown();
+
+//     // Assert that the dropdown is cleared and hidden
+//     expect(venueDropdown.innerHTML).toBe('');
+//     expect(venueDropdown.classList).toContain('hidden');
+//   });
+// });

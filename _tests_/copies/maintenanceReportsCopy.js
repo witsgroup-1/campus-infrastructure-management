@@ -190,21 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Function to update the dropdown with fetched venues
-  function updateVenueDropdown(venues) {
-    clearVenueDropdown();
-    if (venues.length > 0) {
-      venues.forEach(venue => {
-        const option = document.createElement('option');
-        option.textContent = venue.Name;
-        option.dataset.id = venue.id; // Store the venue ID in dataset
-        venueDropdown.appendChild(option);
-      });
-      venueDropdown.classList.remove('hidden');
-    } else {
-      clearVenueDropdown();
-    }
-  }
+
 
   // Handle selection from the dropdown
   venueDropdown.addEventListener('click', (event) => {
@@ -219,13 +205,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+    // Function to update the dropdown with fetched venues
+    function updateVenueDropdown(venues) {
+      const venueDropdown = document.getElementById('venue-dropdown'); 
+      clearVenueDropdown();
+      if (venues.length > 0) {
+        venues.forEach(venue => {
+          const option = document.createElement('option');
+          option.textContent = venue.Name;
+          option.dataset.id = venue.id; // Store the venue ID in dataset
+          venueDropdown.appendChild(option);
+        });
+        venueDropdown.classList.remove('hidden');
+      } else {
+        clearVenueDropdown();
+      }
+    }
+
+
   // Function to clear the dropdown
   function clearVenueDropdown() {
+    const venueDropdown = document.getElementById('venue-dropdown'); 
+   // console.log("Clearing dropdown...");
     venueDropdown.innerHTML = ''; 
     venueDropdown.classList.add('hidden'); 
   }
 
-  module.exports = {clearVenueDropdown, updateVenueDropdown};
-
+// Export functions if using modules
+if (typeof window !== 'undefined') {
+  window.updateVenueDropdown = updateVenueDropdown;
+  window.clearVenueDropdown = clearVenueDropdown;
+}
+//module.exports = {clearVenueDropdown, updateVenueDropdown};
 });
 
