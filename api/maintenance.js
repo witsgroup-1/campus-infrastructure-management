@@ -28,6 +28,35 @@ maintenanceRouter.get('/maintenanceRequests', async(req,res)=>{
 
 });
 
+// Get maintenance requests by venueId (roomId)
+maintenanceRouter.get('/maintenanceRequests/venue/:venueId', async (req, res) => {
+    const { venueId } = req.params;
+
+    try {
+        // Query the maintenanceRequests collection where the roomId equals the venueId
+        const snapshot = await getDocs(collection(db, 'maintenanceRequests'));
+        const maintenanceRequests = [];
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.roomId === venueId) {
+                maintenanceRequests.push({ id: doc.id, ...data });
+            }
+        });
+
+        // Return the filtered maintenance requests as JSON
+        if (maintenanceRequests.length > 0) {
+            res.status(200).json(maintenanceRequests);
+        } else {
+            res.status(404).send('No maintenance requests found for this venue');
+        }
+    } catch (error) {
+        console.error('Error getting maintenance requests by venueId:', error);
+        res.status(500).send('Error getting maintenance requests by venueId');
+    }
+});
+
+
 
 //get maintenance request by id
 maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {

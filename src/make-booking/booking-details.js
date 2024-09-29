@@ -19,6 +19,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
+
+
 // Function to toggle loading indicator
 function toggleLoading(show) {
     document.getElementById('loadingIndicator').classList.toggle('hidden', !show);
@@ -26,50 +29,86 @@ function toggleLoading(show) {
 }
 
 // Function to fetch a venue by its ID
+// Function to fetch a venue by its ID via API
 async function getVenueById(venueId) {
+   
+    const apiUrl = `http://localhost:3000/api/venues/${venueId}`;
+
     try {
-        const venueRef = doc(db, 'venues', venueId);
-        const venueDoc = await getDoc(venueRef);
-        return venueDoc.exists() ? venueDoc.data() : null;
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey 
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching venue: ${response.statusText}`);
+        }
+
+        const venueData = await response.json();
+        return venueData; // Venue data from API
     } catch (error) {
-        console.error('Error fetching venue:', error);
+        console.error('Error fetching venue from API:', error);
         return null;
     }
 }
 
 
-// Function to fetch bookings for a specific date
-// Function to fetch bookings for a specific date
+// Function to fetch bookings for a specific date via API
 async function fetchBookingsForDate(venueId, bookingDate) {
+    const apiUrl = `http://localhost:3000/api/venues/${venueId}/${bookingDate}`;
+
     try {
-        // Query the bookings for the specific date under the venue
-        const bookingsRef = collection(db, `venues/${venueId}/${bookingDate}`);
-        const bookingsSnapshot = await getDocs(bookingsRef);
-        return bookingsSnapshot.docs.map(doc => doc.data()); // Return booking data
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey // Include your API key if needed
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching bookings: ${response.statusText}`);
+        }
+
+        const bookings = await response.json();
+        return bookings; // Return the bookings data
     } catch (error) {
-        console.error('Error fetching bookings for date:', error);
+        console.error('Error fetching bookings from API:', error);
         return [];
     }
 }
 
 
-// Function to check if the requested time slot overlaps with any existing bookings
+function convertToDate(timestamp) {
+    if (timestamp.seconds) {
+        // Firestore timestamp format
+        return new Date(timestamp.seconds * 1000);
+    } else {
+        // Assume it's already a valid Date object or ISO string
+        return new Date(timestamp);
+    }
+}
+
 function hasTimeConflict(startTime, endTime, existingBookings) {
     for (const booking of existingBookings) {
-        const existingStart = booking.startTime.toDate();
-        const existingEnd = booking.endTime.toDate();
+        const existingStart = convertToDate(booking.startTime);
+        const existingEnd = convertToDate(booking.endTime);
 
         // Check for any overlap
         if (
-            (startTime >= existingStart && startTime < existingEnd) || // Start time is within an existing booking
-            (endTime > existingStart && endTime <= existingEnd) ||    // End time is within an existing booking
-            (startTime <= existingStart && endTime >= existingEnd)     // Booking completely overlaps
+            (startTime >= existingStart && startTime < existingEnd) ||
+            (endTime > existingStart && endTime <= existingEnd) ||
+            (startTime <= existingStart && endTime >= existingEnd)
         ) {
-            return true;  // Conflict found
+            return true;
         }
     }
-    return false;  // No conflict
+    return false;
 }
+
 
 
 // Function to submit the booking
@@ -79,9 +118,13 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         // Fetch existing bookings for the selected date
         const existingBookings = await fetchBookingsForDate(venueId, bookingDate);
 
+        console.log('bookingData: being posted to users', bookingData);
+        console.log('bookingData.start_time:', bookingData.start_time);
+        console.log('bookingData.end_time:', bookingData.end_time);
+
         // Check for time conflicts
-        const startTime = bookingData.startTime.toDate();
-        const endTime = bookingData.endTime.toDate();
+        const startTime = bookingData.start_time.toDate();
+        const endTime = bookingData.end_time.toDate();
 
         if (hasTimeConflict(startTime, endTime, existingBookings)) {
             alert(`The venue is already booked between ${startTime.toLocaleTimeString()} and ${endTime.toLocaleTimeString()}. Please choose a different time.`);
@@ -90,46 +133,74 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         }
 
         // Proceed with booking if no conflicts
-        await addDoc(collection(db, 'users', userId, 'bookings'), bookingData);
-        await addDoc(collection(db, `venues/${venueId}/${bookingDate}`), venueBookingData);
-
-        // Prepare the booking object for the API
-       
-        // Your API key
-        const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
-
-        // Make the POST request to the API endpoint
-        
-        const response = await fetch('http://localhost:3000/api/Bookings', {
+        const userBookingResponse = await fetch(`http://localhost:3000/api/users/${userId}/bookings`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': apiKey 
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey 
+            },
+            body: JSON.stringify(bookingData)
+        });
+        
+        if (!userBookingResponse.ok) {
+            // Handle error response from the API
+            const errorText = await userBookingResponse.text();
+            console.error('Error posting booking to API:', userBookingResponse.status, errorText);
+            alert('Failed to post booking to the server API.');
+            toggleLoading(false);
+            return;
+        }
+
+        // Post venue booking to the venues/venueId/bookingDate API
+        const apiUrl = `http://localhost:3000/api/venues/${venueId}/${bookingDate}`;
+        const venueResponse = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey 
+            },
+            body: JSON.stringify(venueBookingData)
+        });
+
+        if (!venueResponse.ok) {
+            const errorText = await venueResponse.text();
+            console.error('Error adding booking to venues:', venueResponse.status, errorText);
+            alert('Failed to add booking to venue.');
+            toggleLoading(false);
+            return;
+        }
+
+        const venueResponseData = await venueResponse.json();
+        console.log('Venue booking added successfully:', venueResponseData);
+
+        // Post venue booking data collection (if necessary)
+        const dataCollectionResponse = await fetch('http://localhost:3000/api/Bookings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey 
             },
             body: JSON.stringify(bookingDataCollection)
         });
-        
-        if (!response.ok) {
-            // Handle error response from the API
-            const errorText = await response.text();
-            console.error('Error posting booking to API:', response.status, errorText);
-            alert('Failed to post booking to the server API.');
+
+        if (!dataCollectionResponse.ok) {
+            const errorText = await dataCollectionResponse.text();
+            console.error('Error posting venue booking to API:', dataCollectionResponse.status, errorText);
+            alert('Failed to post venue booking to the server API.');
         } else {
-            const responseData = await response.json();
+            const responseData = await dataCollectionResponse.json();
             console.log('Booking posted to API:', responseData);
             alert(`Booking confirmed for ${venueName} at ${startTime.toLocaleTimeString()}.`);
             clearForm();
         }
-        
+
     } catch (error) {
         console.error('Error posting booking:', error);
         alert('An unexpected error occurred while booking.');
     } finally {
-        toggleLoading(false);
+        toggleLoading(false); // Ensure loading is stopped
     }
 }
-
-
 
 
 // Function to clear the form
@@ -191,8 +262,8 @@ async function updateAvailableTimeSlots(venueId, bookingDate) {
     
     // Extract booked start and end times
     const bookedTimes = bookedSlots.map(booking => {
-        const startTime = booking.startTime.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const endTime = booking.endTime.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const startTime = new Date(booking.startTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const endTime = new Date(booking.endTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         return `${startTime} - ${endTime}`;
     });
 
@@ -217,6 +288,7 @@ async function updateAvailableTimeSlots(venueId, bookingDate) {
         timeSlotSelect.appendChild(noSlotsOption);
     }
 }
+
 
 
 // Initialize booking functionality
@@ -272,11 +344,10 @@ onAuthStateChanged(auth, async (user) => {
                     // If the time slot is available (filtered by updateAvailableTimeSlots)
                     if (timeSlot) {
                         const bookingData = {
-                            venueId: bookingId,
-                            startTime: startTimestamp,
-                            endTime: endTimestamp,
-                            purpose: bookingPurpose,
-                            createdAt: Timestamp.now()
+                            "venue_id": bookingId,
+                            "start_time": startTimestamp,
+                            "end_time": endTimestamp,
+                            "purpose": bookingPurpose
                         };
 
                         const venueBookingData = {
