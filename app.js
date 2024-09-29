@@ -10,8 +10,10 @@ const scheduleRouter = require("./api/schedule"); // Import the scheduleRouter
 const usersRouter = require('./api/users');
 const bookingsRouter = require('./api/bookings');
 const venuesRouter = require('./api/venues');
+const securityRouter = require('./api/security');
 
 const notificationsRouter = require('./api/notification');
+const apiLogsRouter = require('./api/apiLogs'); // Import the apiLogsRouter
 
 //middleware to require a API key
 const verifyApiKey = require('./middleware/verifyApiKey');
@@ -34,6 +36,8 @@ app.use("/api", usersRouter);
 app.use("/api", bookingsRouter);
 app.use("/api", venuesRouter);
 app.use("/api", notificationsRouter);
+app.use("/api", apiLogsRouter);
+app.use("/api", securityRouter);
 
 
 

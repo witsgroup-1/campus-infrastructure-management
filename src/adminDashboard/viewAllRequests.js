@@ -24,7 +24,10 @@ async function getWhitelistRequests() {
 }
 
 async function fetchRequests() {
-    const requests = await getWhitelistRequests(); // Replace with your function to fetch requests
+    const loader = document.getElementById('loader');
+    loader.style.display = "block";
+    const requests = await getWhitelistRequests();
+    loader.style.display = "none";
 
     const requestsContainer = document.getElementById('requestsContainer');
 
@@ -37,7 +40,7 @@ async function fetchRequests() {
 
         requestBox.innerHTML = `
             <p><strong>Name:</strong> ${request.name} ${request.surname}</p>
-            <p><strong>Email:</strong> ${request.email}</p>
+            <p><strong>Email:</strong> ${request.emailInput}</p>
             <p><strong>Status:</strong> ${request.status}</p>
             <div class="flex justify-end mt-4">
                 <button class="bg-green-500 text-white px-4 py-2 rounded-lg mr-2" onclick="acceptRequest('${request.id}')">Accept</button>

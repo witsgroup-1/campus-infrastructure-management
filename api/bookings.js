@@ -147,6 +147,57 @@ bookingsRouter.put('/bookings/:bookingId', async (req, res) => {
     }
 });
 
+// PUT request for updating user bookings
+bookingsRouter.put('/users/:userId/bookings/:purpose', async (req, res) => {
+    const { userId, purpose } = req.params;
+    const updates = req.body;
+
+    try {
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
+
+        const bookingDocRef = doc(db, 'Bookings', `${userId}_${purpose}`); // Assuming a composite ID for bookings
+        const bookingDoc = await getDoc(bookingDocRef);
+
+        if (!(bookingDoc.exists())) {
+            return res.status(404).send('User booking not found');
+        }
+
+        await updateDoc(bookingDocRef, updates);
+        res.status(200).json({ bookingId: `${userId}_${purpose}`, message: 'User booking updated successfully.' });
+    } catch (error) {
+        console.error('Error updating user booking:', error);
+        res.status(500).send('Error updating user booking');
+    }
+});
+
+// PUT request for updating venue bookings
+bookingsRouter.put('/venues/:venueId/date/bookings/:purpose', async (req, res) => {
+    const { venueId, purpose } = req.params;
+    const updates = req.body;
+
+    try {
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
+
+        const bookingDocRef = doc(db, 'Bookings', `${venueId}_${purpose}`); // Assuming a composite ID for bookings
+        const bookingDoc = await getDoc(bookingDocRef);
+
+        if (!(bookingDoc.exists())) {
+            return res.status(404).send('Venue booking not found');
+        }
+
+        await updateDoc(bookingDocRef, updates);
+        res.status(200).json({ bookingId: `${venueId}_${purpose}`, message: 'Venue booking updated successfully.' });
+    } catch (error) {
+        console.error('Error updating venue booking:', error);
+        res.status(500).send('Error updating venue booking');
+    }
+});
+
+
 
 bookingsRouter.delete('/bookings/:bookingId', async (req, res) => {
     const { bookingId } = req.params;
