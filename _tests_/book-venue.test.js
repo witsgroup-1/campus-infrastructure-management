@@ -6,11 +6,14 @@ fetchMock.enableMocks();
 beforeEach(() => {
     fetchMock.resetMocks();
 
-    // Mock DOM elements
+    // Mock DOM elements including #roomFilter, #searchInput, and #bookingsContainer
     document.body.innerHTML = `
-        <select id="roomFilter"></select>
-        <input id="searchInput" />
-        <div id="bookingsContainer"></div>
+        <select id="roomFilter">
+            <option value="Lecture Hall">Lecture Hall</option>
+            <option value="Tutorial Room">Tutorial Room</option>
+        </select>
+        <input id="searchInput" value="lecture" /> <!-- Mock search query -->
+        <div id="bookingsContainer"></div> <!-- Mock container for venue rendering -->
     `;
 
     // Mock Firebase Auth
