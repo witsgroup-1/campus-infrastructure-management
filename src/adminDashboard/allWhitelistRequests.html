@@ -19,6 +19,18 @@
         .content {
             flex: 1;
         }
+        .loader {
+            border: 8px solid white; /* Light grey */
+            border-top: 8px solid var(--witsBlue); /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
     </style>
 </head>
 <body class="bg-white text-gray-800">
@@ -31,6 +43,8 @@
             </svg>
         </button>
     </header>
+
+    <div class="loader" id="loader"></div>
 
     <section id="requestsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
 
