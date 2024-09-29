@@ -231,12 +231,12 @@ const showModal = (message) => {
     `;
     document.body.appendChild(modal);
     
-    // Close modal functionality
+   
     modal.querySelector('.close').onclick = function() {
         modal.style.display = "none";
-        document.body.removeChild(modal); // Remove modal from DOM
+        document.body.removeChild(modal); 
     };
     
-    modal.style.display = "block"; // Show modal
+    modal.style.display = "block"; 
 };
 
