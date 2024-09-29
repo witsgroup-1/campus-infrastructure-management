@@ -1,6 +1,9 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { setPersistence,  browserLocalPersistence, getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { FirebaseConfig } from '../FirebaseConfig.js';
 
-
+const firebaseConfig = new FirebaseConfig(); 
+const db = firebaseConfig.getFirestoreInstance();
 const auth = getAuth();
 
 const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
