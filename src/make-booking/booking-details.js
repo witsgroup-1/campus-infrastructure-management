@@ -32,7 +32,7 @@ function toggleLoading(show) {
 // Function to fetch a venue by its ID via API
 async function getVenueById(venueId) {
    
-    const apiUrl = `http://localhost:3000/api/venues/${venueId}`;
+    const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}`;
 
     try {
         const response = await fetch(apiUrl, {
@@ -58,7 +58,7 @@ async function getVenueById(venueId) {
 
 // Function to fetch bookings for a specific date via API
 async function fetchBookingsForDate(venueId, bookingDate) {
-    const apiUrl = `http://localhost:3000/api/venues/${venueId}/${bookingDate}`;
+    const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}/${bookingDate}`;
 
     try {
         const response = await fetch(apiUrl, {
@@ -133,7 +133,7 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         }
 
         // Proceed with booking if no conflicts
-        const userBookingResponse = await fetch(`http://localhost:3000/api/users/${userId}/bookings`, {
+        const userBookingResponse = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         }
 
         // Post venue booking to the venues/venueId/bookingDate API
-        const apiUrl = `http://localhost:3000/api/venues/${venueId}/${bookingDate}`;
+        const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}/${bookingDate}`;
         const venueResponse = await fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -174,7 +174,7 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         console.log('Venue booking added successfully:', venueResponseData);
 
         // Post venue booking data collection (if necessary)
-        const dataCollectionResponse = await fetch('http://localhost:3000/api/Bookings', {
+        const dataCollectionResponse = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
