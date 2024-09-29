@@ -83,17 +83,34 @@ bookingsRouter.get('/Bookings/date/:date', async (req, res) => {
 // Create new booking
 bookingsRouter.post('/Bookings', async (req, res) => {
     try {
+        console.log('Received booking data:', req.body);
+
+        // Convert date and time strings to Date objects
+        const startDateTime = new Date(`${req.body.date}T${req.body.start_time}:00`);
+        const endDateTime = new Date(`${req.body.date}T${req.body.end_time}:00`);
+
+        // Convert Date objects to Firestore Timestamps
+        const startTimestamp = Timestamp.fromDate(startDateTime);
+        const endTimestamp = Timestamp.fromDate(endDateTime);
 
         const booking = {
             status: req.body.status,
-            date: req.body.date,
-            end_time: req.body.end_time,
+            date: Timestamp.fromDate(new Date(req.body.date)), // Store date as Timestamp
+            start_time: startTimestamp,
+            end_time: endTimestamp,
             purpose: req.body.purpose,
-            roomId: req.body.roomId,
-            start_time: req.body.start_time,
             userId: req.body.userId,
             venueId: req.body.venueId,
         };
+
+        // Validate that none of the fields are undefined
+        for (const [key, value] of Object.entries(booking)) {
+            if (value === undefined) {
+                console.error(`Error: Missing value for ${key}`);
+                return res.status(400).json({ error: `Missing value for ${key}` });
+            }
+        }
+
         const docRef = await addDoc(collection(db, 'Bookings'), booking);
         res.status(201).json({ id: docRef.id });
     } catch (error) {

@@ -62,7 +62,6 @@ async function fetchAndRenderBookings(userData) {
     }
 }
 
-// Function to filter and render venues based on user role and access
 function renderVenues(venues, userData) {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing venues
@@ -71,6 +70,12 @@ function renderVenues(venues, userData) {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
     const allowedCategories = getAllowedCategories(userData);
+
+    // Check if the user is filtering by a category they don't have access to
+    if (categoryFilter && !allowedCategories.includes(categoryFilter)) {
+        container.innerHTML = `<p class="text-center text-red-500">You don't have the privilege to book ${categoryFilter}s.</p>`;
+        return; // Stop further rendering
+    }
 
     // Filter venues based on user access, category filter, and search query
     const filteredVenues = venues.filter(venue => {
@@ -121,6 +126,7 @@ function renderVenues(venues, userData) {
         container.appendChild(venueBox);
     });
 }
+
 
 
 

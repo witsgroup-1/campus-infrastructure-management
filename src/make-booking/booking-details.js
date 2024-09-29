@@ -39,11 +39,13 @@ async function getVenueById(venueId) {
 
 
 // Function to fetch bookings for a specific date
+// Function to fetch bookings for a specific date
 async function fetchBookingsForDate(venueId, bookingDate) {
     try {
-        const bookingsRef = collection(db, 'venues', venueId, bookingDate);
+        // Query the bookings for the specific date under the venue
+        const bookingsRef = collection(db, `venues/${venueId}/${bookingDate}`);
         const bookingsSnapshot = await getDocs(bookingsRef);
-        return bookingsSnapshot.docs.map(doc => doc.data());
+        return bookingsSnapshot.docs.map(doc => doc.data()); // Return booking data
     } catch (error) {
         console.error('Error fetching bookings for date:', error);
         return [];
@@ -51,20 +53,83 @@ async function fetchBookingsForDate(venueId, bookingDate) {
 }
 
 
+// Function to check if the requested time slot overlaps with any existing bookings
+function hasTimeConflict(startTime, endTime, existingBookings) {
+    for (const booking of existingBookings) {
+        const existingStart = booking.startTime.toDate();
+        const existingEnd = booking.endTime.toDate();
+
+        // Check for any overlap
+        if (
+            (startTime >= existingStart && startTime < existingEnd) || // Start time is within an existing booking
+            (endTime > existingStart && endTime <= existingEnd) ||    // End time is within an existing booking
+            (startTime <= existingStart && endTime >= existingEnd)     // Booking completely overlaps
+        ) {
+            return true;  // Conflict found
+        }
+    }
+    return false;  // No conflict
+}
+
+
 // Function to submit the booking
-async function submitBooking(userId, bookingData, venueBookingData, venueId, bookingDate, venueName) {
+async function submitBooking(userId, bookingData, venueBookingData, venueId, bookingDate, venueName, bookingDataCollection) {
     toggleLoading(true);
     try {
+        // Fetch existing bookings for the selected date
+        const existingBookings = await fetchBookingsForDate(venueId, bookingDate);
+
+        // Check for time conflicts
+        const startTime = bookingData.startTime.toDate();
+        const endTime = bookingData.endTime.toDate();
+
+        if (hasTimeConflict(startTime, endTime, existingBookings)) {
+            alert(`The venue is already booked between ${startTime.toLocaleTimeString()} and ${endTime.toLocaleTimeString()}. Please choose a different time.`);
+            toggleLoading(false);
+            return;  // Stop the booking process if there is a conflict
+        }
+
+        // Proceed with booking if no conflicts
         await addDoc(collection(db, 'users', userId, 'bookings'), bookingData);
-        await addDoc(collection(db, 'venues', venueId, bookingDate), venueBookingData);
-        alert(`Booking confirmed for ${venueName} at ${new Date(bookingData.startTime.seconds * 1000)}.`);
-        clearForm();
+        await addDoc(collection(db, `venues/${venueId}/${bookingDate}`), venueBookingData);
+
+        // Prepare the booking object for the API
+       
+        // Your API key
+        const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
+
+        // Make the POST request to the API endpoint
+        
+        const response = await fetch('http://localhost:3000/api/Bookings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey 
+            },
+            body: JSON.stringify(bookingDataCollection)
+        });
+        
+        if (!response.ok) {
+            // Handle error response from the API
+            const errorText = await response.text();
+            console.error('Error posting booking to API:', response.status, errorText);
+            alert('Failed to post booking to the server API.');
+        } else {
+            const responseData = await response.json();
+            console.log('Booking posted to API:', responseData);
+            alert(`Booking confirmed for ${venueName} at ${startTime.toLocaleTimeString()}.`);
+            clearForm();
+        }
+        
     } catch (error) {
         console.error('Error posting booking:', error);
+        alert('An unexpected error occurred while booking.');
     } finally {
         toggleLoading(false);
     }
 }
+
+
 
 
 // Function to clear the form
@@ -165,7 +230,7 @@ window.onload = function () {
     }
 
     // Fetch venue details from Firestore using the venue ID
-    getVenueById(bookingId).then(venueData => {
+getVenueById(bookingId).then(venueData => {
         if (!venueData) {
             alert("No venue data found.");
             return;
@@ -183,7 +248,7 @@ window.onload = function () {
         });
 
         // Track the user's authentication state
-        onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userId = user.uid;
                 console.log(`Logged in as: ${user.email}, User ID: ${userId}`);
@@ -222,7 +287,22 @@ window.onload = function () {
                             createdAt: Timestamp.now()
                         };
 
-                        await submitBooking(userId, bookingData, venueBookingData, bookingId, bookingDate, venueData.Name);
+                        const bookingDataCollection = {
+                           
+                            "status": "approved",
+                            "date": bookingDate,
+                            "start_time": startTime,
+                            "end_time": endTime,
+                            "purpose": bookingPurpose,
+                            "userId": userId,
+                            "venueId": bookingId
+                            
+                        };
+                      
+                        console.log('The one Im posting to bookings:', bookingDataCollection );
+
+
+                        await submitBooking(userId, bookingData, venueBookingData, bookingId, bookingDate, venueData.Name, bookingDataCollection);
                     } else {
                         alert("Venue booked for that time, sorry.");
                     }
