@@ -1,3 +1,8 @@
+import { setPersistence,  browserLocalPersistence, getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+
+const auth = getAuth();
+
 const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
 const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
 
@@ -156,53 +161,69 @@ async function fetchData(endpoint) {
         fetchBookings();
         //fetchSchedules();
 
-document.addEventListener('DOMContentLoaded', () => {
-    const menuIcon = document.getElementById('menu-icon');
-    const sidebar = document.getElementById('sidebar');
-    const closeBtn = document.getElementById('close-btn');
-    const userEmail = localStorage.getItem('userEmail');
-    const userId= localStorage.getItem('userId');
-
-    if (userEmail) {
-        console.log('User email:', userEmail);
-        console.log("userId:",userId);
-        // Use the email (e.g., display it, use it in queries, etc.)
-        document.getElementById('userEmailDisplay').textContent = `Admin logged in as: ${userEmail}`;
-    } else {
-        console.log('No email found');
-    }
-
-    const getSidebarWidth = () => {
-        const screenWidth = window.innerWidth;
-        if (screenWidth >= 1024) {
-            return '20%';
-        } else if (screenWidth >= 768) {
-            return '33%';
-        } else {
-            return '50%';
-        }
-    };
-
-    sidebar.style.width = '0';
-
-    menuIcon.addEventListener('click', () => {
-        if (sidebar.style.width === '0px' || sidebar.style.width === '0') {
-            sidebar.style.width = getSidebarWidth();
-        } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuIcon = document.getElementById('menu-icon');
+            const sidebar = document.getElementById('sidebar');
+            const closeBtn = document.getElementById('close-btn');
+        
+            // Initialize Firebase Auth
+            const auth = getAuth();
+        
+            // Check Firebase Authentication state
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in, get user email and userId
+                    const userEmail = user.email;
+                    const userId = user.uid;
+        
+                    console.log('User email:', userEmail);
+                    console.log("UserId:", userId);
+        
+                    // Display the user email on the page
+                    document.getElementById('userEmailDisplay').textContent = `Admin logged in as: ${userEmail}`;
+                } else {
+                  
+                    console.log('No user is signed in.');
+                    window.location.href = '../login/login.html'; 
+                }
+            });
+        
+            const getSidebarWidth = () => {
+                const screenWidth = window.innerWidth;
+                if (screenWidth >= 1024) {
+                    return '20%';
+                } else if (screenWidth >= 768) {
+                    return '33%';
+                } else {
+                    return '50%';
+                }
+            };
+        
             sidebar.style.width = '0';
-        }
+        
+            menuIcon.addEventListener('click', () => {
+                if (sidebar.style.width === '0px' || sidebar.style.width === '0') {
+                    sidebar.style.width = getSidebarWidth();
+                } else {
+                    sidebar.style.width = '0';
+                }
+            });
+        
+            closeBtn.addEventListener('click', () => {
+                sidebar.style.width = '0';
+            });
+        
+            window.addEventListener('resize', () => {
+                if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
+                    sidebar.style.width = getSidebarWidth();
+                }
+            });
+ });
+
+ setPersistence(auth, browserLocalPersistence)
+    .then(() => {
+        console.log('Persistence set to LOCAL');
+    })
+    .catch((error) => {
+        console.error("Error setting persistence:", error);
     });
-
-    closeBtn.addEventListener('click', () => {
-        sidebar.style.width = '0';
-    });
-
-    window.addEventListener('resize', () => {
-        if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
-            sidebar.style.width = getSidebarWidth();
-        }
-    });
-
-
-
-});

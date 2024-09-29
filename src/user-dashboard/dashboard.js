@@ -13,10 +13,8 @@ const firebaseConfig = {
     measurementId: "G-Y95YE5ZDRY"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Get Firestore and Auth references
 const db = getFirestore(app);
 const auth = getAuth(app);
 
@@ -46,7 +44,7 @@ const getUserDocumentByEmail = async (email) => {
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const email = user.email;
-
+        
         // Store email in localStorage 
         localStorage.setItem('userEmail', email);
 
