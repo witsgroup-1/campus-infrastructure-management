@@ -1,5 +1,8 @@
+
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -13,12 +16,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     console.log("User is signed in with id:", user.email);
-    
   } else {
     console.log("No user is signed in.");
   }
@@ -26,13 +28,11 @@ onAuthStateChanged(auth, (user) => {
 
 async function getFirestoreUserIdByEmail(email) {
   try {
-    
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      
       const userDoc = querySnapshot.docs[0];
       const firestoreUserId = userDoc.id;
       return firestoreUserId;
@@ -45,150 +45,121 @@ async function getFirestoreUserIdByEmail(email) {
   }
 }
 
-const venueInput = document.querySelector('input[placeholder="Venue"]'); // Ensure it's the right input field
+const venueInput = document.querySelector('input[placeholder="Venue"]'); 
+
 
 document.addEventListener("DOMContentLoaded", () => {
-    //add the event listener for the submit button
-    document.querySelector("form").addEventListener("submit", async (e) => {
-      e.preventDefault(); //prevent the default form submission
+  const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
+  const venueDropdown = document.getElementById('venue-dropdown');
+  const venueInput = document.querySelector('input[placeholder="Venue"]');
 
-      const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
-      //collect the data that we need from the form
-      //const reportType = document.querySelector('select[placeholder="Report Type"]').value;
-      const reportType = document.querySelector('#reportType').value;
-      const description = document.querySelector('textarea[placeholder="Enter description"]').value;
-      // const venueId = document.querySelector('input[placeholder="Venue"]').dataset.venueId; // Get venue ID from dataset
-      // const venueName = document.querySelector('input[placeholder="Venue"]').value;
-      const venueId = venueInput.dataset.venueId; // Get the selected venue ID from the dataset
-      const venueName = venueInput.value; // Get the venue name from the input field
-  
-      const userId = getFirestoreUserIdByEmail(user.email);
-      //generate the timestamp
-      const timestampNow = new Date().toISOString();
-      //console.log(timestampNow);
-      
-      //data to be sent to the API
-      const requestData = {
-        assignedTo: 'none', // Default assigned value
-        createdAt: timestampNow, // Generated timestamp
-        description: description,
-        issueType: reportType,
-        roomId: venueId, // Use the selected venue ID
-        roomName: venueName,
-        status: 'Scheduled', //status starts as Scheduled 
-        timestamp: timestampNow, //default status
-        userId: '123' //we will replace with the user data
-      };
-  
-      try {
-        //Call API to create new maintenance requests
-        //https://campus-infrastructure-management.azurewebsites.net
-        //http://localhost:3000
-        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey 
-          },
-          body: JSON.stringify(requestData)
-        });
-  
-        if (!response.ok) {
-          throw new Error('Failed to submit request');
-        }
+  // Add event listener for the submit button
+  document.querySelector("form").addEventListener("submit", async (e) => {
+    e.preventDefault(); // Prevent default form submission
 
-        //alert('Maintenance request created successfully!');
-        console.log('Maintenance request created successfully!');
+    const reportType = document.querySelector('#reportType').value;
+    const description = document.querySelector('textarea[placeholder="Enter description"]').value;
+    const venueId = venueInput.dataset.venueId; // Get the selected venue ID from dataset
+    const venueName = venueInput.value; // Get venue name from input field
 
-        document.querySelector("form").reset();
-        //document.querySelector("form").reset();
-        console.log(document.querySelector("#reportType").value); // Should log an empty string
+    // Check if a valid venue is selected
+    if (!venueId || venueName === '') {
+      alert('Please select a valid venue from the dropdown.');
+      venueInput.value = ''; // Clear the input field
+      venueInput.dataset.venueId = '';
+      clearVenueDropdown(); // Clear and hide dropdown
+      return;
+    }
 
+    const requestData = {
+      assignedTo: 'none',
+      createdAt: new Date().toISOString(),
+      description: description,
+      issueType: reportType,
+      roomId: venueId,
+      roomName: venueName,
+      status: 'Scheduled',
+      timestamp: new Date().toISOString(),
+      userId: user.email // Update with the actual user email
+    };
 
-      } catch (error) {
-        console.error(error);
-        //alert('There was an error creating the maintenance request');
-        console.error('There was an error creating the maintenance request');
-      }
-    });
+    try {
+      const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      if (!response.ok) throw new Error('Failed to submit request');
+
+      console.log('Maintenance request created successfully!');
+      document.querySelector("form").reset();
+    } catch (error) {
+      console.error('There was an error creating the maintenance request:', error);
+    }
   });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
-    //const venueInput = document.querySelector('input[placeholder="Venue"]');
-    //const suggestionsList = document.getElementById('suggestionsList');
-    const venueDropdown = document.getElementById('venue-dropdown');
-
-venueInput.addEventListener('input', async (event) => {
+  // Function to handle venue input changes and fetch matching venues
+  venueInput.addEventListener('input', async (event) => {
     const query = event.target.value;
 
     if (query.length >= 2) {
-        try {
-            const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey,
-                },
-            });
+      try {
+        const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+          },
+        });
 
-            if (!response.ok) throw new Error('Failed to fetch venues');
-            const venues = await response.json();
-            updateVenueDropdown(venues);
-        } catch (error) {
-            //console.error('Error fetching venues:', error);
-            clearVenueDropdown();
-        }
-    } else {
+        if (!response.ok) throw new Error('Failed to fetch venues');
+        const venues = await response.json();
+        updateVenueDropdown(venues);
+      } catch (error) {
         clearVenueDropdown();
+        //console.error('Error fetching venues:', error);
+      }
+    } else {
+      clearVenueDropdown();
     }
-});
+  });
 
-
-function updateVenueDropdown(venues) {
-  clearVenueDropdown(); // Clear previous options
-  
-  const defaultOption = document.createElement('option');
-  defaultOption.textContent = 'Select a venue...';
-  defaultOption.disabled = true;
-  defaultOption.selected = true;
-  venueDropdown.appendChild(defaultOption); // Add default option
-
-  if (venues.length > 0) {
+  // Function to update the dropdown with fetched venues
+  function updateVenueDropdown(venues) {
+    clearVenueDropdown();
+    if (venues.length > 0) {
       venues.forEach(venue => {
-          const option = document.createElement('option');
-          option.textContent = venue.Name; // Set the option's text to the venue name
-          option.setAttribute('id', venue.id); // Store the venue ID as a data attribute
-          venueDropdown.appendChild(option);
+        const option = document.createElement('option');
+        option.textContent = venue.Name;
+        option.dataset.id = venue.id; // Store the venue ID in dataset
+        venueDropdown.appendChild(option);
       });
-      venueDropdown.classList.remove('hidden'); // Show the dropdown
-  } else {
-      clearVenueDropdown(); // Hide if no results
+      venueDropdown.classList.remove('hidden');
+    } else {
+      clearVenueDropdown();
+    }
   }
-}
 
-venueDropdown.addEventListener('change', () => {
-  // Get the selected option
-  const selectedOption = venueDropdown.options[venueDropdown.selectedIndex];
+  // Handle selection from the dropdown
+  venueDropdown.addEventListener('click', (event) => {
+    if (event.target.tagName === 'OPTION') {
+      const selectedOption = event.target;
+      const venueId = selectedOption.dataset.id;
+      const venueName = selectedOption.textContent;
 
-  // get id and name
-  const venueId = selectedOption.getAttribute('id');  
-  const venueName = selectedOption.textContent;  
-  // Set the input field to display the venue's name
-  venueInput.value = venueName;
-  // Store the venue id
-  venueInput.dataset.venueId = venueId;
+      venueInput.value = venueName; // Update input field with selected name
+      venueInput.dataset.venueId = venueId; // Store the selected venue ID
+      clearVenueDropdown(); // Clear dropdown after selection
+    }
+  });
 
-});
-
-
-function clearVenueDropdown() {
-    venueDropdown.innerHTML = ''; // Clear dropdown options
+  // Function to clear the dropdown
+  function clearVenueDropdown() {
+    venueDropdown.innerHTML = ''; // Clear dropdown content
     venueDropdown.classList.add('hidden'); // Hide dropdown
-}
-
-venueDropdown.addEventListener('change', () => {
-    venueInput.value = venueDropdown.value; // Set input value to selected option
-    clearVenueDropdown(); // Hide dropdown after selection
-});
+  }
 });
