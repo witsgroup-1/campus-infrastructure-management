@@ -36,13 +36,11 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        .menu-item h3 {
+        .menu-item h4 {
             margin: 0 0 10px 0;
         }
-        .ingredients {
-            color: #555;
-        }
         .reserve-button {
+            display: block;
             background-color: #003B5C;
             color: #fff;
             border: none;
@@ -51,89 +49,9 @@
             cursor: pointer;
             font-size: 16px;
             text-align: center;
+            margin: 20px auto;
         }
         .reserve-button:hover {
-            background-color: #0056b3;
-        }
-        /* Reservation Form Styles */
-        .reservation-form {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
-        .reservation-form h2 {
-            margin-top: 0;
-        }
-        .reservation-form label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        .reservation-form input, .reservation-form select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .reservation-form button {
-            background-color: #003B5C;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .reservation-form button:hover {
-            background-color: #0056b3;
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-        /* Popup Styles */
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .popup h2 {
-            margin-top: 0;
-            font-size: 18px;
-        }
-        .popup button {
-            background-color: #003B5C;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .popup button:hover {
             background-color: #0056b3;
         }
     </style>
@@ -143,14 +61,16 @@
         <h1>Today's Menu</h1>
         <!-- Menu will be populated here by JavaScript -->
         <div id="menuList"></div>
+
+        <!-- Button to open reservation form -->
+        <button class="reserve-button" onclick="showReservationForm()">Make Reservation with Campus Dining</button>
     </div>
 
     <!-- Reservation Form -->
-    <div id="reservationOverlay" class="overlay"></div>
+  <!--  <div id="reservationOverlay" class="overlay"></div>
     <div id="reservationForm" class="reservation-form">
         <h2>Make a Reservation</h2>
         <form id="reservationDetailsForm">
-            <input type="hidden" id="item_id">
             <label for="diningHall">Dining Hall:</label>
             <select id="diningHall" required>
                 <option value="">Select a dining hall</option>
@@ -168,74 +88,33 @@
             <input type="number" id="numberOfPeople" min="1" required>
             <button type="submit">Confirm Reservation</button>
         </form>
-    </div>
-
-    <!-- Popup -->
-    <div id="popup" class="popup">
-        <p>Sorry! Our Server is currently down. You have been added to a waiting list.</p>
-        <button id="popupCloseButton">Close</button>
-    </div>
+    </div>-->
 
     <script>
-        // Mock Data (can be fetched from an API in a real application)
-        const menuData = {
-            "menus": [
-                {
-                    "menu_id": "M001",
-                    "name": "Breakfast",
-                    "items": [
-                        {
-                            "item_id": "I001",
-                            "name": "Pancakes",
-                            "calories": 350,
-                            "ingredients": ["flour", "eggs", "milk", "butter"]
-                        },
-                        {
-                            "item_id": "I002",
-                            "name": "Scrambled Eggs",
-                            "calories": 200,
-                            "ingredients": ["eggs", "butter", "salt", "pepper"]
-                        }
-                    ]
-                },
-                {
-                    "menu_id": "M002",
-                    "name": "Lunch",
-                    "items": [
-                        {
-                            "item_id": "I003",
-                            "name": "Chicken Salad",
-                            "calories": 450,
-                            "ingredients": ["chicken", "lettuce", "tomatoes", "olive oil"]
-                        },
-                        {
-                            "item_id": "I004",
-                            "name": "Vegetarian Pizza",
-                            "calories": 700,
-                            "ingredients": ["flour", "tomatoes", "cheese", "mushrooms", "olives"]
-                        }
-                    ]
-                },
-                {
-                    "menu_id": "M003",
-                    "name": "Dinner",
-                    "items": [
-                        {
-                            "item_id": "I003",
-                            "name": "Rice and Chicken",
-                            "calories": 750,
-                            "ingredients": ["chicken", "rice", "tomatoes", "olive oil"]
-                        },
-                        {
-                            "item_id": "I004",
-                            "name": "Vegetarian Pasta",
-                            "calories": 500,
-                            "ingredients": ["Pasta", "tomatoes", "cheese", "mushrooms", "olives"]
-                        }
-                    ]
+
+async function fetchMenu() {
+            const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues'; 
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayMenu(data);
+                } else {
+                    console.error('Failed to fetch menu: ', response.status);
                 }
-            ]
-        };
+            } catch (error) {
+                console.error('Error fetching menu:', error);
+            }
+        }
+
+
 
         // Function to display the menu
         function displayMenu(data) {
@@ -256,15 +135,8 @@
                     itemDiv.classList.add('menu-item');
 
                     const itemName = document.createElement('h4');
-                    itemName.textContent = `${item.name} - ${item.calories} calories`;
+                    itemName.textContent = item.name;
                     itemDiv.appendChild(itemName);
-
-                    // Reservation button
-                    const reserveButton = document.createElement('button');
-                    reserveButton.textContent = 'Make Reservation';
-                    reserveButton.classList.add('reserve-button');
-                    reserveButton.onclick = () => showReservationForm(item.item_id);
-                    itemDiv.appendChild(reserveButton);
 
                     menuDiv.appendChild(itemDiv);
                 });
@@ -273,42 +145,15 @@
             });
         }
 
+        
+
         // Function to show reservation form
-        function showReservationForm(itemId) {
-            document.getElementById('item_id').value = itemId;
-            document.getElementById('reservationForm').style.display = 'block';
-            document.getElementById('reservationOverlay').style.display = 'block';
+        function showReservationForm() {
+            alert('The service is currently offline. Please try again later.')
         }
 
-        // Function to handle reservation form submission
-        function handleFormSubmit(event) {
-        event.preventDefault();
-
-        // Simulate a server down situation
-        showPopup();
-
-        // Hide the reservation form
-        document.getElementById('reservationForm').style.display = 'none';
-        document.getElementById('reservationOverlay').style.display = 'none';
-    }
-        // Function to show the popup
-        function showPopup() {
-            document.getElementById('popup').style.display = 'block';
-        }
-
-        // Function to hide the popup
-        function hidePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
-
-        // Attach event listener to the form
-        document.getElementById('reservationDetailsForm').addEventListener('submit', handleFormSubmit);
-
-        // Attach event listener to the popup close button
-        document.getElementById('popupCloseButton').addEventListener('click', hidePopup);
-
-        // Initial call to display the menu
-        displayMenu(menuData);
+        // Initial call to fetch and display the menu
+        fetchMenu();
     </script>
 </body>
 </html>

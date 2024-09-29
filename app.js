@@ -13,7 +13,7 @@ const venuesRouter = require('./api/venues');
 
 const notificationsRouter = require('./api/notification');
 const apiLogsRouter = require('./api/apiLogs'); // Import the apiLogsRouter
-
+const menuRouter =require('./api/menu');
 //middleware to require a API key
 const verifyApiKey = require('./middleware/verifyApiKey');
   
@@ -36,7 +36,7 @@ app.use("/api", bookingsRouter);
 app.use("/api", venuesRouter);
 app.use("/api", notificationsRouter);
 app.use("/api", apiLogsRouter);
-
+app.use("./api",menuRouter);
 
 
 app.set("port", process.env.PORT || 3000);
