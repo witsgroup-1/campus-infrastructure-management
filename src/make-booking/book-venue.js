@@ -19,16 +19,32 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Function to fetch user role and access data from Firestore
+
+// Function to fetch user data using the API
+// Function to fetch user data using the API
 async function fetchUserData(uid) {
+    const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
+    const apiUrl = `http://localhost:3000/api/users/${uid}`; // Include uid in the URL
+
     try {
-        const userDocRef = doc(db, 'users', uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-            console.log('User document data:', userDoc.data()); // Log the user document
-            return userDoc.data();
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey 
+            }
+            // No 'body' property needed for GET requests
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            console.log('User data:', userData);
+            return userData;
+        } else if (response.status === 404) {
+            console.log('User not found.');
+            return null;
         } else {
-            console.log('No user document found in Firestore.');
+            console.error('Error fetching user data:', response.statusText);
             return null;
         }
     } catch (error) {
@@ -37,30 +53,41 @@ async function fetchUserData(uid) {
     }
 }
 
-
-// Function to fetch and render bookings
 async function fetchAndRenderBookings(userData) {
     const categoryFilter = document.getElementById('roomFilter').value; // Get the selected category
+    const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
+
+    let apiUrl;
+    if (categoryFilter) {
+        apiUrl = `http://localhost:3000/api/venues?category=${encodeURIComponent(categoryFilter)}`; // Use query parameter
+    } else {
+        apiUrl = `http://localhost:3000/api/venues`;
+    }
 
     try {
-        let q;
-        if (categoryFilter) {
-            // If a category is selected, filter by that category
-            q = query(collection(db, 'venues'), where('Category', '==', categoryFilter));
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey 
+            }
+        });
+
+        if (response.ok) {
+            const venues = await response.json();
+            console.log('Venues:', venues);
+            renderVenues(venues, userData);  // Render fetched venues with user-specific filters
         } else {
-            // If no category is selected, return all venues
-            q = query(collection(db, 'venues'));
+            const errorText = await response.text();
+            console.error('Error:', errorText);
         }
-
-        const querySnapshot = await getDocs(q);
-        const venues = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        console.log(venues);
-        renderVenues(venues, userData);  // Render fetched venues with user-specific filters
     } catch (error) {
-        console.error('Error fetching venues:', error);
+        console.error('Fetch Error:', error);
     }
 }
+
+
+
 
 function renderVenues(venues, userData) {
     const container = document.getElementById('bookingsContainer');
@@ -144,13 +171,13 @@ function getAllowedCategories(userData) {
     } else if (role === 'Student' && isTutor && !isLecturer) {
         return ['Study Room', 'Tutorial Room'];
     }  else if (role === 'Student' && !isTutor && isLecturer) {
-       return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom'];
+       return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
     }else if (role === 'Staff' && isLecturer) {
-        return ['Tutorial Room', 'Exam Venue', 'Boardroom'];
+        return ['Tutorial Room', 'Exam Venue', 'Boardroom','Lecture Hall'];
     } else if (role === 'Staff' && !isLecturer && !isTutor) {
-        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom'];
+        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
     }else if ((role === 'Student'||role=="Staff") && isLecturer && isTutor) {
-        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom'];
+        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
     }
     return [];
 }
@@ -184,18 +211,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Attach event listeners to filters and search input
-document.getElementById('roomFilter').addEventListener('change', async () => {
-    const user = auth.currentUser;
-    if (user) {
-        const userData = await fetchUserData(user.uid);
-        fetchAndRenderBookings(userData); // Fetch venues after changing filter
+document.addEventListener('DOMContentLoaded', () => {
+    const roomFilterElement = document.getElementById('roomFilter');
+    if (roomFilterElement) {
+        roomFilterElement.addEventListener('change', async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const userData = await fetchUserData(user.uid);
+                fetchAndRenderBookings(userData); // Fetch venues after changing filter
+            }
+        });
     }
-});
 
-document.getElementById('searchInput').addEventListener('input', async () => {
-    const user = auth.currentUser;
-    if (user) {
-        const userData = await fetchUserData(user.uid);
-        fetchAndRenderBookings(userData); // Fetch venues after typing in search
+    const searchInputElement = document.getElementById('searchInput');
+    if (searchInputElement) {
+        searchInputElement.addEventListener('input', async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const userData = await fetchUserData(user.uid);
+                fetchAndRenderBookings(userData); // Fetch venues after typing in search
+            }
+        });
     }
 });

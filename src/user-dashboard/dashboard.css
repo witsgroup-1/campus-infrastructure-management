@@ -1,187 +1,186 @@
 :root {
-    --witsBlue: #003B5C;
-    --witsGold: #917248;
-    --projectGrey: #D9D9D9;
-    --projectWhite: white;
-    --text-color: #2c3e50;
-  }
+  --witsBlue: #003B5C;
+  --witsGold: #917248;
+  --projectGrey: #D9D9D9;
+  --projectWhite: white;
+  --text-color: #2c3e50;
+}
 
 #sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 0;
-    background-color: #003B5C;
-    color: white;
-    overflow-x: hidden;
-    transition: width 0.3s ease;
-    z-index: 9999;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 0;
+  background-color: #003B5C;
+  color: white;
+  overflow-x: hidden;
+  transition: width 0.3s ease;
+  z-index: 9999;
 }
 
 #sidebar.open {
-    width: 30%; 
+  width: 30%; 
 }
 
 
 #close-btn {
-    position: absolute; 
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%); 
-    margin-top: 1rem; 
-    font-size: 2rem; 
-    color: white; 
-    background: none; 
-    border: none; 
-    cursor: pointer;
+  position: absolute; 
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%); 
+  margin-top: 1rem; 
+  font-size: 2rem; 
+  color: white; 
+  background: none; 
+  border: none; 
+  cursor: pointer;
 }
 
 nav {
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    height: calc(80% - 3rem);
-    padding: 1rem; 
-    gap: 1rem; 
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  height: calc(80% - 3rem);
+  padding: 1rem; 
+  gap: 1rem; 
 }
 
 a {
-    color: white;
-    text-decoration: none; 
-    font-size: 1.25rem; 
+  color: white;
+  text-decoration: none; 
+  font-size: 1.25rem; 
 }
 
 a:hover {
-    color: var(--witsGold); 
+  color: var(--witsGold); 
 }
 
 h2:hover {
-  color: var(--witsGold); 
+color: var(--witsGold); 
 }
 
 
 #bookings-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 5px; 
-  min-height: 200px; 
-  max-width: 100%; 
+display: flex;
+flex-direction: column;
+gap: 10px;
+padding: 5px; 
+min-height: 200px; 
+max-width: 100%; 
 }
 
 .booking-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Aligns items evenly */
-  background-color: #f0f0f0; 
-  border-radius: 8px; 
-  padding: 10px;
-  box-shadow: 0 2px 4px var(--witsGold); /* Subtle shadow for depth */
+display: flex;
+align-items: center;
+justify-content: space-between; /* Aligns items evenly */
+background-color: #f0f0f0; 
+border-radius: 8px; 
+padding: 10px;
+box-shadow: 0 2px 4px var(--witsGold); /* Subtle shadow for depth */
 }
 
+
+.booking-info {
+  flex: 1;
+}
+
+.booking-times {
+  text-align: right;
+}
+
+#noBookings{
+  position: center;
+  margin-top: 1px;
+}
+
+#see-more-button {
+  color: #003B5C;
+  margin-left: -20px;
+  padding: 20px 20px 20px 20px;
+  cursor: pointer;
+  font-size: 14px;
   
-  .booking-info {
-    flex: 1;
-  }
-  
-  .booking-times {
-    text-align: right;
-  }
 
-  #noBookings{
-    position: center;
-    margin-top: 1px;
-  }
+}
 
-  #see-more-button {
-    color: #003B5C;
-    margin-left: -20px;
-    padding: 20px 20px 20px 20px;
-    cursor: pointer;
-    font-size: 14px;
-    
+#see-more-button:hover{
+  text-decoration: underline;
+  color: var(--witsGold)
+}
 
-  }
-  
-  #see-more-button:hover{
-    text-decoration: underline;
-    color: var(--witsGold)
-  }
-
-  #userEmailDisplay{
-    color: var(--witsBlue);
-    margin-left: 40px;
-    margin-top: 10px;
-  }
+#userEmailDisplay{
+  color: var(--witsBlue);
+  margin-left: 40px;
+  margin-top: 10px;
+}
 
 
-  .loader {
-    border: 8px solid white; /* Light grey */
-    border-top: 8px solid var(--witsBlue); /* Blue */
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
+.loader {
+  border: 8px solid white; /* Light grey */
+  border-top: 8px solid var(--witsBlue); /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .skeleton-card {
-  background-color: #e0e0e0; /* Light gray for the skeleton */
-  border-radius: 8px; /* Rounded corners */
-  height: 160px; /* Adjust height as needed */
-  animation: pulse 1.5s infinite; /* Pulsing animation */
+background-color: #e0e0e0; /* Light gray for the skeleton */
+border-radius: 8px; /* Rounded corners */
+height: 160px; /* Adjust height as needed */
+animation: pulse 1.5s infinite; /* Pulsing animation */
 }
 
 @keyframes pulse {
-  0% {
-      background-color: #e0e0e0;
-  }
-  50% {
-      background-color: #f0f0f0;
-  }
-  100% {
-      background-color: #e0e0e0;
-  }
+0% {
+    background-color: #e0e0e0;
+}
+50% {
+    background-color: #f0f0f0;
+}
+100% {
+    background-color: #e0e0e0;
+}
 }
 
 
 
 
-  @media (max-width: 768px) { /* Adjust this breakpoint as needed */
-    #bookings-container {
-      flex-direction: column; /* Stacks items vertically */
-    }
-  
-    .booking-container {
-      width: 100%; /* Full width for mobile */
-    }
+@media (max-width: 768px) { /* Adjust this breakpoint as needed */
+  #bookings-container {
+    flex-direction: column; /* Stacks items vertically */
   }
-  
-  
-  .notification-item {
-    border: 1px solid #917248; /* Border color */
-    padding: 10px; /* Padding around the notification */
-    border-radius: 8px; /* Rounded corners */
-    background-color: white; /* Background color */
-    color: #003B5C; /* Text color */
-    margin-bottom: 10px; /* Space between notifications */
-    transition: background-color 0.2s ease-in-out; /* Smooth transition for background color */
+
+  .booking-container {
+    width: 100%; /* Full width for mobile */
+  }
+}
+
+
+.notification-item {
+  border: 1px solid #917248; /* Border color */
+  padding: 10px; /* Padding around the notification */
+  border-radius: 8px; /* Rounded corners */
+  background-color: white; /* Background color */
+  color: #003B5C; /* Text color */
+  margin-bottom: 10px; /* Space between notifications */
+  transition: background-color 0.2s ease-in-out; /* Smooth transition for background color */
 }
 #notificationPanel{
-  z-index: 9999;
+z-index: 9999;
 }
 
 /* Hover effect */
 .notification-item:hover {
-    background-color: #917248; /* Change background color on hover */
-    color: white; /* Change text color on hover */
+  background-color: #917248; /* Change background color on hover */
+  color: white; /* Change text color on hover */
 }
 
 
-  

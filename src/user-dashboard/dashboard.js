@@ -114,10 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchNotifications = async () => {
         try {
-            // if (!userId) {
-            //     console.log('No userId found');
-            //     return;
-            // }
+            if (!userId) {
+                console.log('No userId found');
+                return;
+            }
     
             const response = await fetch(notificationsUrl, {
                 method: 'GET',
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     li.classList.add('notification-item');
 
-    // `read` status
+    // `read` status in case needed
                     if (notification.read) {
                         li.classList.add('read-notification'); 
                     } else {
