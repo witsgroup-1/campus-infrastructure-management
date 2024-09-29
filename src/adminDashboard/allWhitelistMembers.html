@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Requests</title>
+    <title>Whitelist</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -19,6 +19,7 @@
         .content {
             flex: 1;
         }
+
         .loader {
             border: 8px solid #f3f3f3;
             border-top: 8px solid #917248; 
@@ -34,12 +35,13 @@
             100% { transform: rotate(360deg); }
         }
 
+       
     </style>
 </head>
 <body class="bg-white text-gray-800">
 <main class="wrapper content">
     <header class="p-4 bg-[#003B5C] text-white text-center relative">
-        <h1 class="text-xl">All Requests</h1>
+        <h1 class="text-xl">Whitelist</h1>
         <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.history.back()">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -47,17 +49,20 @@
         </button>
     </header>
 
+
+    <section id="whitelistContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2"></section>
     <div class="loader" id="loader"></div>
-
-    <section id="requestsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-
-    </section>
+    <div id="pagination" class="flex justify-center mt-4">
+        <button id="prevPage" class="px-4 py-2 text-[#003B5C] rounded-lg" disabled>Previous</button>
+        <span id="pageInfo" class="mx-2">Page 1</span>
+        <button id="nextPage" class="px-4 py-2  text-[#003B5C] rounded-lg">Next</button>
+    </div>
 </main>
 
 <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center">
     <p>&copy; 2024 Group -1. All rights reserved.</p>
 </footer>
 
-<script type = "module" src="viewAllRequests.js"></script>
+<script type = "module" src="allWhitelistMembers.js"></script>
 </body>
 </html>
