@@ -82,15 +82,9 @@ function populateVenues(data) {
 }
 
 
-// Validate input fields
-function isValidDate(dateString) {
-  return !isNaN(new Date(dateString).getTime());
-}
 
-function isValidTimeSlot(timeSlot) {
-  const regex = /^\d{1,2}:\d{2} [APM]{2} - \d{1,2}:\d{2} [APM]{2}$/; // Example format: 9:00 AM - 11:00 AM
-  return regex.test(timeSlot);
-}
+
+
 
 function isValidVenue(venueId) {
   return venues.some(venue => venue.id === venueId);
@@ -99,8 +93,6 @@ function isValidVenue(venueId) {
 // Save changes with validation
 function saveChanges(id) {
   const selectedVenue = document.getElementById('venueSelector').value;
-  const bookingDate = document.getElementById('bookingDate').value;
-  const timeSlot = document.getElementById('timeSlot').value;
   const status = document.getElementById('statusSelection').value;
 
   if (!isValidVenue(selectedVenue)) {
@@ -108,18 +100,9 @@ function saveChanges(id) {
     return;
   }
 
-  if (!isValidDate(bookingDate)) {
-    alert('Please enter a valid date.');
-    return;
-  }
 
-  if (!isValidTimeSlot(timeSlot)) {
-    alert('Please select a valid time slot.');
-    return;
-  }
 
-  const newDate = formatDateDMY(bookingDate);
-  const { startTime, endTime } = extractStartEndTime(timeSlot);
+
   
   fetch(`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${id}`, {
     method: 'PUT',
@@ -128,9 +111,6 @@ function saveChanges(id) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      start_time: startTime,
-      end_time: endTime,
-      date: newDate,
       venueId: selectedVenue,
       status: status
     })
@@ -141,23 +121,28 @@ function saveChanges(id) {
     alert('Booking edited successfully');
   })
   .catch(error => console.error('Error:', error));
+
+  const bookingInfo=getBooking(id);
+  const venueInfo=getRoomInfo(bookingInfo.venueId);
+  const userId=bookingInfo.userId;
+  notificationMessage=`Your booking for ${venueInfo.Name} on ${bookingInfo.date} has been edited by administrators, please check your bookings for updates or changes made. If you are not happy with these changes please delete that booking and rebook for another available venue.`
+  const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
+  fetch(userNotificationUrl, {
+      method: 'POST',
+      headers: {
+          'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: notificationMessage,
+          type:"notification",
+          sendAt: "09:00"
+       })
+  });
+
 }
 
-// Format date as 'Day Month Year'
-function formatDateDMY(dateString) {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.toLocaleString('default', { month: 'long' });
-  const year = date.getFullYear();
 
-  return `${day} ${month} ${year}`;
-}
 
-// Extract start and end time from time slot
-function extractStartEndTime(timeSlot) {
-  const [startTime, endTime] = timeSlot.split(' - ').map(time => time.trim());
-  return { startTime, endTime };
-}
 
 // Event listener for DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {

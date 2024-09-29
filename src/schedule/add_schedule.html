@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="add_schedule.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="calender.js"></script>
     <title>Add new Schedule</title>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
      <!-- Page Header -->
   <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-    <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">
-      <a href="timetable.html">&larr;</a>
-    </button>
+    <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.location.href='timetable.html'">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+  </button>
     <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Add New Schedule</h1>
   </header>
 
@@ -35,8 +36,9 @@
 
       <!--Venue -->
       <label class="block text-lg text-[#003B5C] font-medium">
-        Venue:
-        <input type="text" id="venue" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md"  required>
+        Venue
+        <input type="text" id="venue-input" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md"  required>
+        <select id="venue-dropdown" class="hidden w-full mt-1 p-2 border rounded-md"></select>
       </label>
 
         <!--Day of the week-->

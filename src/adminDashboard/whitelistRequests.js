@@ -74,7 +74,7 @@ async function displayWhitelistRequests() {
 
                 listItem.innerHTML = `
                     <p><strong>Name:</strong> ${request.name} ${request.surname}</p>
-                    <p><strong>Email:</strong> ${request.email}</p>
+                    <p><strong>Email:</strong> ${request.emailInput}</p>
                 `;
                 requestsList.appendChild(listItem);
             });
