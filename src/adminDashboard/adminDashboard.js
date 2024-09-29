@@ -160,13 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuIcon = document.getElementById('menu-icon');
     const sidebar = document.getElementById('sidebar');
     const closeBtn = document.getElementById('close-btn');
-    const mainButton = document.getElementById('main-button');
-    const reportButton = document.getElementById('report-button');
-    const scheduleButton = document.getElementById('schedule-button');
-    const bookButton = document.getElementById('book-button');
-    const whitelistButton = document.getElementById('request-button');
-
-
     const userEmail = localStorage.getItem('userEmail');
     const userId= localStorage.getItem('userId');
 
@@ -174,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('User email:', userEmail);
         console.log("userId:",userId);
         // Use the email (e.g., display it, use it in queries, etc.)
-        document.getElementById('userEmailDisplay').textContent = `Logged in as: ${userEmail}`;
+        document.getElementById('userEmailDisplay').textContent = `Admin logged in as: ${userEmail}`;
     } else {
         console.log('No email found');
     }
@@ -211,39 +204,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let isExpanded = false;
 
-    mainButton.addEventListener('click', () => {
-        if (!isExpanded) {
-            reportButton.classList.remove('hidden');
-            bookButton.classList.remove('hidden');
-            scheduleButton.classList.remove('hidden');
-            whitelistButton.classList.remove('hidden');
-
-            isExpanded = true;
-        } else {
-            reportButton.classList.add('hidden');
-            bookButton.classList.add('hidden');
-            scheduleButton.classList.add('hidden');
-            whitelistButton.classList.add('hidden');
-
-            isExpanded = false;
-        }
-    });
-
-    reportButton.addEventListener('click', () => {
-        window.location.href = '../maintenance/maintenanceLogs.html';
-    });
-
-    bookButton.addEventListener('click', () => {
-        window.location.href = '../manage-bookings/manageBookings.html';
-    });
-
-    scheduleButton.addEventListener('click', () => {
-        window.location.href = '../schedule/add_schedule.html';
-    });
-
-    whitelistButton.addEventListener('click', () => {
-        window.location.href = './allWhitelistRequests.html';
-    });
 });

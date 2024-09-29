@@ -83,17 +83,34 @@ bookingsRouter.get('/Bookings/date/:date', async (req, res) => {
 // Create new booking
 bookingsRouter.post('/Bookings', async (req, res) => {
     try {
+        console.log('Received booking data:', req.body);
+
+        // Convert date and time strings to Date objects
+        const startDateTime = new Date(`${req.body.date}T${req.body.start_time}:00`);
+        const endDateTime = new Date(`${req.body.date}T${req.body.end_time}:00`);
+
+        // Convert Date objects to Firestore Timestamps
+        const startTimestamp = Timestamp.fromDate(startDateTime);
+        const endTimestamp = Timestamp.fromDate(endDateTime);
 
         const booking = {
             status: req.body.status,
-            date: req.body.date,
-            end_time: req.body.end_time,
+            date: Timestamp.fromDate(new Date(req.body.date)), // Store date as Timestamp
+            start_time: startTimestamp,
+            end_time: endTimestamp,
             purpose: req.body.purpose,
-            roomId: req.body.roomId,
-            start_time: req.body.start_time,
             userId: req.body.userId,
             venueId: req.body.venueId,
         };
+
+        // Validate that none of the fields are undefined
+        for (const [key, value] of Object.entries(booking)) {
+            if (value === undefined) {
+                console.error(`Error: Missing value for ${key}`);
+                return res.status(400).json({ error: `Missing value for ${key}` });
+            }
+        }
+
         const docRef = await addDoc(collection(db, 'Bookings'), booking);
         res.status(201).json({ id: docRef.id });
     } catch (error) {
@@ -129,6 +146,57 @@ bookingsRouter.put('/bookings/:bookingId', async (req, res) => {
         res.status(500).send('Error updating booking');
     }
 });
+
+// PUT request for updating user bookings
+bookingsRouter.put('/users/:userId/bookings/:purpose', async (req, res) => {
+    const { userId, purpose } = req.params;
+    const updates = req.body;
+
+    try {
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
+
+        const bookingDocRef = doc(db, 'Bookings', `${userId}_${purpose}`); // Assuming a composite ID for bookings
+        const bookingDoc = await getDoc(bookingDocRef);
+
+        if (!(bookingDoc.exists())) {
+            return res.status(404).send('User booking not found');
+        }
+
+        await updateDoc(bookingDocRef, updates);
+        res.status(200).json({ bookingId: `${userId}_${purpose}`, message: 'User booking updated successfully.' });
+    } catch (error) {
+        console.error('Error updating user booking:', error);
+        res.status(500).send('Error updating user booking');
+    }
+});
+
+// PUT request for updating venue bookings
+bookingsRouter.put('/venues/:venueId/date/bookings/:purpose', async (req, res) => {
+    const { venueId, purpose } = req.params;
+    const updates = req.body;
+
+    try {
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
+
+        const bookingDocRef = doc(db, 'Bookings', `${venueId}_${purpose}`); // Assuming a composite ID for bookings
+        const bookingDoc = await getDoc(bookingDocRef);
+
+        if (!(bookingDoc.exists())) {
+            return res.status(404).send('Venue booking not found');
+        }
+
+        await updateDoc(bookingDocRef, updates);
+        res.status(200).json({ bookingId: `${venueId}_${purpose}`, message: 'Venue booking updated successfully.' });
+    } catch (error) {
+        console.error('Error updating venue booking:', error);
+        res.status(500).send('Error updating venue booking');
+    }
+});
+
 
 
 bookingsRouter.delete('/bookings/:bookingId', async (req, res) => {
