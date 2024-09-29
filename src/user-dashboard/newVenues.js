@@ -14,12 +14,46 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const intervals = [
+    { start: '08:00', end: '08:45' },
+    { start: '09:00', end: '09:45' },
+    { start: '10:15', end: '11:00' },
+    { start: '11:15', end: '12:00' },
+    { start: '12:30', end: '13:15' },
+    { start: '14:15', end: '15:00' },
+    { start: '15:15', end: '16:00' },
+    { start: '16:15', end: '17:00' },
+    { start: '17:15', end: '18:00' },
+    { start: '18:15', end: '19:00' },
+    { start: '19:15', end: '20:00' },
+    { start: '20:15', end: '21:00' },
+    { start: '21:15', end: '22:00' },
+    { start: '22:15', end: '23:00' },
+    { start: '23:15', end: '00:00' }
+];
+
 function getCurrentDate() {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0'); 
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+}
+
+function getNextSlot() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    
+    for (const interval of intervals) {
+        const [startHour, startMinute] = interval.start.split(':').map(Number);
+        
+        if (currentHour < startHour || (currentHour === startHour && currentMinute < startMinute)) {
+            return interval;
+        }
+    }
+    
+    return null;
 }
 
 const venuesPerPage = 10; 
@@ -32,34 +66,55 @@ async function fetchAvailableVenues() {
         const venuesSnapshot = await getDocs(venuesCollectionRef);
         const availableVenues = [];
         const currentDate = getCurrentDate();
-        const venuePromises = [];
-
-        for (const venueDoc of venuesSnapshot.docs) {
+        const nextSlot = getNextSlot();
+        
+        if (!nextSlot) {
+            console.log('No more slots available for today.');
+            return availableVenues;
+        }
+        
+        const venuePromises = venuesSnapshot.docs.map(async (venueDoc) => {
             const venueData = venueDoc.data();
             const bookingsCollectionRef = collection(db, 'venues', venueDoc.id, currentDate);
-            venuePromises.push(getDocs(bookingsCollectionRef).then(bookingsSnapshot => {
-                const isBooked = bookingsSnapshot.docs.some(doc => {
-                    const booking = doc.data();
-                    const startTime = new Date(booking.startTime.seconds * 1000);
-                    const endTime = new Date(booking.endTime.seconds * 1000);
-                    const currentDateTime = new Date();
-                    
-                    return currentDateTime >= startTime && currentDateTime <= endTime;
+            const bookingsSnapshot = await getDocs(bookingsCollectionRef);
+
+            const isBooked = bookingsSnapshot.docs.some(doc => {
+                const booking = doc.data();
+                
+                const bookingStartTime = new Date(booking.startTime.seconds * 1000);
+                const bookingEndTime = new Date(booking.endTime.seconds * 1000);
+                
+                const [nextSlotStartHour, nextSlotStartMinute] = nextSlot.start.split(':').map(Number);
+                const [nextSlotEndHour, nextSlotEndMinute] = nextSlot.end.split(':').map(Number);
+                
+                const nextSlotStartTime = new Date();
+                nextSlotStartTime.setHours(nextSlotStartHour, nextSlotStartMinute, 0, 0);
+                
+                const nextSlotEndTime = new Date();
+                nextSlotEndTime.setHours(nextSlotEndHour, nextSlotEndMinute, 0, 0);
+                
+                // Check if the booking overlaps with the next slot
+                const isOverlap = (bookingStartTime < nextSlotEndTime && bookingEndTime > nextSlotStartTime);
+
+                
+                return isOverlap; 
+            });
+
+            console.log(isBooked)
+
+            if (!isBooked) {
+                availableVenues.push({
+                    Name: venueData.Name,
+                    Capacity: venueData.Capacity,
+                    Features: venueData.Features || [],
+                    Building: venueData.Building
                 });
+            }
+        });
 
-                if (!isBooked) {
-                    availableVenues.push({
-                        Name: venueData.Name,
-                        Capacity: venueData.Capacity,
-                        Features: venueData.Features || [], 
-                        Building: venueData.Building 
-                    });
-                }
-            }));
-        }
         await Promise.all(venuePromises);
-
         return availableVenues;
+        
     } catch (error) {
         console.error('Error fetching available venues:', error);
         return [];
