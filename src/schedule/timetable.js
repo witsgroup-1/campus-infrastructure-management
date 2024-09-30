@@ -33,26 +33,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (deleteButton) {
             const id = deleteButton.getAttribute('data-id');
-
+        
             if (confirm('Are you sure you want to delete this schedule?')) {
                 try {
-                    const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.statusText}`);
-                    }
-
+                    // Delete from both databases in parallel using Promise.all
+                    await Promise.all([
+                        deleteFromSchedules(id),
+                        deleteFromBookings(id)
+                    ]);
+        
+                    // Remove the row from the table
                     deleteButton.closest('tr').remove();
-                    alert('Schedule deleted successfully!');
+                    alert('Schedule and associated bookings deleted successfully!');
                 } catch (error) {
-                    console.error('Error deleting schedule:', error);
-                    alert('Failed to delete the schedule.');
+                    console.error('Error deleting schedule or bookings:', error);
+                    alert('Failed to delete the schedule or associated bookings.');
                 }
             }
         }
@@ -106,7 +101,8 @@ document.getElementById('update').addEventListener('click', async function () {
     };
 
     try {
-        const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
+        // First API call to update the first database
+        const schedule_db = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
             method: 'PUT',
             headers: {
                 'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
@@ -115,18 +111,33 @@ document.getElementById('update').addEventListener('click', async function () {
             body: JSON.stringify(updatedSchedule),
         });
 
-        if (!response.ok) {
-            throw new Error(`API error: ${response.statusText}`);
+        if (!schedule_db.ok) {
+            throw new Error(`API error on first database: ${schedule_db.statusText}`);
         }
 
-        alert('Schedule updated successfully!');
+        // Second API call to update the second database
+        const booking_db = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${id}`, {  
+            method: 'PUT',
+            headers: {
+                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',  
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedSchedule), 
+        });
+
+        if (!booking_db.ok) {
+            throw new Error(`API error on second database: ${booking_db.statusText}`);
+        }
+
+        alert('Schedule updated successfully in both databases!');
         modal.classList.add('hidden');  // Hide the modal after saving
         displaySchedules();  // Reload or refresh the schedules
     } catch (error) {
         console.error('Error updating schedule:', error);
-        alert('Failed to update the schedule.');
+        alert('Failed to update the schedule in both databases.');
     }
 });
+
 
 });
 
@@ -162,4 +173,33 @@ function displaySchedules() {
     });
 }
 
+// Function to delete schedule from the schedules database
+async function deleteFromSchedules(id) {
+    const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error deleting schedule from schedules database: ${response.statusText}`);
+    }
+}
+
+// Function to delete associated bookings from the bookings database
+async function deleteFromBookings(id) {
+    const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error deleting booking from bookings database: ${response.statusText}`);
+    }
+}
 
