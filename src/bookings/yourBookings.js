@@ -319,7 +319,7 @@ async function displayPastBookings(pastBookings, userId) {
   
       const updatedBookings = await fetchUserBookings(userId);
       displayUpcomingBookings(updatedBookings.filter(booking => {
-        const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
+        const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
         return startTime && startTime > new Date();
       }), userId);
   
