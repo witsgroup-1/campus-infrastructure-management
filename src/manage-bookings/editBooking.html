@@ -25,7 +25,11 @@
     <main class="wrapper content">
         <!-- Header -->
         <header class="p-4 bg-[#003B5C] text-white text-center relative">
-            <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4" onclick="history.back()">&larr;</button>
+            <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.history.length > 1 ? window.history.back() : window.location.href='../user-dashboard/dashboard.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
             <h1 class="text-xl">Edit Booking Details</h1>
         </header>
 
@@ -48,7 +52,7 @@
                     <label for="statusSelection" class="block text-gray-700 text-sm font-semibold mb-2">Select Time Slot</label>
                     <select id="statusSelection" class="block w-full bg-white border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="Pending">Pending</option>
-                        <option value="Confirmed">Confirmed</option>
+                        <option value="Confirmed">Accepted</option>
                         <option value="Cancelled">Cancelled</option>
 
 

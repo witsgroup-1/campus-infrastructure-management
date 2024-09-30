@@ -106,7 +106,6 @@ function createVenueElement(venue) {
     infoElement.innerHTML = `
         <p><strong>${venue.Name}</strong></p>
         <p>Capacity: ${venue.Capacity}</p>
-        <p>Status: ${venue.isBooked ? 'Booked' : 'Available'}</p>
     `;
 
     overlayElement.appendChild(infoElement);
@@ -183,6 +182,12 @@ async function populateVenues() {
 document.addEventListener('DOMContentLoaded', () => {
     populateVenues();
 });
+
+
+
+
+
+
 
 
 

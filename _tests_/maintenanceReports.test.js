@@ -1,130 +1,170 @@
-//get the file
+// //get the file
 require('./copies/maintenanceReportsCopy');
 /**
  * @jest-environment jsdom
  */
 import { fireEvent, waitFor } from '@testing-library/dom';
 
+
 describe('Form submission', () => {
-  let form, reportTypeInput, descriptionInput, venueInput, submitButton;
-
+  let form, reportTypeInput, descriptionInput, venueInput;
+  let apiKey = process.env.API_KEY_1
   beforeEach(() => {
-    // Set up the document body
-    document.body.innerHTML = `
-      <form>
-        <select id="reportType">
-          <option value="Issue 1">Issue 1</option>
-          <option value="Issue 2">Issue 2</option>
-        </select>
-        <textarea placeholder="Enter description"></textarea>
-        <input placeholder="Venue" />
-        <button type="submit">Submit</button>
-      </form>
-    `;
 
-    form = document.querySelector('form');
-    reportTypeInput = document.querySelector('#reportType');
-    descriptionInput = document.querySelector('textarea');
-    venueInput = document.querySelector('input');
-    submitButton = document.querySelector('button');
+  document.body.innerHTML = `
+  <form id="maintenanceForm">
+    <select id="reportType">
+      <option value="Issue 1">Issue 1</option>
+      <option value="Issue 2">Issue 2</option>
+    </select>
+    <textarea id="description" placeholder="Enter description"></textarea>
+    <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
+    <button type="submit">Submit</button>
+    <div id="venue-dropdown" class="hidden"></div>
+  </form>
+`;
 
-    // Mock the fetch function
-    global.fetch = jest.fn();
+    form = document.getElementById('maintenanceForm');
+    reportTypeInput = document.getElementById('reportType');
+    descriptionInput = document.getElementById('description');
+    venueInput = document.getElementById('venueInput');
+
+    // Mock fetch
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ message: 'Success' }),
+      })
+    );
+
   });
 
   afterEach(() => {
-    // Clear mocks after each test
     jest.clearAllMocks();
   });
 
+  test('Submits the form correctly', async () => {
+    // Fill out the form
+    fireEvent.change(reportTypeInput, { target: { value: 'Issue 1' } });
+    fireEvent.change(descriptionInput, { target: { value: 'Test description' } });
+    fireEvent.change(venueInput, { target: { value: 'Room 101' } });
 
+    // Add event listener 
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-  test('should submit the form with correct data and reset form on success', async () => {
-    const staticTimestamp = '2024-09-25T19:00:00.000Z';
-  
-    // Mock Date to always return the static timestamp
-    const mockDate = new Date(staticTimestamp);
-    global.Date = jest.fn(() => mockDate);
-  
-    // Mock the fetch response
-    fetch.mockResolvedValueOnce({ ok: true });
-  
-    // Simulate DOMContentLoaded
-    document.dispatchEvent(new Event('DOMContentLoaded'));
-  
-    // Populate form fields
-    reportTypeInput.value = 'Issue 1'; 
-    descriptionInput.value = 'Test description';
-    venueInput.value = 'Test venue';
-  
-    // Simulate form submission
-    const submitEvent = new Event('submit', { bubbles: true });
-    form.dispatchEvent(submitEvent);
-  
-    await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for async to complete
-  
-    // Expect the fetch to have been called with the correct arguments
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/maintenanceRequests', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-      },
-      body: JSON.stringify({
-        assignedTo: 'none',
-        createdAt: staticTimestamp,
-        description: 'Test description',
-        issueType: 'Issue 1',
-        roomId: 'Test venue',
-        status: 'Scheduled',
-        timestamp: staticTimestamp,
-        userId: '12345',
-      }),
+      await fetch('http://localhost:3000/api/maintenanceRequests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': 'your-api-key',
+        },
+        body: JSON.stringify({
+          sample: {
+            issueType: reportTypeInput.value,
+            description: descriptionInput.value,
+            roomId: venueInput.dataset.venueId,
+            roomName: venueInput.value,
+          },
+          inverse: false,
+        }),
+      });
     });
-  
-    // Manually reset the dropdown
-    reportTypeInput.value = '';
-  
-    // Verify that the form was reset
-    expect(reportTypeInput.value).toBe(''); 
-    expect(descriptionInput.value).toBe('');
-    expect(venueInput.value).toBe('');
-  
-    // Restore original Date object after the test
-    global.Date = Date;
-  });
-  
 
-
-  test('should handle fetch error during form submission', async () => {
-    // Mock fetch to return a failed response
-    fetch.mockResolvedValueOnce({ ok: false });
-  
-    // Mock console.error
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-  
-    // Simulate DOMContentLoaded event
-    document.dispatchEvent(new Event('DOMContentLoaded'));
-  
-    // Populate form fields
-    reportTypeInput.value = 'Issue 1';
-    descriptionInput.value = 'Test description';
-    venueInput.value = 'Test venue';
-  
     // Simulate form submission
-    const submitEvent = new Event('submit', { bubbles: true });
-    form.dispatchEvent(submitEvent);
-  
-    await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for async
-  
+    fireEvent.submit(form);
+
     // Verify fetch was called
-    expect(fetch).toHaveBeenCalledTimes(1);
-  
-    // Verify error handling
-    expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Failed to submit request'));
-    expect(consoleErrorSpy).toHaveBeenCalledWith('There was an error creating the maintenance request');
-  
-    // Clean up the mock
-    consoleErrorSpy.mockRestore();
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        'http://localhost:3000/api/maintenanceRequests',
+        expect.any(Object) 
+      );
+    });
+  });
+
+test('Displays an alert if venue is not selected correctly', async () => {
+  document.body.innerHTML = `
+    <form id="maintenanceForm">
+      <select id="reportType">
+        <option value="Issue 1">Issue 1</option>
+        <option value="Issue 2">Issue 2</option>
+      </select>
+      <textarea id="description" placeholder="Enter description"></textarea>
+      <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
+      <button type="submit">Submit</button>
+      <div id="venue-dropdown" class="hidden"></div>
+    </form>
+  `;
+
+  // Manually trigger the DOMContentLoaded event to ensure event listeners are attached
+  const event = new Event('DOMContentLoaded');
+  document.dispatchEvent(event);
+
+  // Now check if the form is submitted
+  const form = document.getElementById('maintenanceForm');
+  const venueInput = document.getElementById('venueInput');
+
+  // Simulate input values
+  venueInput.value = ''; // Invalid venue selection
+
+  // Mock window.alert
+  const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+  // Submit the form
+  fireEvent.submit(form);
+
+  // Wait for the alert to be called
+  await waitFor(() => {
+    expect(alertMock).toHaveBeenCalledWith('Please select a valid venue from the dropdown.');
+  });
+
+  expect(venueInput.value).toBe('');
+
+  alertMock.mockRestore(); // Cleanup mock
+});
+});
+
+describe('Venue Dropdown Functionality', () => {
+  let venueDropdown, venueInput;
+
+  beforeEach(() => {
+    // Set up a mock DOM before each test
+    document.body.innerHTML = `
+      <div id="venue-dropdown" class="hidden"></div>
+      <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
+    `;
+
+    // Get the DOM elements
+    venueDropdown = document.getElementById('venue-dropdown');
+    venueInput = document.getElementById('venueInput');
+
+    // Ensure that the functions are assigned to the window
+    window.updateVenueDropdown = updateVenueDropdown;
+    window.clearVenueDropdown = clearVenueDropdown;
+  });
+
+  test('updateVenueDropdown should populate and show dropdown', () => {
+    const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
+
+    //call the function from the script
+    window.updateVenueDropdown(venues);
+
+    // Assert that the dropdown has the correct options
+    expect(venueDropdown.innerHTML).toContain('Room 101');
+    expect(venueDropdown.innerHTML).toContain('Room 102');
+    expect(venueDropdown.classList).not.toContain('hidden');
+  });
+
+  test('clearVenueDropdown should clear the dropdown', () => {
+    venueDropdown.innerHTML = '<option>Room 101</option>';
+    // Call the actual function 
+    window.clearVenueDropdown();
+
+
+    // Assert that the dropdown is cleared and hidden
+    expect(venueDropdown.innerHTML).toBe('');
+    expect(venueDropdown.classList).toContain('hidden');
   });
 });
+

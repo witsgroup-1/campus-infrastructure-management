@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, collection, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 // Firebase configuration
@@ -13,10 +13,8 @@ const firebaseConfig = {
     measurementId: "G-Y95YE5ZDRY"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Get Firestore and Auth references
 const db = getFirestore(app);
 const auth = getAuth(app);
 
@@ -47,13 +45,32 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         const email = user.email;
 
-        // Store email in localStorage 
         localStorage.setItem('userEmail', email);
 
-        // Get user document ID by email
+        
         const userDocId = await getUserDocumentByEmail(email);
         if (userDocId) {
             localStorage.setItem('userId', userDocId);
+            const userDoc = await getDoc(doc(db, 'users', userDocId)); 
+
+           
+            const isTutor = userDoc.data().isTutor || false;
+            const isLecturer = userDoc.data().isLecturer || false;
+            const role = userDoc.data().role || '';
+
+            const isAdmin = !isTutor && !isLecturer && role === 'Staff';
+
+            if (isAdmin) {
+                document.getElementById('admin-link').style.display = 'block'; // Show admin link
+                document.getElementById('admin-link').addEventListener('click', () => {
+                    window.location.href = "../adminDashboard/adminDashboard.html"; // Redirect to admin page
+                });
+            } else {
+                document.getElementById('admin-link').addEventListener('click', (event) => {
+                    event.preventDefault()
+                    showModal("Oops! Only admins can access this.");
+                });
+            }
         }
     }
 });
@@ -201,88 +218,25 @@ document.addEventListener('DOMContentLoaded', () => {
     bookButton.addEventListener('click', () => {
         window.location.href = '../make-booking/book-venue.html';
     });
-
-    fetchSecurityContact();
 });
 
-//const proxyUrl = 'https://api.allorigins.win/raw?url=';
-const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/contacts'
-const ourSecurityUrl = `https://campus-infrastructure-management.azurewebsites.net/api/securityInfo`;
-
-async function fetchSecurityContact() {
-    try {
-        const response = await fetch(securityUrl, {
-            method: 'GET',
-            //mode: 'no-cors',
-            headers: {
-                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const securityInfo = await response.json();
+const showModal = (message) => {
+    const modal = document.createElement('div');
+    modal.className = 'modal'; // Add styles for the modal
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>${message}</p>
+        </div>
+    `;
+    document.body.appendChild(modal);
     
-        const section = document.getElementById('security_info');
-        section.innerHTML = ''; 
-
-        securityInfo.forEach(info => {
-            const contact_details = document.createElement('div');
-
-            contact_details.innerHTML = `
-            <span class=" text-white">${info.name}:</span>
-            <span class="text-gray-300">${info.phone}</span>
-            `;
-           // contact_details.textContent = `${info.Name}: ${info['Contact Number']}`;
-            section.appendChild(contact_details);
-        });
-
-    } catch (error) {
-        console.error('Error fetching security contact information:', error);
-        fetchOurSecurityContact();
-    }
-}
-
-async function fetchOurSecurityContact() {
-    try {
-        const response = await fetch(ourSecurityUrl, {
-            method: 'GET',
-            headers: {
-                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const securityInfo = await response.json();
+   
+    modal.querySelector('.close').onclick = function() {
+        modal.style.display = "none";
+        document.body.removeChild(modal); 
+    };
     
-        const section = document.getElementById('security_info');
-        section.innerHTML = ''; 
-
-        securityInfo.forEach(info => {
-            const contact_details = document.createElement('div');
-
-            contact_details.innerHTML = `
-            <span class="text-xs text-white">${info.Name}:</span>
-            <span class="text-xs text-gray-300">${info['Contact Number']}</span>
-            `;
-           // contact_details.textContent = `${info.Name}: ${info['Contact Number']}`;
-            section.appendChild(contact_details);
-        });
-
-    } catch (error) {
-        console.error('Error fetching security contact information:', error);
-    }
-}
-
-
-
-
-
+    modal.style.display = "block"; 
+};
 

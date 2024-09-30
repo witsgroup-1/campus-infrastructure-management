@@ -18,14 +18,16 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 async function isEmailWhitelisted(email) {
+    const statusMessage = document.getElementById('status-message');
+    statusMessage.textContent = "Checking approval...";
     const whitelistCollection = collection(db, 'whitelist');
     const q = query(whitelistCollection, where('emailInput', '==', email));
     const querySnapshot = await getDocs(q);
-    
     console.log(`Checking if ${email} is whitelisted...`);
     if (!querySnapshot.empty) {
         return true;
     } else {
+        statusMessage.textContent = "";
         return false;
     }
 }
@@ -41,11 +43,10 @@ async function searchUserByEmail(email) {
             return null;
         }
 
-        querySnapshot.forEach((doc) => {
-            console.log('Document data:', doc.data());
-        });
+        const userDoc = querySnapshot.docs[0];
+        console.log('Document data:', userDoc.data());
 
-        return querySnapshot.docs.map(doc => doc.data());
+        return userDoc.data();
     } catch (error) {
         console.error('Error searching for user:', error);
         return null;
@@ -53,31 +54,42 @@ async function searchUserByEmail(email) {
 }
 
 
-// Inside the event listener for the login form submission
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevent the default form submission
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+document.getElementById('login-form').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const statusMessage = document.getElementById('status-message');
 
     try {
         if (await isEmailWhitelisted(email)) {
             // Set session persistence to 'session-only'
             await setPersistence(auth, browserSessionPersistence);
 
+            statusMessage.textContent = "Signing in...";
+
             try {
                 // Proceed with sign-in after setting session persistence
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                const userData = await searchUserByEmail(email);
+
                 console.log("User signed in: session bs btw:", user);
 
                 // Store the user's email in localStorage
                 localStorage.setItem('userEmail', user.email);
 
-                // Redirect to the user dashboard
-                window.location.href = "../user-dashboard/dashboard.html";
+                if (userData.role === "Staff" && !userData.isTutor && !userData.isLecturer) {
+                    window.location.href = "../adminDashboard/adminDashboard.html";
+                } else {
+                    window.location.href = "../user-dashboard/dashboard.html";
+                }
             } catch (error) {
                 if (error.code === 'auth/invalid-login-credentials') {
+                    // Show the "Creating account..." message
+                    statusMessage.textContent = "Creating account...";
+
                     try {
                         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                         const user = userCredential.user;
@@ -102,14 +114,17 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     }
 });
 
-
 const googleProvider = new GoogleAuthProvider();
 document.getElementById('googleLogin').addEventListener('click', async (e) => {
     e.preventDefault();
+    const statusMessage = document.getElementById('status-message');
 
     try {
         // Set session persistence for Google sign-in as well
         await setPersistence(auth, browserSessionPersistence);
+
+        // Show the "Signing in..." message for Google login
+        statusMessage.textContent = "Signing in with Google...";
 
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
@@ -143,7 +158,7 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
     }
 });
 
-
+});
 // Logout functionality
 /*document.getElementById('logout').addEventListener('click', async () => {
     try {
@@ -159,4 +174,3 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
     }
 });*/
 
-});

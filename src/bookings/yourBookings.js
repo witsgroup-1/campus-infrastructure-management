@@ -31,25 +31,27 @@ function showLoading() {
   }
 
   function formatFirestoreTimestamp(timestamp) {
-    if (timestamp && timestamp.seconds) {
-      const date = new Date(timestamp.seconds * 1000);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); 
-      const year = date.getFullYear().toString().slice(-2); 
-      return `${day}/${month}/${year}`; 
+    if (timestamp && timestamp.seconds !== undefined) {
+        const date = new Date(timestamp.seconds * 1000);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const year = date.getFullYear().toString().slice(-2); 
+        return `${day}/${month}/${year}`; 
     }
     return 'Invalid date';
-  }
-  
-  function formatTime(timestamp) {
-    if (timestamp && timestamp.seconds) {
-      const date = new Date(timestamp.seconds * 1000);
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
+}
+
+function formatTime(timestamp) {
+    if (timestamp && timestamp.seconds !== undefined) {
+        const date = new Date(timestamp.seconds * 1000);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
     }
     return 'Invalid time';
-  }
+}
+
+
   
 
   
@@ -86,7 +88,7 @@ function showLoading() {
       if (!querySnapshot.empty) {
        
         const userDoc = querySnapshot.docs[0];
-        const firestoreUserId = userDoc.id; // The document ID is the userId
+        const firestoreUserId = userDoc.id; 
         return firestoreUserId;
       } else {
         throw new Error('No matching user document found in Firestore.');
@@ -110,54 +112,55 @@ function showLoading() {
   
   async function displayBookings(bookings, userId) {
     const now = new Date();
-  
+
     const upcomingBookings = bookings.filter(booking => {
-      const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
-      return startTime && startTime > now;
-    }).sort((a, b) => new Date(a.startTime.seconds * 1000) - new Date(b.startTime.seconds * 1000));
-  
+        const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
+        return startTime && startTime > now;
+    }).sort((a, b) => new Date(a.start_time.seconds * 1000) - new Date(b.start_time.seconds * 1000));
+
     const pastBookings = bookings.filter(booking => {
-      const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
-      return startTime && startTime <= now;
-    }).sort((a, b) => new Date(a.startTime.seconds * 1000) - new Date(b.startTime.seconds * 1000));
-  
+        const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
+        return startTime && startTime <= now;
+    }).sort((a, b) => new Date(a.start_time.seconds * 1000) - new Date(b.start_time.seconds * 1000));
+
     displayUpcomingBookings(upcomingBookings, userId);
     displayPastBookings(pastBookings, userId);
-  }
-  
-  async function displayUpcomingBookings(upcomingBookings, userId) {
+}
+
+async function displayUpcomingBookings(upcomingBookings, userId) {
     const scheduledContent = document.getElementById('scheduled-content');
     const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
-  
+
     scheduledContent.innerHTML = '';
     mobileScheduledContent.innerHTML = '';
-  
+
     const paginatedUpcomingDesktop = paginateBookings(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop);
     const paginatedUpcomingMobile = paginateBookings(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile);
-  
+
     renderBookings(paginatedUpcomingDesktop, scheduledContent, 'upcoming', userId, 'desktop');
     renderBookings(paginatedUpcomingMobile, mobileScheduledContent, 'upcoming', userId, 'mobile');
-  
+
     renderPaginationControls(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop, scheduledContent, 'desktop', 'upcoming', userId);
     renderPaginationControls(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile, mobileScheduledContent, 'mobile', 'upcoming', userId);
-  }
-  
-  async function displayPastBookings(pastBookings, userId) {
+}
+
+async function displayPastBookings(pastBookings, userId) {
     const pastContent = document.getElementById('in-progress-content');
     const mobilePastContent = document.getElementById('mobile-in-progress-content');
-  
+
     pastContent.innerHTML = '';
     mobilePastContent.innerHTML = '';
-  
+
     const paginatedPastDesktop = paginateBookings(pastBookings, currentPagePastDesktop, itemsPerPageDesktop);
     const paginatedPastMobile = paginateBookings(pastBookings, currentPagePastMobile, itemsPerPageMobile);
-  
+
     renderBookings(paginatedPastDesktop, pastContent, 'past', userId, 'desktop');
     renderBookings(paginatedPastMobile, mobilePastContent, 'past', userId, 'mobile');
-  
+
     renderPaginationControls(pastBookings, currentPagePastDesktop, itemsPerPageDesktop, pastContent, 'desktop', 'past', userId);
     renderPaginationControls(pastBookings, currentPagePastMobile, itemsPerPageMobile, mobilePastContent, 'mobile', 'past', userId);
-  }
+}
+
   
   function paginateBookings(bookings, page, itemsPerPage) {
     const start = (page - 1) * itemsPerPage;
@@ -173,11 +176,11 @@ function showLoading() {
       bookingsSection.innerHTML = `<p>No ${type} bookings.</p>`;
     } else {
       for (const booking of bookings) {
-        const venueName = await getCachedVenueName(booking.venueId);
-        const formattedStartTime = formatFirestoreTimestamp(booking.startTime);
-        const formattedStartHour = formatTime(booking.startTime);
-        const formattedEndHour = formatTime(booking.endTime);
-  
+        const venueName = await getCachedVenueName(booking.venue_id);
+        const formattedStartTime = formatFirestoreTimestamp(booking.start_time);
+        const formattedStartHour = formatTime(booking.start_time);
+        const formattedEndHour = formatTime(booking.end_time);
+
         const bookingElement = document.createElement('div');
         bookingElement.classList.add('w-full', 'bg-gray-200', 'rounded-lg', 'mb-2', 'p-4', 'shadow-sm');
   
@@ -191,7 +194,7 @@ function showLoading() {
             </div>
             ${type === 'upcoming'
               ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${userId}', '${booking.id}')">Cancel</button>`
-              : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venueId}', '${venueName}')">Book Again</button>`}
+              : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venue_id}', '${venueName}')">Book Again</button>`}
           </div>
         `;
   
@@ -214,7 +217,7 @@ function showLoading() {
   
   function renderPaginationControls(bookings, currentPage, itemsPerPage, container, deviceType, bookingType, userId) {
     const totalPages = Math.ceil(bookings.length / itemsPerPage);
-    if (totalPages <= 1) return; // No pagination if only one page
+    if (totalPages <= 1) return; 
     
     const paginationContainer = document.createElement('div');
     paginationContainer.classList.add('pagination-controls');
@@ -235,7 +238,7 @@ function showLoading() {
     };
     paginationContainer.appendChild(prevButton);
   
-    // Add page buttons
+    
     for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement('button');
       pageButton.textContent = i;
@@ -269,7 +272,7 @@ function showLoading() {
     };
     paginationContainer.appendChild(nextButton);
   
-    // Append the pagination controls to the container
+  
     container.appendChild(paginationContainer);
   }
   
@@ -316,7 +319,7 @@ function showLoading() {
   
       const updatedBookings = await fetchUserBookings(userId);
       displayUpcomingBookings(updatedBookings.filter(booking => {
-        const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
+        const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
         return startTime && startTime > new Date();
       }), userId);
   
@@ -331,19 +334,26 @@ function showLoading() {
     }
   }
 
-window.bookAgain = function(venueId, venueName) {
-  try {
-    
-    localStorage.setItem('bookingId', venueId);
-    localStorage.setItem('venueName', venueName);
-
-    const bookingDetailsUrl = `../make-booking/booking-details.html?bookingId=${venueId}&venueName=${encodeURIComponent(venueName)}`;
-    window.location.href = bookingDetailsUrl;
-  } catch (error) {
-    console.error('Error storing booking info:', error);
-    alert('Error: ' + error.message);
+  window.bookAgain = function(venueId, venueName) {
+    try {
+      if (!venueId || !venueName) {
+        throw new Error('Venue ID or name is missing.');
+      }
+      
+      // Store the venue ID and name in localStorage
+      localStorage.setItem('bookingId', venueId);
+      localStorage.setItem('venueName', venueName);
+  
+      // Construct the URL with the bookingId and venueName as parameters
+      const bookingDetailsUrl = `../make-booking/booking-details.html?bookingId=${venueId}&venueName=${encodeURIComponent(venueName)}`;
+      window.location.href = bookingDetailsUrl;
+    } catch (error) {
+      console.error('Error storing booking info:', error);
+      alert('Error: ' + error.message);
+    }
   }
-}
+  
+  
 
 
 async function fetchVenueName(venueId) {
