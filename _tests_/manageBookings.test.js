@@ -1,8 +1,24 @@
 // bookings.test.js
 const { fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); // Adjust path accordingly
-
+const { JSDOM } = require('jsdom');
 // Mocking the fetch API
 global.fetch = jest.fn();
+
+beforeEach(() => {
+  // Set up your mock DOM here
+  const dom = new JSDOM(`<!DOCTYPE html><html><body>
+      <select id="statusFilter"></select>
+      <select id="roomFilter"></select>
+      <input id="searchInput" />
+  </body></html>`);
+  global.document = dom.window.document;
+  
+  // Initialize your event listeners here
+  document.getElementById('statusFilter').addEventListener('change', renderBookings);
+  document.getElementById('roomFilter').addEventListener('change', renderBookings);
+  document.getElementById('searchInput').addEventListener('input', renderBookings);
+});
+
 
 // Sample data for testing
 const mockVenues = [
