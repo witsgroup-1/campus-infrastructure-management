@@ -1,7 +1,6 @@
-// Import Firebase SDK and Firestore
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, collection, getDoc, addDoc, Timestamp, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, collection, getDoc, addDoc, Timestamp, doc, getDocs } from "firebase/firestore";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -28,10 +27,8 @@ function toggleLoading(show) {
     document.getElementById('bookNowBtn').disabled = show;
 }
 
-// Function to fetch a venue by its ID
 // Function to fetch a venue by its ID via API
 async function getVenueById(venueId) {
-   
     const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}`;
 
     try {
@@ -50,11 +47,9 @@ async function getVenueById(venueId) {
         const venueData = await response.json();
         return venueData; // Venue data from API
     } catch (error) {
-        console.error('Error fetching venue from API:', error);
         return null;
     }
 }
-
 
 // Function to fetch bookings for a specific date via API
 async function fetchBookingsForDate(venueId, bookingDate) {
@@ -65,7 +60,7 @@ async function fetchBookingsForDate(venueId, bookingDate) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey // Include your API key if needed
+                'x-api-key': apiKey
             }
         });
 
@@ -76,18 +71,14 @@ async function fetchBookingsForDate(venueId, bookingDate) {
         const bookings = await response.json();
         return bookings; // Return the bookings data
     } catch (error) {
-        console.error('Error fetching bookings from API:', error);
         return [];
     }
 }
 
-
 function convertToDate(timestamp) {
     if (timestamp.seconds) {
-        // Firestore timestamp format
         return new Date(timestamp.seconds * 1000);
     } else {
-        // Assume it's already a valid Date object or ISO string
         return new Date(timestamp);
     }
 }
@@ -97,7 +88,6 @@ function hasTimeConflict(startTime, endTime, existingBookings) {
         const existingStart = convertToDate(booking.startTime);
         const existingEnd = convertToDate(booking.endTime);
 
-        // Check for any overlap
         if (
             (startTime >= existingStart && startTime < existingEnd) ||
             (endTime > existingStart && endTime <= existingEnd) ||
@@ -109,18 +99,12 @@ function hasTimeConflict(startTime, endTime, existingBookings) {
     return false;
 }
 
-
-
 // Function to submit the booking
 async function submitBooking(userId, bookingData, venueBookingData, venueId, bookingDate, venueName, bookingDataCollection) {
     toggleLoading(true);
     try {
         // Fetch existing bookings for the selected date
         const existingBookings = await fetchBookingsForDate(venueId, bookingDate);
-
-        console.log('bookingData: being posted to users', bookingData);
-        console.log('bookingData.start_time:', bookingData.start_time);
-        console.log('bookingData.end_time:', bookingData.end_time);
 
         // Check for time conflicts
         const startTime = bookingData.start_time.toDate();
@@ -129,7 +113,7 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         if (hasTimeConflict(startTime, endTime, existingBookings)) {
             alert(`The venue is already booked between ${startTime.toLocaleTimeString()} and ${endTime.toLocaleTimeString()}. Please choose a different time.`);
             toggleLoading(false);
-            return;  // Stop the booking process if there is a conflict
+            return;
         }
 
         // Proceed with booking if no conflicts
@@ -143,10 +127,6 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         });
         
         if (!userBookingResponse.ok) {
-            // Handle error response from the API
-            const errorText = await userBookingResponse.text();
-            console.error('Error posting booking to API:', userBookingResponse.status, errorText);
-            alert('Failed to post booking to the server API.');
             toggleLoading(false);
             return;
         }
@@ -163,15 +143,11 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         });
 
         if (!venueResponse.ok) {
-            const errorText = await venueResponse.text();
-            console.error('Error adding booking to venues:', venueResponse.status, errorText);
-            alert('Failed to add booking to venue.');
             toggleLoading(false);
             return;
         }
 
         const venueResponseData = await venueResponse.json();
-        console.log('Venue booking added successfully:', venueResponseData);
 
         // Post venue booking data collection (if necessary)
         const dataCollectionResponse = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
@@ -184,24 +160,19 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
         });
 
         if (!dataCollectionResponse.ok) {
-            const errorText = await dataCollectionResponse.text();
-            console.error('Error posting venue booking to API:', dataCollectionResponse.status, errorText);
-            alert('Failed to post venue booking to the server API.');
+            toggleLoading(false);
         } else {
             const responseData = await dataCollectionResponse.json();
-            console.log('Booking posted to API:', responseData);
             alert(`Booking confirmed for ${venueName} at ${startTime.toLocaleTimeString()}.`);
             clearForm();
         }
 
     } catch (error) {
-        console.error('Error posting booking:', error);
         alert('An unexpected error occurred while booking.');
     } finally {
-        toggleLoading(false); // Ensure loading is stopped
+        toggleLoading(false);
     }
 }
-
 
 // Function to clear the form
 function clearForm() {
@@ -214,7 +185,7 @@ function clearForm() {
 function isFutureDateTime(bookingDate, startTime) {
     const currentDateTime = new Date();
     const bookingDateTime = new Date(`${bookingDate}T${startTime}:00`);
-    return bookingDateTime > currentDateTime;  // Ensure the selected booking time is in the future
+    return bookingDateTime > currentDateTime;
 }
 
 // Function to validate the form
@@ -287,20 +258,16 @@ async function updateAvailableTimeSlots(venueId, bookingDate) {
   }
   
 
-
-
 // Initialize booking functionality
 window.onload = function () {
     const params = new URLSearchParams(window.location.search);
-    const bookingId = params.get('bookingId');  // This is the venueId
+    const bookingId = params.get('bookingId');
 
     if (!bookingId) {
-        console.error('No bookingId provided in URL');
         return;
     }
 
-    // Fetch venue details from Firestore using the venue ID
-getVenueById(bookingId).then(venueData => {
+    getVenueById(bookingId).then(venueData => {
         if (!venueData) {
             alert("No venue data found.");
             return;
@@ -308,7 +275,6 @@ getVenueById(bookingId).then(venueData => {
 
         document.getElementById("venueName").textContent = `${venueData.Name} (${venueData.Category})`;
 
-        // Event listener for date change to update available time slots
         const bookingDateInput = document.getElementById('bookingDate');
         bookingDateInput.addEventListener('change', async function () {
             const bookingDate = bookingDateInput.value;
@@ -317,13 +283,10 @@ getVenueById(bookingId).then(venueData => {
             }
         });
 
-        // Track the user's authentication state
-onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userId = user.uid;
-                console.log(`Logged in as: ${user.email}, User ID: ${userId}`);
 
-                // Add event listener to the 'Book Now' button
                 const bookNowBtn = document.getElementById('bookNowBtn');
                 bookNowBtn.addEventListener('click', async function () {
                     if (!isFormValid()) return;
@@ -339,7 +302,6 @@ onAuthStateChanged(auth, async (user) => {
                     const startTimestamp = Timestamp.fromDate(startDateTime);
                     const endTimestamp = Timestamp.fromDate(endDateTime);
 
-                    // If the time slot is available (filtered by updateAvailableTimeSlots)
                     if (timeSlot) {
                         const bookingData = {
                             "venue_id": bookingId,
@@ -357,7 +319,6 @@ onAuthStateChanged(auth, async (user) => {
                         };
 
                         const bookingDataCollection = {
-                           
                             "status": "approved",
                             "date": bookingDate,
                             "start_time": startTime,
@@ -365,11 +326,7 @@ onAuthStateChanged(auth, async (user) => {
                             "purpose": bookingPurpose,
                             "userId": userId,
                             "venueId": bookingId
-                            
                         };
-                      
-                        console.log('The one Im posting to bookings:', bookingDataCollection );
-
 
                         await submitBooking(userId, bookingData, venueBookingData, bookingId, bookingDate, venueData.Name, bookingDataCollection);
                     } else {
@@ -377,9 +334,11 @@ onAuthStateChanged(auth, async (user) => {
                     }
                 });
             } else {
-                console.log('No user is signed in.');
-                window.location.href = "../index.html";  // Redirect to login page
+                window.location.href = "../index.html";
             }
         });
     });
 };
+
+// Export all functions for testing
+module.exports = { getVenueById, fetchBookingsForDate, submitBooking, isFormValid, updateAvailableTimeSlots };
