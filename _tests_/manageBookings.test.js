@@ -1,24 +1,10 @@
 // bookings.test.js
-const {bookings, venues, fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); // Adjust path accordingly
+const { fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); // Adjust path accordingly
 const { JSDOM } = require('jsdom');
-// Mocking the fetch API
 global.fetch = jest.fn();
 
-// beforeEach(() => {
-//   // Set up your mock DOM here
-//   const dom = new JSDOM(`<!DOCTYPE html><html><body>
-//       <select id="statusFilter"></select>
-//       <select id="roomFilter"></select>
-//       <input id="searchInput" />
-//   </body></html>`);
-//   global.document = dom.window.document;
-  
-//   // Initialize your event listeners here
-//   document.getElementById('statusFilter').addEventListener('change', renderBookings);
-//   document.getElementById('roomFilter').addEventListener('change', renderBookings);
-//   document.getElementById('searchInput').addEventListener('input', renderBookings);
-// });
-
+let venues = []; // Change to let
+let bookings = []; // Change to let
 
 // Sample data for testing
 const mockVenues = [
@@ -81,14 +67,16 @@ describe('fetchBookings', () => {
 
 // Tests for getRoomInfo
 describe('getRoomInfo', () => {
+    beforeEach(() => {
+        venues = mockVenues; // Use let to assign mock venues
+    });
+
     it('should return room info for a valid venueId', () => {
-        venues = mockVenues; // Setting mock venues for the test
         const roomInfo = getRoomInfo(1);
         expect(roomInfo).toEqual(mockVenues[0]);
     });
 
     it('should return undefined for an invalid venueId', () => {
-        venues = mockVenues;
         const roomInfo = getRoomInfo(999); // Invalid ID
         expect(roomInfo).toBeUndefined();
     });
@@ -96,14 +84,16 @@ describe('getRoomInfo', () => {
 
 // Tests for getBookingInfo
 describe('getBookingInfo', () => {
+    beforeEach(() => {
+        bookings = mockBookings; // Use let to assign mock bookings
+    });
+
     it('should return booking info for a valid bookingId', () => {
-        bookings = mockBookings; // Setting mock bookings for the test
         const bookingInfo = getBookingInfo(1);
         expect(bookingInfo).toEqual(mockBookings[0]);
     });
 
     it('should return undefined for an invalid bookingId', () => {
-        bookings = mockBookings;
         const bookingInfo = getBookingInfo(999); // Invalid ID
         expect(bookingInfo).toBeUndefined();
     });
