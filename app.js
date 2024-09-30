@@ -38,7 +38,7 @@ app.use("/api", venuesRouter);
 app.use("/api", notificationsRouter);
 app.use("/api", apiLogsRouter);
 app.use("/api", securityRouter);
-app.use("./api",menuRouter);
+app.use("/api",menuRouter);
 
 
 app.set("port", process.env.PORT || 3000);
