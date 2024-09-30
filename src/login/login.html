@@ -5,33 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="origin">
     <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles for background image */
+        .background-image {
+            background-image: url('wss.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
 </head>
-<body>
+<body class="background-image">
 
-    <button class="button bg-white rounded-full shadow-md p-3 hover:bg-gray-200" onclick="window.location.href='../landingPage/landingPage.html'">
+    <button class="absolute top-4 left-4 bg-white rounded-full shadow-md p-3 hover:bg-gray-200" onclick="window.location.href='../landingPage/landingPage.html'">
         <i class="fa-solid fa-chevron-left fa-2x"></i>
     </button>
 
-    <img src="wss.jpg" class="background_image" alt="Background Image">
-    <div class="login_container">
-        <img src="wits_logo.png" alt="Wits Logo" class="logo">
-        <form id = "login-form">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-            <button id = "login" type="submit">Sign in</button>
-        </form>
-        <div class="social-login">
-            <img src="google_logo.png" alt="Google Login" class="social_icon" id="googleLogin">
-        </div>
-        <div class="additional-options">
-            <p><a href="#">Forgot Password?</a></p>
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-10 rounded-lg shadow-lg max-w-md w-full bg-opacity-90">
+            <h1 class="text-2xl font-extrabold text-[#003B5C] mb-6 text-center tracking-wide">
+                Campus Infrastructure Management
+            </h1>
+            
+            <img src="wits_logo.png" alt="Wits Logo" class="mx-auto mb-8 h-20 w-15">
+            
+            <form id="login-form" class="space-y-4">
+                <!-- Note to the user -->
+                <div class="text-sm text-gray-600 bg-yellow-100 p-3 rounded-md">
+                    <p>If you're using a whitelisted non-Wits email, proceed with the form to sign in. If you have a Wits email, please sign in using Google below.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="email" class="block text-left font-semibold text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="space-y-2 relative">
+                    <label for="password" class="block text-left font-semibold text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10">
+                    <i class="fa fa-eye toggle-password absolute right-3 top-9 cursor-pointer text-gray-600" id="togglePassword"></i>
+                </div>
+                
+                <!-- Button with custom colors -->
+                <button id="login" type="submit" class="w-full bg-[#917248] text-white font-bold py-3 rounded-lg hover:bg-[#7d6239]">Sign in</button>
+            </form>
+            <div id="status-message" class="status-message"></div> 
+          
+            <div class="flex justify-center mt-4">
+                <img src="google_logo.png" alt="Google Login" class="w-8 cursor-pointer" id="googleLogin">
+            </div>
+            
+   
+
         </div>
     </div>
 
-    <script type = "module" src = "login.js" ></script>
+    <script>
+      const togglePassword = document.querySelector('#togglePassword');
+      const passwordInput = document.querySelector('#password');
+
+      togglePassword.addEventListener('click', function () {
+          // Toggle the type attribute
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+          
+          // Toggle the eye / eye-slash icon
+          this.classList.toggle('fa-eye-slash');
+      });
+    </script>
+    <script type="module" src="login.js"></script>
+
+    <!-- Include Firebase SDK script before using Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+
 </body>
 </html>

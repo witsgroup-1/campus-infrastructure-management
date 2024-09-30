@@ -23,29 +23,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure the user is authenticated
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // The user is signed in, you can access the user's info
-                const uid = user.uid;
-                const email = user.email;
-    
+
                 const name = document.getElementById('name').value;
                 const surname = document.getElementById('surname').value;
                 const emailInput = document.getElementById('email').value;
-    
+
                 if (!name || !surname || !emailInput) {
                     alert('Please fill in all required fields.');
                     return;
                 }
-    
+
                 try {
                     const querySnapshot = await getDocs(
                         query(collection(db, 'whitelistRequests'), where('emailInput', '==', emailInput))
                     );
-    
+
                     if (!querySnapshot.empty) {
                         alert('This email has already been requested for approval.');
                         window.location.href = '../landingPage/landingPage.html';
                         return;
                     }
+
                     const requestData = {
                         name,
                         surname,
@@ -53,18 +51,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         status: 'pending',
                         createdAt: new Date()
                     };
-    
+
+                    document.getElementById('loadingSpinner').classList.remove('hidden');
+
                     await addDoc(collection(db, 'whitelistRequests'), requestData);
+
+                    document.getElementById('loadingSpinner').classList.add('hidden');
+
                     alert('Your request has been submitted for approval!');
                     window.location.href = 'statusCheck.html';
-    
+
                 } catch (error) {
                     console.error('Error submitting request: ', error);
                     alert('There was an issue submitting your request. Please try again.');
+                    document.getElementById('loadingSpinner').classList.add('hidden');
                 }
             }
         });
     });
-    
 });
+
 

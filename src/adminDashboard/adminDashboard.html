@@ -83,62 +83,36 @@
     <div id="sidebar" class="fixed top-0 right-0 h-full bg-[#003B5C] text-white w-0 overflow-hidden transition-all duration-300 lg:w-1/4 md:w-1/3 sm:w-1/2">
         <button id="close-btn" class="absolute top-4 left-1/2 transform -translate-x-1/2 text-2xl cursor-pointer mt-4" aria-label="Close Sidebar">&times;</button>
         <nav class="flex flex-col items-center justify-center h-full p-4 space-y-4">
-            <a href="../schedule/add_schedule.html" >Schedules</a>
-            <a href="../manage-bookings/manageBookings.html" >Bookings</a>
-            <a href="../maintenance/maintenanceLogs.html" >Maintenance</a>
-            <a href="./allVenues.html" >Venues</a>
-            <a href="./allWhitelistRequests.html">Whitelist</a>
+            <a href='./allWhitelistRequests.html' >Requests</a>
+            <a href="./allWhitelistMembers.html">Whitelist</a>
+            <a href="../user-dashboard/dashboard.html">User Dashboard</a>
             <a href="../login/login.html" id = "logout">Log out</a>
         </nav>
     </div>
     
 <p id="userEmailDisplay"></p>
 
-    <main class="min-h-screen p-8">
+<main class="min-h-screen p-8 flex flex-wrap">
+    <section id="image-section" class="w-full md:w-1/2 flex justify-center items-center hidden md:flex">
+        <img src="img/admin.svg" class="w-3/4 h-auto object-cover">
+    </section>
 
-        <section class="mt-8">
-            <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Recent reports...</h2>
-            <div id="no-bookings-message" class="hidden text-center">
-                <p  class="text-lg font-semibold text-[#003B5C] mt-4">No recent reports</p>
-            </div>
-            <div id="reports-container" class="space-y-4">
-              <!-- Bookings will be dynamically inserted here -->
-            </div>
-            <br>
-        </section>
-       
-           
-        
-        <section class="mt-8">
-            <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Recent bookings...</h2>
-            <div id="no-bookings-message" class="hidden text-center">
-                <p  class="text-lg font-semibold text-[#003B5C] mt-4">No upcoming bookings</p>
-            </div>
-            <div id="bookings-container" class="space-y-4">
-              <!-- Bookings will be dynamically inserted here -->
-            </div>
-            <br>
-            <a id="see-more-button" href="../manage-bookings/manageBookings.html" class = "hidden">See More</a>
-            <!-- This section will be shown when there are no bookings -->
-        </section>
-        
+    <section class="w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center">
+        <div class="square bg-[#003B5C] text-white rounded-lg shadow-lg cursor-pointer flex justify-center items-center w-full h-48" onclick=" window.location.href = '../maintenance/maintenanceLogs.html'">
+            <h2 class="text-xl font-semibold text-center">Reports</h2>
+        </div>
+        <div class="square bg-[#003B5C] text-white rounded-lg shadow-lg cursor-pointer flex justify-center items-center w-full h-48" onclick=" window.location.href = '../manage-bookings/manageBookings.html'">
+            <h2 class="text-xl font-semibold text-center">Bookings</h2>
+        </div>
+        <div class="square bg-[#003B5C] text-white rounded-lg shadow-lg cursor-pointer flex justify-center items-center w-full h-48" onclick=" window.location.href = './allVenues.html'">
+            <h2 class="text-xl font-semibold text-center">Venues</h2>
+        </div>
+        <div class="square bg-[#003B5C] text-white rounded-lg shadow-lg cursor-pointer flex justify-center items-center w-full h-48" onclick=" window.location.href = '../schedule/add_schedule.html'">
+            <h2 class="text-xl font-semibold text-center">Schedules</h2>
+        </div>
+    </section>
+</main>
 
-    </main>
-
-    <!-- Quick Access Button -->
-    <div class="fixed bottom-4 right-4 flex flex-col items-end space-y-4">
-       
-        <button id="report-button" class="hidden bg-blue-950 text-white py-2 px-4 rounded-full font-semibold w-24 h-12 shadow-lg mb-4">Reports</button>
-        
-        <button id="book-button" class="hidden bg-blue-950 text-white py-2 px-4 rounded-full font-semibold w-24 h-12 shadow-lg mb-4">Bookings</button>
-
-        <button id="request-button" class="hidden bg-blue-950 text-white py-2 px-4 rounded-full font-semibold w-24 h-12 shadow-lg mb-4">Requests</button>
-
-        <button id="schedule-button" class="hidden bg-blue-950 text-white py-2 px-4 rounded-full font-semibold w-24 h-12 shadow-lg mb-4">Schedules</button>
-       
-        <button id="main-button" class="bg-[#917248] text-blue-950 py-2 px-4 rounded-full font-bold text-3xl shadow-lg p-5">+</button>
-    </div>
-    
     
 
     <footer class="bg-[#003B5C] text-white flex justify-around">

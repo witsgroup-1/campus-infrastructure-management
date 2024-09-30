@@ -24,7 +24,10 @@ async function getWhitelistRequests() {
 }
 
 async function fetchRequests() {
+    const loader = document.getElementById('loader');
+    loader.style.display = "block";
     const requests = await getWhitelistRequests();
+    loader.style.display = "none";
 
     const requestsContainer = document.getElementById('requestsContainer');
 
