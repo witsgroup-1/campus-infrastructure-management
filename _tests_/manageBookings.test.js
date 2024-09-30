@@ -3,8 +3,8 @@ const { fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings,
 const { JSDOM } = require('jsdom');
 global.fetch = jest.fn();
 
-let venues = []; // Change to let
-let bookings = []; // Change to let
+const venues = []; // Change to let
+const bookings = []; // Change to let
 
 // Sample data for testing
 const mockVenues = [
