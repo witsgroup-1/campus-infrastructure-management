@@ -1,5 +1,5 @@
 // bookings.test.js
-const {venues, fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); // Adjust path accordingly
+const {bookings, venues, fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); // Adjust path accordingly
 const { JSDOM } = require('jsdom');
 // Mocking the fetch API
 global.fetch = jest.fn();

@@ -445,4 +445,4 @@ document.addEventListener('DOMContentLoaded', () => {
 // document.getElementById('searchInput').addEventListener('input', renderBookings);
 
 
-module.exports={ venues, fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking }
+module.exports={ bookings, venues, fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking }
