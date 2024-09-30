@@ -194,7 +194,7 @@ async function displayPastBookings(pastBookings, userId) {
             </div>
             ${type === 'upcoming'
               ? `<button class="bg-red-500 text-white px-3 py-1 rounded" onclick="cancelBooking('${userId}', '${booking.id}')">Cancel</button>`
-              : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venueId}', '${venueName}')">Book Again</button>`}
+              : `<button class="bg-green-500 text-white px-3 py-1 rounded" onclick="bookAgain('${booking.venue_id}', '${venueName}')">Book Again</button>`}
           </div>
         `;
   
@@ -334,19 +334,26 @@ async function displayPastBookings(pastBookings, userId) {
     }
   }
 
-window.bookAgain = function(venueId, venueName) {
-  try {
-    
-    localStorage.setItem('bookingId', venueId);
-    localStorage.setItem('venueName', venueName);
-
-    const bookingDetailsUrl = `../make-booking/booking-details.html?bookingId=${venueId}&venueName=${encodeURIComponent(venueName)}`;
-    window.location.href = bookingDetailsUrl;
-  } catch (error) {
-    console.error('Error storing booking info:', error);
-    alert('Error: ' + error.message);
+  window.bookAgain = function(venueId, venueName) {
+    try {
+      if (!venueId || !venueName) {
+        throw new Error('Venue ID or name is missing.');
+      }
+      
+      // Store the venue ID and name in localStorage
+      localStorage.setItem('bookingId', venueId);
+      localStorage.setItem('venueName', venueName);
+  
+      // Construct the URL with the bookingId and venueName as parameters
+      const bookingDetailsUrl = `../make-booking/booking-details.html?bookingId=${venueId}&venueName=${encodeURIComponent(venueName)}`;
+      window.location.href = bookingDetailsUrl;
+    } catch (error) {
+      console.error('Error storing booking info:', error);
+      alert('Error: ' + error.message);
+    }
   }
-}
+  
+  
 
 
 async function fetchVenueName(venueId) {
