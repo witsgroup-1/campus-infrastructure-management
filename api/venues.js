@@ -75,7 +75,7 @@ venuesRouter.get('/venues', async (req, res) => {
 
 
 //get venue by name
-// venuesRouter.get('/venues/:name', async (req, res) => {
+// venuesRouter.get('/venues/name/:name', async (req, res) => {
 //     const { name } = req.params;
 
 //     try {
