@@ -21,7 +21,7 @@ jest.mock('firebase/firestore', () => {
   };
 });
 
-import { fetchVenues } from '../copy/manageBookingsCopy'; // Adjust the import path
+import { fetchVenues } from './copy/manageBookingsCopy'; // Adjust the import path
 
 // Mock the fetch function
 global.fetch = jest.fn(() =>
