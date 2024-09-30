@@ -40,25 +40,29 @@ function getCurrentDate() {
     return `${year}-${month}-${day}`;
 }
 
+
+
+const venuesPerPage = 10; 
+let currentPage = 1; 
+let availableVenues = [];
+
 function getNextSlot() {
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
     
+    // Find the next available time slot after the current time
     for (const interval of intervals) {
         const [startHour, startMinute] = interval.start.split(':').map(Number);
         
+        // Check if the current time is before the start of the next interval
         if (currentHour < startHour || (currentHour === startHour && currentMinute < startMinute)) {
             return interval;
         }
     }
     
-    return null;
+    return null; // No more slots available today
 }
-
-const venuesPerPage = 10; 
-let currentPage = 1; 
-let availableVenues = [];
 
 async function fetchAvailableVenues() {
     try {
@@ -72,6 +76,16 @@ async function fetchAvailableVenues() {
             console.log('No more slots available for today.');
             return availableVenues;
         }
+
+        const [nextSlotStartHour, nextSlotStartMinute] = nextSlot.start.split(':').map(Number);
+        const [nextSlotEndHour, nextSlotEndMinute] = nextSlot.end.split(':').map(Number);
+
+        // Create Date objects for the start and end of the next time slot
+        const nextSlotStartTime = new Date();
+        nextSlotStartTime.setHours(nextSlotStartHour, nextSlotStartMinute, 0, 0);
+        
+        const nextSlotEndTime = new Date();
+        nextSlotEndTime.setHours(nextSlotEndHour, nextSlotEndMinute, 0, 0);
         
         const venuePromises = venuesSnapshot.docs.map(async (venueDoc) => {
             const venueData = venueDoc.data();
@@ -80,26 +94,14 @@ async function fetchAvailableVenues() {
 
             const isBooked = bookingsSnapshot.docs.some(doc => {
                 const booking = doc.data();
-                
                 const bookingStartTime = new Date(booking.startTime.seconds * 1000);
                 const bookingEndTime = new Date(booking.endTime.seconds * 1000);
-                
-                const [nextSlotStartHour, nextSlotStartMinute] = nextSlot.start.split(':').map(Number);
-                const [nextSlotEndHour, nextSlotEndMinute] = nextSlot.end.split(':').map(Number);
-                
-                const nextSlotStartTime = new Date();
-                nextSlotStartTime.setHours(nextSlotStartHour, nextSlotStartMinute, 0, 0);
-                
-                const nextSlotEndTime = new Date();
-                nextSlotEndTime.setHours(nextSlotEndHour, nextSlotEndMinute, 0, 0);
-                
-                const isOverlap = (bookingStartTime < nextSlotEndTime && bookingEndTime > nextSlotStartTime);
 
-                console.log(isOverlap)
+                // Only consider bookings that overlap with or are after the nextSlot
+                const isOverlap = (bookingStartTime < nextSlotEndTime && bookingEndTime > nextSlotStartTime);
+                
                 return isOverlap; 
             });
-
-            console.log(isBooked)
 
             if (!isBooked) {
                 availableVenues.push({
@@ -119,6 +121,7 @@ async function fetchAvailableVenues() {
         return [];
     }
 }
+
 
 
 
