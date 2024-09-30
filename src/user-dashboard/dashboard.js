@@ -218,6 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bookButton.addEventListener('click', () => {
         window.location.href = '../make-booking/book-venue.html';
     });
+
+    fetchSecurityContact();
 });
 
 const showModal = (message) => {
@@ -239,4 +241,80 @@ const showModal = (message) => {
     
     modal.style.display = "block"; 
 };
+
+//const proxyUrl = 'https://api.allorigins.win/raw?url=';
+const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/contacts'
+const ourSecurityUrl = `https://campus-infrastructure-management.azurewebsites.net/api/securityInfo`;
+
+async function fetchSecurityContact() {
+    try {
+        const response = await fetch(securityUrl, {
+            method: 'GET',
+            //mode: 'no-cors',
+            headers: {
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const securityInfo = await response.json();
+    
+        const section = document.getElementById('security_info');
+        section.innerHTML = ''; 
+
+        securityInfo.forEach(info => {
+            const contact_details = document.createElement('div');
+
+            contact_details.innerHTML = `
+            <span class=" text-white">${info.name}:</span>
+            <span class="text-gray-300">${info.phone}</span>
+            `;
+           // contact_details.textContent = `${info.Name}: ${info['Contact Number']}`;
+            section.appendChild(contact_details);
+        });
+
+    } catch (error) {
+        console.error('Error fetching security contact information:', error);
+        fetchOurSecurityContact();
+    }
+}
+
+async function fetchOurSecurityContact() {
+    try {
+        const response = await fetch(ourSecurityUrl, {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const securityInfo = await response.json();
+    
+        const section = document.getElementById('security_info');
+        section.innerHTML = ''; 
+
+        securityInfo.forEach(info => {
+            const contact_details = document.createElement('div');
+
+            contact_details.innerHTML = `
+            <span class="text-xs text-white">${info.Name}:</span>
+            <span class="text-xs text-gray-300">${info['Contact Number']}</span>
+            `;
+           // contact_details.textContent = `${info.Name}: ${info['Contact Number']}`;
+            section.appendChild(contact_details);
+        });
+
+    } catch (error) {
+        console.error('Error fetching security contact information:', error);
+    }
+}
 
