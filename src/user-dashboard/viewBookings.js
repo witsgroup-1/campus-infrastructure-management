@@ -12,7 +12,6 @@ const firebaseConfig = {
   measurementId: "G-Y95YE5ZDRY"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -21,9 +20,9 @@ function formatFirestoreTimestamp(timestamp) {
   if (timestamp && timestamp.seconds) {
     const date = new Date(timestamp.seconds * 1000);
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const year = date.getFullYear().toString().slice(-2); // Get last 2 digits of year
-    return `${day}/${month}/${year}`; // Format as dd/mm/yy
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = date.getFullYear().toString().slice(-2); 
+    return `${day}/${month}/${year}`;
   }
   return 'Invalid date';
 }
@@ -33,32 +32,30 @@ function formatTime(timestamp) {
     const date = new Date(timestamp.seconds * 1000);
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`; // Format as HH:MM
+    return `${hours}:${minutes}`;
   }
   return 'Invalid time';
 }
 
-// Function to show a loading state
+
 function showLoading() {
   const bookingsContainer = document.getElementById('bookings-container');
   bookingsContainer.innerHTML = '<p>Loading bookings...</p>';
 }
 
-// Function to hide the loading state
+
 function hideLoading() {
   const bookingsContainer = document.getElementById('bookings-container');
-  bookingsContainer.innerHTML = ''; // Clear the loading message
+  bookingsContainer.innerHTML = ''; 
 }
 
 async function getFirestoreUserIdByEmail(email) {
   try {
-    
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      
       const userDoc = querySnapshot.docs[0];
       const firestoreUserId = userDoc.id;
       return firestoreUserId;
@@ -76,13 +73,11 @@ async function fetchVenueName(venueId) {
     const venueRef = doc(db, 'venues', venueId);  
     const venueDoc = await getDoc(venueRef); 
     return venueDoc;
-    
   } catch (error) {
     console.error('Error fetching venue:', error);
-    return null;  // Handle error case
+    return null; 
   }
 }
-
 async function fetchUserBookings(userId) {
   try {
     const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings`;
@@ -107,6 +102,7 @@ async function fetchUserBookings(userId) {
 }
 
 async function displayBookings(bookings) {
+  console.log(bookings)
   const bookingsContainer = document.getElementById('bookings-container');
   const noBookingsMessage = document.getElementById('no-bookings-message');
   const seeMoreButton = document.getElementById('see-more-button');
@@ -115,11 +111,11 @@ async function displayBookings(bookings) {
   const now = new Date();
 
   const upcomingBookings = bookings.filter(booking => {
-    const startTime = booking.startTime ? new Date(booking.startTime.seconds * 1000) : null;
+    const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
     return startTime && startTime > now;
   }).sort((a, b) => {
-    const startA = new Date(a.startTime.seconds * 1000);
-    const startB = new Date(b.startTime.seconds * 1000);
+    const startA = new Date(a.start_time.seconds * 1000);
+    const startB = new Date(b.start_time.seconds * 1000);
     return startA - startB; 
   });
 
@@ -133,26 +129,22 @@ async function displayBookings(bookings) {
     const isMobile = window.innerWidth <= 768; 
     const bookingsToDisplay = isMobile ? upcomingBookings.slice(0, 1) : upcomingBookings.slice(0, 3); // Show 1 on mobile, 3 on others
 
-    if(isMobile){
-      
-    }
-
     for (let booking of bookingsToDisplay) {
-      const formattedStartTime = formatFirestoreTimestamp(booking.startTime);
-      const formattedStartHour = formatTime(booking.startTime);
-      const formattedEndHour = formatTime(booking.endTime);
+      const formattedStartTime = formatFirestoreTimestamp(booking.start_time);
+      const formattedStartHour = formatTime(booking.start_time);
+      const formattedEndHour = formatTime(booking.end_time);
 
       const bookingElement = document.createElement('div');
       bookingElement.classList.add('w-11/12', 'h-16', 'rounded-lg', 'mb-2', 'p-2');
 
-      const venueDoc = await fetchVenueName(booking.venueId);
+      const venueDoc = await fetchVenueName(booking.venue_id);
       const venueName = venueDoc.exists() ? venueDoc.data().Name : 'Venue not found';
 
       bookingElement.innerHTML = `
         <div class="booking-container flex items-center">
           <div class="booking-info flex-1">
             <div><strong>Venue:</strong> ${venueName}</div>
-            <div><strong>Purpose:</strong> ${booking.purpose}</div>
+            <div><strong>Purpose:</strong> ${booking.purpose}</div> <!-- Use purpose directly -->
           </div>
           <div class="separator w-px bg-[#003B5C] h-12 mx-4"></div>
           <div class="booking-times flex-1 text-right">
@@ -174,13 +166,11 @@ async function displayBookings(bookings) {
 }
 
 
-
 async function loadUserBookings(userEmail) {
   showLoading();
 
-  
   const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
-  console.log(firestoreUserId)
+  console.log(firestoreUserId);
 
   if (firestoreUserId) {
     const bookings = await fetchUserBookings(firestoreUserId);
@@ -188,15 +178,13 @@ async function loadUserBookings(userEmail) {
   } else {
     console.error('Could not find Firestore userId for the given email.');
   }
-  displayBookings(bookings);
   hideLoading();
 }
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("User is signed in with email:", user.email);
-    loadUserBookings(user.email); // Load bookings based on the user's email
-    console.log(user.email)
+    loadUserBookings(user.email); 
   } else {
     console.log("No user is signed in.");
   }

@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, collection, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 // Firebase configuration
@@ -13,10 +13,8 @@ const firebaseConfig = {
     measurementId: "G-Y95YE5ZDRY"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Get Firestore and Auth references
 const db = getFirestore(app);
 const auth = getAuth(app);
 
@@ -47,13 +45,32 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         const email = user.email;
 
-        // Store email in localStorage 
         localStorage.setItem('userEmail', email);
 
-        // Get user document ID by email
+        
         const userDocId = await getUserDocumentByEmail(email);
         if (userDocId) {
             localStorage.setItem('userId', userDocId);
+            const userDoc = await getDoc(doc(db, 'users', userDocId)); 
+
+           
+            const isTutor = userDoc.data().isTutor || false;
+            const isLecturer = userDoc.data().isLecturer || false;
+            const role = userDoc.data().role || '';
+
+            const isAdmin = !isTutor && !isLecturer && role === 'Staff';
+
+            if (isAdmin) {
+                document.getElementById('admin-link').style.display = 'block'; // Show admin link
+                document.getElementById('admin-link').addEventListener('click', () => {
+                    window.location.href = "../adminDashboard/adminDashboard.html"; // Redirect to admin page
+                });
+            } else {
+                document.getElementById('admin-link').addEventListener('click', (event) => {
+                    event.preventDefault()
+                    showModal("Oops! Only admins can access this.");
+                });
+            }
         }
     }
 });
@@ -203,5 +220,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
+const showModal = (message) => {
+    const modal = document.createElement('div');
+    modal.className = 'modal'; // Add styles for the modal
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>${message}</p>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+   
+    modal.querySelector('.close').onclick = function() {
+        modal.style.display = "none";
+        document.body.removeChild(modal); 
+    };
+    
+    modal.style.display = "block"; 
+};
 

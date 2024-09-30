@@ -36,6 +36,22 @@
             position: relative;
             z-index: 10;
         }
+
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #917248; 
+            border-radius: 50%;
+            width: 40px; /* Spinner size */
+            height: 40px; /* Spinner size */
+            animation: spin 2s linear infinite;
+            margin: 0 auto; /* Center the spinner */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         
         @media (max-width: 768px) {
             .form-block {
@@ -54,7 +70,11 @@
 <body class="bg-gray-50">
     <main class="flex-grow max-w-4xl mx-auto p-4">
         <header class="flex justify-between items-center w-full bg-[#003B5C] p-4 h-16 fixed left-0 top-0 right-0 z-10">
-            <button id="backBtn" class="text-6xl text-[#917248] font-bold">&larr;</button>
+            <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
             <div class="flex-grow text-center">
                 <h1 id="step-title" class="text-xl text-white font-bold">Welcome</h1>
             </div>
@@ -92,15 +112,19 @@
             <button id="nextBtn1" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg block mx-auto">Next</button>
         </section>
 
-        <!-- Step 3: Finish -->
         <section id="step-3" class="step hidden mt-20">
             <div class="relative form-block p-6 md:p-12 rounded-lg shadow-md mx-auto md:w-3/4 w-full max-w-md">
                 <div class="relative-content text-center">
                     <h2 class="text-2xl text-[#003B5C]">You are ready to submit your information!</h2>
                     <button id="requestBtn" class="mt-8 bg-[#917248] text-white px-6 py-3 rounded-lg">Finish</button>
+                    
                 </div>
             </div>
+            <div id="loadingSpinner" class="hidden mt-4">
+                <div class="loader"></div>
+            </div>
         </section>
+        
     </main>
 
     <footer class="bg-[#003B5C] text-white text-center p-4 w-full">
