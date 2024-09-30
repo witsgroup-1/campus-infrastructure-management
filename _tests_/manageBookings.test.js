@@ -1,6 +1,5 @@
 // Import the necessary modules
-import { fetchVenues } from './yourFile';  // Adjust the import based on your file structure
-
+import { fetchVenues } from './copies/manageBookingsCopy'; 
 describe('fetchVenues', () => {
   beforeEach(() => {
     global.fetch = jest.fn();
