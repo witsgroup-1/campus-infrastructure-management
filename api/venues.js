@@ -49,7 +49,7 @@ venuesRouter.get('/venues', async (req, res) => {
 
 
 // Get venue by category
-venuesRouter.get('/venues/:Category', async (req, res) => {
+venuesRouter.get('/venues/category/:Category', async (req, res) => {
     const { Category } = req.params;
 
     try {
@@ -75,7 +75,7 @@ venuesRouter.get('/venues/:Category', async (req, res) => {
 
 
 //get venue by name
-// venuesRouter.get('/venues/:name', async (req, res) => {
+// venuesRouter.get('/venues/name/:name', async (req, res) => {
 //     const { name } = req.params;
 
 //     try {
