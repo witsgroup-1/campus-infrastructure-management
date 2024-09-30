@@ -24,7 +24,7 @@ const db = getFirestore(app);
 // Function to fetch user data using the API
 async function fetchUserData(uid) {
     const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
-    const apiUrl = `http://localhost:3000/api/users/${uid}`; // Include uid in the URL
+    const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${uid}`; // Include uid in the URL
 
     try {
         const response = await fetch(apiUrl, {
@@ -59,9 +59,9 @@ async function fetchAndRenderBookings(userData) {
 
     let apiUrl;
     if (categoryFilter) {
-        apiUrl = `http://localhost:3000/api/venues?category=${encodeURIComponent(categoryFilter)}`; // Use query parameter
+        apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues?category=${encodeURIComponent(categoryFilter)}`; // Use query parameter
     } else {
-        apiUrl = `http://localhost:3000/api/venues`;
+        apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues`;
     }
 
     try {
