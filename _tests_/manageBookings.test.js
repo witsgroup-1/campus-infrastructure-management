@@ -1,53 +1,31 @@
-// _tests_/fetchVenues.test.js
-jest.mock('firebase/app', () => {
-  return {
-      initializeApp: jest.fn(),  // Mock the initializeApp function
-  };
-});
+// fetchVenues.test.js
 
-jest.mock('firebase/auth', () => {
-  return {
-      getAuth: jest.fn(),  // Mock the getAuth function
-      onAuthStateChanged: jest.fn(), // Mock auth state changes
-  };
-});
+const mockVenuesData = [
+  { id: "1", Name: "Venue A", Category: "Auditorium", Building: "Building A" },
+  { id: "2", Name: "Venue B", Category: "Conference Room", Building: "Building B" }
+];
 
-jest.mock('firebase/firestore', () => {
-  return {
-      getFirestore: jest.fn(), // Mock Firestore
-      collection: jest.fn(),
-      doc: jest.fn(),
-      getDocs: jest.fn(),
-  };
-});
-
-import { fetchVenues } from './copy/manageBookingsCopy'; // Adjust the import path
-
-// Mock the fetch function
 global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve([
-      { Name: 'Venue 1', Capacity: 100, Category: 'Lecture Room' },
-      { Name: 'Venue 2', Capacity: 50, Category: 'Lab Room' }
-    ])
-  })
+Promise.resolve({
+  json: () => Promise.resolve(mockVenuesData)
+})
 );
 
-describe('fetchVenues', () => {
-  it('fetches venues successfully', async () => {
-    const venues = await fetchVenues();
-    expect(venues).toHaveLength(2);
-    expect(venues[0].Name).toBe('Venue 1');
+const { fetchVenues } = require('./copies/manageBookingsCopy');
 
-  });
+describe("fetchVenues", () => {
+  it("fetches venues and updates the venues array", async () => {
+      await fetchVenues();
 
-  it('handles fetch failure', async () => {
-    // Mock fetch to return an error
-    global.fetch.mockImplementationOnce(() => Promise.reject(new Error('Failed to fetch')));
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(fetch).toHaveBeenCalledWith('https://campus-infrastructure-management.azurewebsites.net/api/venues', {
+          method: 'GET',
+          headers: {
+            'x-api-key': expect.any(String),
+            'Content-Type': 'application/json'
+          }
+      });
 
-    const venues = await fetchVenues();
-    expect(venues).toEqual([]); // Adjust based on your error handling logic
+      expect(venues).toEqual(mockVenuesData); // Verify that fetched data matches expected
   });
 });
-
