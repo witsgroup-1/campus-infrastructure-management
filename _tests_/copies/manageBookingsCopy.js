@@ -445,6 +445,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // document.getElementById('searchInput').addEventListener('input', renderBookings);
 
 module.exports={
-    fetchVenues,
-    venues,
+rejectBooking,
+acceptBooking,
+renderBookings,
+cancelBooking,
+venues,
+bookings
 };
