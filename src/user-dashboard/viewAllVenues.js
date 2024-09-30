@@ -17,16 +17,14 @@ fetch(url, {
     return response.json();
   })
   .then(data => {
-    bookings = data;  // Store fetched venues in the bookings array
+    bookings = data; 
     console.log(bookings);
-    renderBookings();  // Render bookings after fetching data
+    renderBookings();
   })
   .catch(error => {
     console.error('Error fetching venues:', error);
   });
 
-
-// Function to render bookings (i.e., venues) based on current filters
 function renderBookings() {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing bookings
@@ -34,7 +32,7 @@ function renderBookings() {
     const categoryFilter = document.getElementById('roomFilter').value;
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
-    // Filter bookings based on selected filters and search query
+ 
     const filteredBookings = bookings.filter(booking => {
         const matchesCategory = categoryFilter ? booking.Category === categoryFilter : true;
         const matchesSearch = booking.Name && booking.Name.toLowerCase().includes(searchQuery);
@@ -47,12 +45,12 @@ function renderBookings() {
         return;
     }
 
-    // Create booking boxes
+
     filteredBookings.forEach(booking => {
         const bookingBox = document.createElement('div');
         bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
-        // Booking Info
+       
         const bookingInfo = document.createElement('div');
         bookingInfo.className = 'flex-shrink-0';
         bookingInfo.innerHTML = `
@@ -61,7 +59,7 @@ function renderBookings() {
         `;
         bookingBox.appendChild(bookingInfo);
 
-        // Book button for all bookings
+        
         const actionButtons = document.createElement('div');
         actionButtons.className = 'flex flex-row space-x-2';
 
@@ -69,9 +67,9 @@ function renderBookings() {
         bookButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
         bookButton.textContent = 'Book';
         
-        // Add click event listener to the button
+       
         bookButton.onclick = function() {
-            // Redirect to the booking details page, passing the booking ID or any other info through the URL
+           
             window.location.href = `../make-booking/booking-details.html?bookingId=${booking.id}`;
         };
         
@@ -84,9 +82,9 @@ function renderBookings() {
 
 
 
-// Attach event listeners to filters and search input
+
 document.getElementById('roomFilter').addEventListener('change', renderBookings);
 document.getElementById('searchInput').addEventListener('input', renderBookings);
 
-// Initial render after DOM content loads
+
 document.addEventListener('DOMContentLoaded', renderBookings);
