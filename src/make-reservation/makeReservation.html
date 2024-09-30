@@ -54,46 +54,46 @@
         .reserve-button:hover {
             background-color: #0056b3;
         }
+        .reservation-form {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="menu-container">
         <h1>Today's Menu</h1>
-        <!-- Menu will be populated here by JavaScript -->
         <div id="menuList"></div>
-
-        <!-- Button to open reservation form -->
-        <button class="reserve-button" onclick="showReservationForm()">Make Reservation with Campus Dining</button>
+        <button class="reserve-button" onclick="toggleReservationForm()">Make Reservation with Campus Dining</button>
     </div>
 
     <!-- Reservation Form -->
-  <!--  <div id="reservationOverlay" class="overlay"></div>
     <div id="reservationForm" class="reservation-form">
         <h2>Make a Reservation</h2>
-        <form id="reservationDetailsForm">
-            <label for="diningHall">Dining Hall:</label>
-            <select id="diningHall" required>
-                <option value="">Select a dining hall</option>
-                <option value="Education Campus">Education Campus</option>
-                <option value="Convocation">Convocation</option>
-                <option value="Matrix DH">Matrix DH</option>
+        <form id="reservationDetailsForm" onsubmit="submitReservation(event)">
+            <label for="venue">Dining Hall:</label>
+            <select id="venue" required>
+                <option value="Dining Hall 1">Dining Hall 1</option>
+                <option value="Dining Hall 2">Dining Hall 2</option>
+                <option value="Dining Hall 3">Dining Hall 3</option>
             </select>
-            <label for="name">Name:</label>
-            <input type="text" id="name" required>
-            <label for="date">Date:</label>
-            <input type="date" id="date" required>
-            <label for="time">Time:</label>
-            <input type="time" id="time" required>
-            <label for="numberOfPeople">Number of People:</label>
-            <input type="number" id="numberOfPeople" min="1" required>
+            <label for="userID">Email:</label>
+            <input type="email" id="userID" required>
+            <label for="resDate">Date:</label>
+            <input type="date" id="resDate" required>
+            <label for="resTime">Time:</label>
+            <input type="time" id="resTime" required>
             <button type="submit">Confirm Reservation</button>
         </form>
-    </div>-->
+    </div>
 
     <script>
-
-async function fetchMenu() {
-            const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues'; 
+        async function fetchMenu() {
+            const url = 'https://campus-infrastructure-management.azurewebsites.net/api/menu'; 
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -114,22 +114,17 @@ async function fetchMenu() {
             }
         }
 
-
-
         // Function to display the menu
         function displayMenu(data) {
             const menuList = document.getElementById('menuList');
             data.menus.forEach(menu => {
-                // Create a menu section
                 const menuDiv = document.createElement('div');
                 menuDiv.classList.add('menu');
-                
-                // Menu name
+
                 const menuTitle = document.createElement('h2');
                 menuTitle.textContent = menu.name;
                 menuDiv.appendChild(menuTitle);
 
-                // Items in the menu
                 menu.items.forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.classList.add('menu-item');
@@ -145,11 +140,50 @@ async function fetchMenu() {
             });
         }
 
-        
+        // Function to toggle reservation form visibility
+        function toggleReservationForm() {
+            const form = document.getElementById('reservationForm');
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        }
 
-        // Function to show reservation form
-        function showReservationForm() {
-            alert('The service is currently offline. Please try again later.')
+        // Function to submit the reservation form
+        async function submitReservation(event) {
+            event.preventDefault();  // Prevent form submission reload
+
+            const resTime = document.getElementById('resTime').value;
+            const resDate = document.getElementById('resDate').value;
+            const venue = document.getElementById('venue').value;
+            // const userID = document.getElementById('userID').value;
+
+            const reservationData = {
+
+                resTime,
+                venue,
+                resDate,
+
+            };
+
+            try {
+                const response = await fetch('https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reservationData)
+                });
+
+                if (response.ok) {
+                    alert('Reservation confirmed!');
+                    document.getElementById('reservationDetailsForm').reset(); // Reset form
+                    toggleReservationForm(); // Close the form
+                } else {
+                    console.error('Failed to submit reservation: ', response.status);
+                    alert('Failed to submit reservation.');
+                }
+            } catch (error) {
+                console.error('Error submitting reservation:', error);
+                alert('Error submitting reservation.');
+            }
         }
 
         // Initial call to fetch and display the menu
