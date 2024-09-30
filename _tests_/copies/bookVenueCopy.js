@@ -219,3 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+// Export all functions for testing
+module.exports = {
+    fetchUserData,
+    fetchAndRenderBookings,
+    renderVenues,
+    getAllowedCategories,
+    db,
+    auth,
+};
