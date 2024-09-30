@@ -440,9 +440,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-document.getElementById('statusFilter').addEventListener('change', renderBookings);
-document.getElementById('roomFilter').addEventListener('change', renderBookings);
-document.getElementById('searchInput').addEventListener('input', renderBookings);
+// document.getElementById('statusFilter').addEventListener('change', renderBookings);
+// document.getElementById('roomFilter').addEventListener('change', renderBookings);
+// document.getElementById('searchInput').addEventListener('input', renderBookings);
 
 
 module.exports={ fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking }
