@@ -78,4 +78,15 @@ securityRouter.delete('/securityInfo/:securityInfoId', async (req, res) => {
     }
 });
 
+// Define route to fetch contacts from the external API
+router.get('/contacts', async (req, res) => {
+    try {
+        const response = await fetch('https://polite-pond-04aadc51e.5.azurestaticapps.net/api/contacts');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch data' });
+    }
+});
+
 module.exports = securityRouter;
