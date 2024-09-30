@@ -16,6 +16,7 @@ When it comes to version control we need to define some things first:
 - Product feature: A products specific characteristics or functions that are important to the customer - so desin and functionality are included.
 
 
+
 ## Branch Managment Guidlines
 - Each collaborator must commit to their own respective branch (labled by their username) or the "Bugs-and-Problems" branch for any problematic code.
 - Always pull new updates before you push your new updates to you respective branches.

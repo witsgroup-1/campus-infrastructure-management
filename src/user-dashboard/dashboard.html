@@ -45,7 +45,8 @@
             <a href="../maintenance/maintenanceReports.html" >Report</a>
             <a href="viewAllVenues.html" >Venues</a>
             <a href="../make-reservation/makeReservation.html">Make Reservation</a>
-            <a href="../adminDashboard/adminDashboard.html" >Admin</a>
+
+            <a href="../adminDashboard/adminDashboard.html" id="admin-link" style="display: none;">Admin Dashboard</a> <!-- Initially hidden -->
             <a href="../login/login.html" id = "logout">Log out</a>
         </nav>
     </div>
@@ -57,7 +58,7 @@
 
 
         <section>
-            <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Available venues...</h2>
+            <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Venues...</h2>
             <div id="venue-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
                 <div class="skeleton-card"></div>
@@ -80,7 +81,6 @@
             </div>
             <br>
             <a id="see-more-button" href="../bookings/yourBookings.html" class = "hidden">See More</a>
-            <!-- This section will be shown when there are no bookings -->
         </section>
         
 
@@ -114,7 +114,7 @@
             <p>&copy; 2024 Infrastructure Management</p>
         </section>
     </footer>
-    <script type="module" src = "dashboard.js"></script>
+    <script type= "module" src = "dashboard.js"></script>
     <script type = "module" src = "viewBookings.js"></script>
     <script type = "module" src = "../login/login.js"></script>
     <script type = "module" src = "viewAllVenues.js"></script>
