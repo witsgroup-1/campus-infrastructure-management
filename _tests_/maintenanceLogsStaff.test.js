@@ -73,7 +73,7 @@ describe('setupStaffSearch', () => {
 
     // Set empty query and dispatch the input event
     const searchInput = document.getElementById('assigned-to');
-    searchInput.value = ''; // Empty query
+    searchInput.value = ''; 
     searchInput.dispatchEvent(inputEvent);
 
     await new Promise((resolve) => setTimeout(resolve, 0));

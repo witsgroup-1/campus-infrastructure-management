@@ -1,11 +1,9 @@
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-  //console.log('Script loaded');
+
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-    //const apiKey = document.querySelector('meta[name="api-key"]').getAttribute('content');
-   
     //https://campus-infrastructure-management.azurewebsites.net
     //http://localhost:3000
     const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
@@ -20,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const scheduledRequests = maintenanceRequests.filter(req => req.status === 'Scheduled');
     const inProgressRequests = maintenanceRequests.filter(req => req.status === 'In Progress');
-    //const completedRequests = maintenanceRequests.filter(req => req.status === 'Completed');
+
     const completedRequests = maintenanceRequests.filter(req => {
       if (req.status === 'Completed') {
           const now = new Date();
@@ -92,15 +90,29 @@ async function setupStaffSearch(apiKey) {
       }
     });
 
-    staffDropdown.addEventListener('click', (event) => {
-      const selectedStaff = event.target.dataset.staffName;
-      const selectedStaffId = event.target.dataset.staffId;
+    // staffDropdown.addEventListener('click', (event) => {
+    //   const selectedStaff = event.target.dataset.staffName;
+    //   const selectedStaffId = event.target.dataset.staffId;
 
-      if (selectedStaff && selectedStaffId) {
-        searchInput.value = selectedStaff;
-        searchInput.dataset.staffId = selectedStaffId;
-        clearStaffDropdown();
-      }
+    //   if (selectedStaff && selectedStaffId) {
+    //     searchInput.value = selectedStaff;
+    //     searchInput.dataset.staffId = selectedStaffId;
+    //     clearStaffDropdown();
+    //   }
+    // });
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('staff-dropdown').addEventListener('click', (event) => {
+        if (event.target.classList.contains('staff-option')) {
+          const selectedStaff = event.target.dataset.staffName;
+          const selectedStaffId = event.target.dataset.staffId;
+    
+          if (selectedStaff && selectedStaffId) {
+            document.getElementById('assigned-to').value = selectedStaff;
+            document.getElementById('assigned-to').dataset.staffId = selectedStaffId;
+            clearStaffDropdown();
+          }
+        }
+      });
     });
   } else {
     console.warn('Assigned To input not found on the page.');
@@ -109,7 +121,7 @@ async function setupStaffSearch(apiKey) {
 
 function updateStaffDropdown(staffMembers) {
   const staffDropdown = document.getElementById('staff-dropdown');
-  staffDropdown.innerHTML = ''; // Clear previous results
+  staffDropdown.innerHTML = ''; 
 
   if (staffMembers.length > 0) {
     staffMembers.forEach((staff) => {
@@ -134,7 +146,7 @@ function clearStaffDropdown() {
   staffDropdown.classList.add('hidden'); // Hide dropdown
 }
 
-// Function to display one request initially for mobile and add Show More functionality
+// Function to display one request initially for mobile
 function displayInitialRequestsForMobile(requests, containerId, buttonId) {
   const container = document.getElementById(containerId);
   if (requests.length > 0) {
