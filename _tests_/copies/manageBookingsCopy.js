@@ -442,4 +442,5 @@ module.exports={
     fetchVenues,
     fetchBookings,
     getRoomInfo,
+    venues,
 }

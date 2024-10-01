@@ -2,6 +2,7 @@ const {
 fetchVenues,
 fetchBookings,
 getRoomInfo,
+venues
 
   } = require('./copies/manageBookingsCopy'); 
   
