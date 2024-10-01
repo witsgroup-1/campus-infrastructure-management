@@ -90,15 +90,29 @@ async function setupStaffSearch(apiKey) {
       }
     });
 
-    staffDropdown.addEventListener('click', (event) => {
-      const selectedStaff = event.target.dataset.staffName;
-      const selectedStaffId = event.target.dataset.staffId;
+    // staffDropdown.addEventListener('click', (event) => {
+    //   const selectedStaff = event.target.dataset.staffName;
+    //   const selectedStaffId = event.target.dataset.staffId;
 
-      if (selectedStaff && selectedStaffId) {
-        searchInput.value = selectedStaff;
-        searchInput.dataset.staffId = selectedStaffId;
-        clearStaffDropdown();
-      }
+    //   if (selectedStaff && selectedStaffId) {
+    //     searchInput.value = selectedStaff;
+    //     searchInput.dataset.staffId = selectedStaffId;
+    //     clearStaffDropdown();
+    //   }
+    // });
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('staff-dropdown').addEventListener('click', (event) => {
+        if (event.target.classList.contains('staff-option')) {
+          const selectedStaff = event.target.dataset.staffName;
+          const selectedStaffId = event.target.dataset.staffId;
+    
+          if (selectedStaff && selectedStaffId) {
+            document.getElementById('assigned-to').value = selectedStaff;
+            document.getElementById('assigned-to').dataset.staffId = selectedStaffId;
+            clearStaffDropdown();
+          }
+        }
+      });
     });
   } else {
     console.warn('Assigned To input not found on the page.');
@@ -107,7 +121,7 @@ async function setupStaffSearch(apiKey) {
 
 function updateStaffDropdown(staffMembers) {
   const staffDropdown = document.getElementById('staff-dropdown');
-  staffDropdown.innerHTML = ''; // Clear previous results
+  staffDropdown.innerHTML = ''; 
 
   if (staffMembers.length > 0) {
     staffMembers.forEach((staff) => {
