@@ -7,23 +7,25 @@ const bookingsUrl = 'https://campus-infrastructure-management.azurewebsites.net/
 const venuesUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';  
 
 // Fetch venues from the API
-function fetchVenues() {
-  return fetch(venuesUrl, {
-    method: 'GET',
-    headers: {
-      'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-      'Content-Type': 'application/json'
+// Fetch venues from the API
+async function fetchVenues() {
+    try {
+      const response = await fetch(venuesUrl, {
+        method: 'GET',
+        headers: {
+          'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      venues = data; 
+      return venues;
+      populateVenues(venues);
+    } catch (error) {
+      console.error('Error fetching venues:', error);
     }
-  })
-  .then(response => response.json())
-  .then(data => {
-    venues = data; 
-    //console.log(venues); 
-  })
-  .catch(error => {
-    console.error('Error fetching venues:', error);
-  });
-}
+  }
+  
 
 // Fetch bookings from the API
 function fetchBookings() {
@@ -47,9 +49,15 @@ function fetchBookings() {
 
 // Function to get the venue info based on venueId
 function getRoomInfo(venueId) {
-    return venues.find(venue => venue.id === venueId);
+
+  for(let i=0;i<venues.length;i++){
+    if(venueId==venues[i].id){
+      //console.log(venues[i]);
+      return venues[i];
+    }
+    
   }
-  
+}
 
 function getBookingInfo(bookingId) {
 
@@ -434,9 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// document.getElementById('statusFilter').addEventListener('change', renderBookings);
-// document.getElementById('roomFilter').addEventListener('change', renderBookings);
-// document.getElementById('searchInput').addEventListener('input', renderBookings);
+document.getElementById('statusFilter').addEventListener('change', renderBookings);
+document.getElementById('roomFilter').addEventListener('change', renderBookings);
+document.getElementById('searchInput').addEventListener('input', renderBookings);
 
-
-module.exports={ bookings, venues, fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking }
+module.exports={
+    fetchVenues,
+}
