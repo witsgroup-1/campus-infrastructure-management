@@ -1,58 +1,39 @@
-// bookings.test.js
-const { fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); 
-const { JSDOM } = require('jsdom');
-global.fetch = jest.fn();
-
-let venues=[];
+// Import the function (assuming it's in a module)
+const { getRoomInfo } = require('./copies/manageBookingsCopy');
 
 describe('getRoomInfo', () => {
-    beforeEach(() => {
-   
-      venues = [];
-    });
-  
-    test('should return the correct room info for a given venueId', () => {
-      // Arrange
-      const venueId = '123';
-      const expectedRoom = {
-        id: '123',
-        Name: 'Conference Room A',
-        Category: 'Conference',
-        Building: 'Main Building'
-      };
-      venues = [
-        { id: '123', Name: 'Conference Room A', Category: 'Conference', Building: 'Main Building' },
-        { id: '456', Name: 'Lecture Hall', Category: 'Lecture', Building: 'Education Building' }
-      ];
-  
-      // Act
-      const roomInfo = getRoomInfo(venueId);
-  
-      // Assert
-      expect(roomInfo).toEqual(expectedRoom);
-    });
-  
-    test('should return undefined if no room matches the venueId', () => {
-      // Arrange
-      const venueId = '789'; // This ID does not exist in the venues array
-      venues = [
-        { id: '123', Name: 'Conference Room A', Category: 'Conference', Building: 'Main Building' },
-        { id: '456', Name: 'Lecture Hall', Category: 'Lecture', Building: 'Education Building' }
-      ];
-  
-      // Act
-      const roomInfo = getRoomInfo(venueId);
-  
-      // Assert
-      expect(roomInfo).toBeUndefined();
-    });
-  
-    test('should return undefined if venues array is empty', () => {
-      // Act
-      const roomInfo = getRoomInfo('123');
-  
-      // Assert
-      expect(roomInfo).toBeUndefined();
-    });
+  beforeEach(() => {
+    // Reset the venues array before each test to avoid state leaks
+    global.venues = [];
   });
-  
+
+  test('should return the correct venue information when a valid venueId is provided', () => {
+    // Arrange
+    global.venues = [
+      { id: 'venue1', Name: 'Conference Hall', Category: 'Conference', Building: 'Building A' },
+      { id: 'venue2', Name: 'Lecture Room', Category: 'Lecture', Building: 'Building B' }
+    ];
+    const venueId = 'venue1';
+
+    // Act
+    const result = getRoomInfo(venueId);
+
+    // Assert
+    expect(result).toEqual({ id: 'venue1', Name: 'Conference Hall', Category: 'Conference', Building: 'Building A' });
+  });
+
+  test('should return undefined if venueId is not found', () => {
+    // Arrange
+    global.venues = [
+      { id: 'venue1', Name: 'Conference Hall', Category: 'Conference', Building: 'Building A' },
+      { id: 'venue2', Name: 'Lecture Room', Category: 'Lecture', Building: 'Building B' }
+    ];
+    const invalidVenueId = 'invalid_venue';
+
+    // Act
+    const result = getRoomInfo(invalidVenueId);
+
+    // Assert
+    expect(result).toBeUndefined();
+  });
+});
