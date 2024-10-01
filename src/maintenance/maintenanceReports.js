@@ -20,33 +20,16 @@ const db = getFirestore(app);
 
 const venueInput = document.querySelector('input[placeholder="Venue"]'); 
 
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
 //auth get current user
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      console.log("User is signed in with id:", user.email);
-    } else {
-      console.log("No user is signed in.");
-    }
-  });
-  
-  async function getFirestoreUserIdByEmail(email) {
-    try {
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('email', '==', email));
-      const querySnapshot = await getDocs(q);
-  
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        const firestoreUserId = userDoc.id;
-        return firestoreUserId;
-      } else {
-        throw new Error('No matching user document found in Firestore.');
-      }
-    } catch (error) {
-      console.error('Error fetching Firestore userId by email:', error);
-      return null;
-    }
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    console.log("User is signed in with id:", user.email);
+  } else {
+    console.log("No user is signed in.");
   }
 
   const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
@@ -56,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listener for the submit button
   document.querySelector("form").addEventListener("submit", async (e) => {
     e.preventDefault(); // Prevent default form submission
+
 
     const reportType = document.querySelector('#reportType').value;
     const description = document.querySelector('textarea[placeholder="Enter description"]').value;
@@ -70,6 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
       clearVenueDropdown(); // Clear and hide dropdown
       return;
     }
+
+    
 
     const requestData = {
       assignedTo: 'none',
@@ -162,4 +148,12 @@ document.addEventListener("DOMContentLoaded", () => {
     venueDropdown.innerHTML = ''; // Clear dropdown content
     venueDropdown.classList.add('hidden'); // Hide dropdown
   }
+
+  if (typeof window !== 'undefined') {
+    window.updateVenueDropdown = updateVenueDropdown;
+    window.clearVenueDropdown = clearVenueDropdown;
+  }
+
+});
+
 });

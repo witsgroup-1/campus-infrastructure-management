@@ -33,9 +33,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (deleteButton) {
             const id = deleteButton.getAttribute('data-id');
-        
+
             if (confirm('Are you sure you want to delete this schedule?')) {
                 try {
+                    const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.statusText}`);
+                    }
+
                     // First, delete from the schedules database
                     await deleteFromSchedules(id);
                     
@@ -44,10 +56,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
                     // Remove the row from the table
                     deleteButton.closest('tr').remove();
-                    alert('Schedule and associated bookings deleted successfully!');
+                    alert('Schedule deleted successfully!');
                 } catch (error) {
-                    console.error('Error deleting schedule or bookings:', error);
-                    alert('Failed to delete the schedule or associated bookings.');
+                    console.error('Error deleting schedule:', error);
+                    alert('Failed to delete the schedule.');
                 }
             }
         }

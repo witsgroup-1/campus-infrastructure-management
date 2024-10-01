@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reportButton.classList.add('hidden');
             bookButton.classList.add('hidden');
             isExpanded = false;
-        } 
+        }
     });
 
     reportButton.addEventListener('click', () => {
@@ -218,8 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
     bookButton.addEventListener('click', () => {
         window.location.href = '../make-booking/book-venue.html';
     });
-
-    fetchSecurityContact();
 });
 
 const showModal = (message) => {
