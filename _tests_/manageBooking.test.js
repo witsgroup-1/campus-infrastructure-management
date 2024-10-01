@@ -1,6 +1,7 @@
 const {
 fetchVenues,
 fetchBookings,
+getRoomInfo,
 
   } = require('./copies/manageBookingsCopy'); 
   
@@ -119,4 +120,30 @@ fetchBookings,
       });
   
   
+        // Test error handling in fetchVenues
+  test('fetchVenues should handle errors correctly', async () => {
+    fetch.mockImplementation(() => Promise.reject(new Error('API error')));
+
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    await fetchVenues();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching venues:', new Error('API error'));
+    consoleErrorSpy.mockRestore();
+  });
+
+  // Test error handling in fetchBookings
+  test('fetchBookings should handle errors correctly', async () => {
+    fetch.mockImplementation(() => Promise.reject(new Error('API error')));
+
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    await fetchBookings();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching bookings:', new Error('API error'));
+    consoleErrorSpy.mockRestore();
+  });
+
+  test('getRoomInfo should return correct venue based on venueId', () => {
+    venues.push({ id: 'venue1', Name: 'Venue One' });
+    expect(getRoomInfo('venue1')).toEqual({ id: 'venue1', Name: 'Venue One' });
+  });
+
+
     });  
