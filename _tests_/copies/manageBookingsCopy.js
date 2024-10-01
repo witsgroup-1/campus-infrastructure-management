@@ -47,15 +47,9 @@ function fetchBookings() {
 
 // Function to get the venue info based on venueId
 function getRoomInfo(venueId) {
-
-  for(let i=0;i<venues.length;i++){
-    if(venueId==venues[i].id){
-      //console.log(venues[i]);
-      return venues[i];
-    }
-    
+    return venues.find(venue => venue.id === venueId);
   }
-}
+  
 
 function getBookingInfo(bookingId) {
 
