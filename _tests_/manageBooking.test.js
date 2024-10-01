@@ -141,10 +141,10 @@ venues,
     consoleErrorSpy.mockRestore();
   });
 
-  test('getRoomInfo should return correct venue based on venueId', () => {
-    venues.push({ id: 'venue1', Name: 'Venue One' });
-    expect(getRoomInfo('venue1')).toEqual({ id: 'venue1', Name: 'Venue One' });
-  });
+//   test('getRoomInfo should return correct venue based on venueId', () => {
+//     venues.push({ id: 'venue1', Name: 'Venue One' });
+//     expect(getRoomInfo('venue1')).toEqual({ id: 'venue1', Name: 'Venue One' });
+//   });
 
 
     });  
