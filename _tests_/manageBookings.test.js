@@ -1,13 +1,13 @@
 // bookings.test.js
-const { fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); // Adjust path accordingly
+const { fetchVenues, fetchBookings, getRoomInfo, getBookingInfo, renderBookings, cancelBooking, acceptBooking } = require('./copies/manageBookingsCopy'); 
 const { JSDOM } = require('jsdom');
 global.fetch = jest.fn();
 
-// Import or mock necessary data/functions if needed
+let venues=[];
 
 describe('getRoomInfo', () => {
     beforeEach(() => {
-      // Reset venues array before each test
+   
       venues = [];
     });
   
