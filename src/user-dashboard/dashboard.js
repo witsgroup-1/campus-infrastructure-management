@@ -270,8 +270,8 @@ async function fetchSecurityContact() {
             const contact_details = document.createElement('div');
 
             contact_details.innerHTML = `
-            <span class=" text-white">${info.name}:</span>
-            <span class="text-gray-300">${info.phone}</span>
+            <span class="text-xs text-white">${info.name}:</span>
+            <span class="text-xs text-gray-300">${info.phone}</span>
             `;
            // contact_details.textContent = `${info.Name}: ${info['Contact Number']}`;
             section.appendChild(contact_details);

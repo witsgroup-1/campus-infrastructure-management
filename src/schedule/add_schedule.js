@@ -179,49 +179,47 @@ async function createBookingsForRecurring(userId, roomId, startDate, startTime, 
     }
 }
 
-
-// POST single booking
 async function createBooking(userId, roomId, date, start_time, end_time, purpose) {
-    // Ensure the date and time values are strings
-    const bookingData = {
-        userId,
-        roomId,
-        date: date.toString(),           // Ensure date is a string
-        start_time: start_time.toString(),  // Ensure start_time is a string
-        end_time: end_time.toString(),      // Ensure end_time is a string
-        purpose,
-        status: 'Pending',
-        venueId: roomId // Assuming venueId and roomId are the same
-    };
 
-    console.log(bookingData); // Log booking data for debugging
+  const bookingData = {
+      userId,
+      roomId,
+      start_time, 
+      end_time,
+      date,
+      purpose,
+      status: 'Pending',
+      venueId: roomId
+  };
 
-    try {
-        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
-            method: 'POST',
-            headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bookingData)
-        });
+  console.log(bookingData); 
+  
+  try {
+      const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
+          method: 'POST',
+          headers: {
+              'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bookingData)
+      });
 
-        if (!response.ok) {
-            let errorData;
-            try {
-                errorData = await response.json();
-            } catch (jsonError) {
-                errorData = await response.text();
-            }
-            console.error(`Booking creation failed with status ${response.status}:`, errorData);
-            throw new Error(`Error creating booking: ${response.statusText}`);
-        }
+      if (!response.ok) {
+          let errorData;
+          try {
+              errorData = await response.json();
+          } catch (jsonError) {
+              errorData = await response.text();
+          }
+          console.error(`Booking creation failed with status ${response.status}:`, errorData);
+          throw new Error(`Error creating booking: ${response.statusText}`);
+      }
 
-        const result = await response.json();
-        console.log(`Booking created successfully:`, result);
-    } catch (error) {
-        console.error('Error occurred during booking creation:', error);
-    }
+      const result = await response.json();
+      console.log(`Booking created successfully:`, result);
+  } catch (error) {
+      console.error('Error occurred during booking creation:', error);
+  }
 }
 
 
