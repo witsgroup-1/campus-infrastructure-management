@@ -1,11 +1,9 @@
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-  //console.log('Script loaded');
+
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-    //const apiKey = document.querySelector('meta[name="api-key"]').getAttribute('content');
-   
     //https://campus-infrastructure-management.azurewebsites.net
     //http://localhost:3000
     const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
@@ -20,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const scheduledRequests = maintenanceRequests.filter(req => req.status === 'Scheduled');
     const inProgressRequests = maintenanceRequests.filter(req => req.status === 'In Progress');
-    //const completedRequests = maintenanceRequests.filter(req => req.status === 'Completed');
+
     const completedRequests = maintenanceRequests.filter(req => {
       if (req.status === 'Completed') {
           const now = new Date();
@@ -134,7 +132,7 @@ function clearStaffDropdown() {
   staffDropdown.classList.add('hidden'); // Hide dropdown
 }
 
-// Function to display one request initially for mobile and add Show More functionality
+// Function to display one request initially for mobile
 function displayInitialRequestsForMobile(requests, containerId, buttonId) {
   const container = document.getElementById(containerId);
   if (requests.length > 0) {

@@ -20,14 +20,11 @@ const db = getFirestore(app);
 
 const venueInput = document.querySelector('input[placeholder="Venue"]'); 
 
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
 //auth get current user
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    console.log("User is signed in with id:", user.email);
+    console.log("User is signed in with");
   } else {
     console.log("No user is signed in.");
   }
@@ -35,7 +32,7 @@ onAuthStateChanged(auth, async (user) => {
   const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
   const venueDropdown = document.getElementById('venue-dropdown');
   const venueInput = document.querySelector('input[placeholder="Venue"]');
-
+  
   // Add event listener for the submit button
   document.querySelector("form").addEventListener("submit", async (e) => {
     e.preventDefault(); // Prevent default form submission
@@ -155,5 +152,15 @@ onAuthStateChanged(auth, async (user) => {
   }
 
 });
+
+
+document.querySelector('#venue-dropdown').addEventListener('change', (event) => {
+  const selectedValue = event.target.value;  // Get the selected option
+  const inputField = document.querySelector('input[placeholder="Venue"]');
+  if (inputField) {
+    inputField.value = selectedValue;  // Update the input field with selected value
+  }
+});
+
 
 });
