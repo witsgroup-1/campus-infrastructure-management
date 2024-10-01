@@ -2,7 +2,7 @@ const {
 fetchVenues,
 fetchBookings,
 getRoomInfo,
-venues
+venues,
 
   } = require('./copies/manageBookingsCopy'); 
   
