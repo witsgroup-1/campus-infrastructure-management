@@ -446,4 +446,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 module.exports={
     fetchVenues,
+    fetchBookings
 }
