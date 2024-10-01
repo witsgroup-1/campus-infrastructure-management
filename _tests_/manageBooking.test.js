@@ -1,5 +1,7 @@
 const {
 fetchVenues,
+fetchBookings,
+
   } = require('./copies/manageBookingsCopy'); 
   
   jest.mock('firebase/app', () => {
