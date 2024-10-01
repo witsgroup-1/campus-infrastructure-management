@@ -28,24 +28,22 @@ async function fetchVenues() {
   
 
 // Fetch bookings from the API
-function fetchBookings() {
-  return fetch(bookingsUrl, {
-    method: 'GET',
-    headers: {
-      'x-api-key':'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-      'Content-Type': 'application/json'
+async function fetchBookings() {
+    try {
+      const response = await fetch(bookingsUrl, {
+        method: 'GET',
+        headers: {
+          'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      bookings = data; 
+      return bookings; 
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
     }
-  })
-  .then(response => response.json())
-  .then(data => {
-    bookings = data;
-    //console.log(bookings); 
-    renderBookings();  // Render bookings after fetching data
-  })
-  .catch(error => {
-    console.error('Error fetching bookings:', error);
-  });
-}
+  }
 
 // Function to get the venue info based on venueId
 function getRoomInfo(venueId) {
