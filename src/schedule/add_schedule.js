@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const scheduleForm = document.getElementById('schedule_form');
     const recurringSelect = document.getElementById('recurring-select');
     const lastDate = document.getElementById('last-date'); 
-    const venue = document.getElementById('venue');
+    //const venue = document.getElementById('venue');
+    const venueInput = document.querySelector('input[placeholder="Venue"]');
+    const venueId = venueInput.dataset.venueId; // Get the selected venue ID from dataset
+    const venueName = venueInput.value; // Get venue name from input field
     const search = document.getElementById('search-results');
 
     // Event listener to show/hide the last date field based on 'Recurring' selection
