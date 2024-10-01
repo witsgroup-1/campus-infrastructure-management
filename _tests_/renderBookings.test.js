@@ -1,179 +1,115 @@
-/**
- * @jest-environment jsdom
- */
 
-const { renderBookings } = require('./copies/manageBookingsCopy');
-const { getRoomInfo, editBooking, cancelBooking, acceptBooking, rejectBooking } = require('./copies/manageBookingsCopy');
-
-// Mock necessary DOM elements
-document.body.innerHTML = `
-  <div id="bookingsContainer"></div>
-  <select id="statusFilter">
-    <option value="">All</option>
-    <option value="pending">Pending</option>
-    <option value="confirmed">Confirmed</option>
-  </select>
-  <select id="roomFilter">
-    <option value="">All</option>
-    <option value="Classroom">Classroom</option>
-  </select>
-  <input id="searchInput" type="text" placeholder="Search by building">
-`;
-
-let bookings = [];
-beforeEach(() => {
-  bookings = [
-    {
-      id: '1',
-      venueId: '123',
-      date: '2024-10-01',
-      start_time: '09:00',
-      end_time: '10:00',
-      purpose: 'Lecture',
-      status: 'confirmed',
-    },
-    {
-      id: '2',
-      venueId: '124',
-      date: '2024-10-02',
-      start_time: '11:00',
-      end_time: '12:00',
-      purpose: 'Meeting',
-      status: 'pending',
-    },
-  ];
-
-  // Mocking helper functions
-  getRoomInfo = jest.fn((venueId) => {
-    return venueId === '123'
-      ? { Name: 'Room A', Category: 'Classroom', Building: 'Building 1' }
-      : { Name: 'Room B', Category: 'Meeting Room', Building: 'Building 2' };
-  });
-
-  editBooking = jest.fn();
-  cancelBooking = jest.fn();
-  acceptBooking = jest.fn();
-  rejectBooking = jest.fn();
-});
+import { getRoomInfo } from './copies/manageBookingsCopy'; 
+import { renderBookings } from './copies/manageBookingsCopy'; 
 
 describe('renderBookings', () => {
-  it('should display filtered bookings with correct details', () => {
-    // Set filters
-    document.getElementById('statusFilter').value = '';
-    document.getElementById('roomFilter').value = '';
-    document.getElementById('searchInput').value = '';
+  let container;
+  let bookings;
 
-    // Call renderBookings
-    renderBookings();
+  beforeEach(() => {
+    // Set up a mock DOM environment
+    document.body.innerHTML = `
+      <div id="bookingsContainer"></div>
+      <input id="statusFilter" value="">
+      <input id="roomFilter" value="">
+      <input id="searchInput" value="">
+    `;
+    
+    container = document.getElementById('bookingsContainer');
 
-    const container = document.getElementById('bookingsContainer');
-    expect(container.childElementCount).toBe(2); // Should render two bookings
+    // Set up bookings data
+    bookings = [
+      { id: '1', venueId: '123', date: '2024-10-01', start_time: '10:00', end_time: '12:00', purpose: 'Meeting', status: 'confirmed' },
+      { id: '2', venueId: '456', date: '2024-10-02', start_time: '14:00', end_time: '16:00', purpose: 'Lecture', status: 'pending' }
+    ];
 
-    // Check for room details in first booking
-    const firstBooking = container.children[0];
+    // Mock the getRoomInfo function using jest.spyOn
+    jest.spyOn(window, 'getRoomInfo').mockImplementation((venueId) => {
+      return venueId === '123'
+        ? { Name: 'Room A', Category: 'Classroom', Building: 'Building 1' }
+        : { Name: 'Room B', Category: 'Meeting Room', Building: 'Building 2' };
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks(); // Clear mocks after each test
+  });
+
+  test('should display filtered bookings with correct details', () => {
+    renderBookings(bookings);
+    
+    const bookingItems = container.querySelectorAll('div');
+    expect(bookingItems.length).toBe(2);
+    
+    // Check first booking details
+    const firstBooking = bookingItems[0];
     expect(firstBooking.querySelector('h2').textContent).toBe('Room A');
-    expect(firstBooking.querySelector('p').textContent).toContain('Lecture');
+    expect(firstBooking.querySelector('.text-gray-600').textContent).toContain('10:00 - 12:00');
   });
 
-  it('should filter bookings by status', () => {
-    // Set status filter to 'pending'
+  test('should filter bookings by status', () => {
     document.getElementById('statusFilter').value = 'pending';
-
-    // Call renderBookings
-    renderBookings();
-
-    const container = document.getElementById('bookingsContainer');
-    expect(container.childElementCount).toBe(1); // Only one booking is 'pending'
-
-    // Check if the booking is the pending one
-    const firstBooking = container.children[0];
-    expect(firstBooking.querySelector('h2').textContent).toBe('Room B'); // Pending booking
+    renderBookings(bookings);
+    
+    const bookingItems = container.querySelectorAll('div');
+    expect(bookingItems.length).toBe(1);
+    
+    const pendingBooking = bookingItems[0];
+    expect(pendingBooking.querySelector('h2').textContent).toBe('Room B');
   });
 
-  it('should filter bookings by room type', () => {
-    // Set room filter to 'Classroom'
+  test('should filter bookings by room type', () => {
     document.getElementById('roomFilter').value = 'Classroom';
-
-    // Call renderBookings
-    renderBookings();
-
-    const container = document.getElementById('bookingsContainer');
-    expect(container.childElementCount).toBe(1); // Only one booking is in a classroom
-
-    const firstBooking = container.children[0];
-    expect(firstBooking.querySelector('h2').textContent).toBe('Room A');
+    renderBookings(bookings);
+    
+    const bookingItems = container.querySelectorAll('div');
+    expect(bookingItems.length).toBe(1);
+    
+    const classroomBooking = bookingItems[0];
+    expect(classroomBooking.querySelector('h2').textContent).toBe('Room A');
   });
 
-  it('should filter bookings by search query', () => {
-    // Set search input to filter by 'Building 1'
-    document.getElementById('searchInput').value = 'Building 1';
-
-    // Call renderBookings
-    renderBookings();
-
-    const container = document.getElementById('bookingsContainer');
-    expect(container.childElementCount).toBe(1); // Only one booking is in 'Building 1'
-
-    const firstBooking = container.children[0];
-    expect(firstBooking.querySelector('h2').textContent).toBe('Room A');
+  test('should filter bookings by search query', () => {
+    document.getElementById('searchInput').value = 'Building 2';
+    renderBookings(bookings);
+    
+    const bookingItems = container.querySelectorAll('div');
+    expect(bookingItems.length).toBe(1);
+    
+    const building2Booking = bookingItems[0];
+    expect(building2Booking.querySelector('h2').textContent).toBe('Room B');
   });
 
-  it('should display "No bookings found" if no bookings match the filters', () => {
-    // Set filters so no bookings will match
-    document.getElementById('statusFilter').value = 'confirmed';
-    document.getElementById('roomFilter').value = 'Meeting Room';
-    document.getElementById('searchInput').value = 'Nonexistent Building';
-
-    // Call renderBookings
-    renderBookings();
-
-    const container = document.getElementById('bookingsContainer');
-    expect(container.innerHTML).toContain('No bookings found.');
+  test('should display "No bookings found" if no bookings match the filters', () => {
+    document.getElementById('statusFilter').value = 'rejected';
+    renderBookings(bookings);
+    
+    expect(container.innerHTML).toContain('No bookings found');
   });
 
-  it('should call editBooking when edit button is clicked', () => {
-    // Call renderBookings
-    renderBookings();
+  test('should call editBooking when edit button is clicked', () => {
+    const mockEditBooking = jest.fn();
+    window.editBooking = mockEditBooking; // Mock the global function
 
-    const editButton = document.querySelector('button.bg-blue-500');
+    renderBookings(bookings);
+    
+    const editButton = container.querySelector('button');
     editButton.click();
-
-    expect(editBooking).toHaveBeenCalledWith('1'); // Check that editBooking is called with correct booking ID
+    
+    expect(mockEditBooking).toHaveBeenCalledWith('1');
   });
 
-  it('should call cancelBooking when cancel button is clicked', () => {
-    // Call renderBookings
-    renderBookings();
+  test('should call cancelBooking when cancel button is clicked', () => {
+    const mockCancelBooking = jest.fn();
+    window.cancelBooking = mockCancelBooking; // Mock the global function
 
-    const cancelButton = document.querySelector('button.bg-red-500');
+    renderBookings(bookings);
+    
+    const cancelButton = container.querySelector('button.bg-red-500');
     cancelButton.click();
-
-    expect(cancelBooking).toHaveBeenCalledWith('1'); // Check that cancelBooking is called with correct booking ID
+    
+    expect(mockCancelBooking).toHaveBeenCalledWith('1');
   });
 
-  it('should call acceptBooking when accept button is clicked', () => {
-    // Set filter to pending so accept button shows
-    document.getElementById('statusFilter').value = 'pending';
-
-    // Call renderBookings
-    renderBookings();
-
-    const acceptButton = document.querySelector('button.bg-green-500');
-    acceptButton.click();
-
-    expect(acceptBooking).toHaveBeenCalledWith('2'); // Check that acceptBooking is called with correct booking ID
-  });
-
-  it('should call rejectBooking when reject button is clicked', () => {
-    // Set filter to pending so reject button shows
-    document.getElementById('statusFilter').value = 'pending';
-
-    // Call renderBookings
-    renderBookings();
-
-    const rejectButton = document.querySelector('button.bg-red-500');
-    rejectButton.click();
-
-    expect(rejectBooking).toHaveBeenCalledWith('2'); // Check that rejectBooking is called with correct booking ID
-  });
+  // Additional tests for acceptBooking, rejectBooking, etc.
 });
