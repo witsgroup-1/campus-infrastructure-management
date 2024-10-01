@@ -138,8 +138,25 @@ onAuthStateChanged(auth, async (user) => {
       venueInput.dataset.venueId = venueId; // Store the selected venue ID
       clearVenueDropdown(); // Clear dropdown after selection
     }
-  });
 
+    document.querySelector('#venue-dropdown').addEventListener('change', (event) => {
+      const selectedValue = event.target.value;  // Get the selected option
+      const inputField = document.querySelector('input[placeholder="Venue"]');
+      if (inputField) {
+        inputField.value = selectedValue;  // Update the input field with selected value
+      }
+    });
+
+
+
+  });
+// document.querySelector('#venue-dropdown').addEventListener('change', (event) => {
+//   const selectedValue = event.target.value;  // Get the selected option
+//   const inputField = document.querySelector('input[placeholder="Venue"]');
+//   if (inputField) {
+//     inputField.value = selectedValue;  // Update the input field with selected value
+//   }
+// });
   // Function to clear the dropdown
   function clearVenueDropdown() {
     venueDropdown.innerHTML = ''; // Clear dropdown content
@@ -154,13 +171,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 
-document.querySelector('#venue-dropdown').addEventListener('change', (event) => {
-  const selectedValue = event.target.value;  // Get the selected option
-  const inputField = document.querySelector('input[placeholder="Venue"]');
-  if (inputField) {
-    inputField.value = selectedValue;  // Update the input field with selected value
-  }
-});
+
 
 
 });
