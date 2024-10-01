@@ -18,14 +18,16 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 async function isEmailWhitelisted(email) {
+    const statusMessage = document.getElementById('status-message');
+    statusMessage.textContent = "Checking approval...";
     const whitelistCollection = collection(db, 'whitelist');
     const q = query(whitelistCollection, where('emailInput', '==', email));
     const querySnapshot = await getDocs(q);
-    
     console.log(`Checking if ${email} is whitelisted...`);
     if (!querySnapshot.empty) {
         return true;
     } else {
+        statusMessage.textContent = "";
         return false;
     }
 }
@@ -53,17 +55,19 @@ async function searchUserByEmail(email) {
 
 
 
-// Inside the event listener for the login form submission
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevent the default form submission
+document.getElementById('login-form').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevent the default form submission
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const statusMessage = document.getElementById('status-message');
 
     try {
         if (await isEmailWhitelisted(email)) {
             // Set session persistence to 'session-only'
             await setPersistence(auth, browserSessionPersistence);
+
+            statusMessage.textContent = "Signing in...";
 
             try {
                 // Proceed with sign-in after setting session persistence
@@ -78,11 +82,14 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
                 if (userData.role === "Staff" && !userData.isTutor && !userData.isLecturer) {
                     window.location.href = "../adminDashboard/adminDashboard.html";
-                   }else{
+                } else {
                     window.location.href = "../user-dashboard/dashboard.html";
-                   }
+                }
             } catch (error) {
                 if (error.code === 'auth/invalid-login-credentials') {
+                    // Show the "Creating account..." message
+                    statusMessage.textContent = "Creating account...";
+
                     try {
                         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                         const user = userCredential.user;
@@ -107,14 +114,17 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     }
 });
 
-
 const googleProvider = new GoogleAuthProvider();
 document.getElementById('googleLogin').addEventListener('click', async (e) => {
     e.preventDefault();
+    const statusMessage = document.getElementById('status-message');
 
     try {
         // Set session persistence for Google sign-in as well
         await setPersistence(auth, browserSessionPersistence);
+
+        // Show the "Signing in..." message for Google login
+        statusMessage.textContent = "Signing in with Google...";
 
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
@@ -134,7 +144,6 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
 
             if (userData) {
                 // Redirect to user dashboard if email is found
-               
                 window.location.href = "../user-dashboard/dashboard.html";
             } else {
                 // Redirect to onboarding page if email is not found
@@ -149,7 +158,7 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
     }
 });
 
-
+});
 // Logout functionality
 /*document.getElementById('logout').addEventListener('click', async () => {
     try {
@@ -165,4 +174,3 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
     }
 });*/
 
-});
