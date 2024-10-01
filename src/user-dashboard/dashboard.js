@@ -218,6 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bookButton.addEventListener('click', () => {
         window.location.href = '../make-booking/book-venue.html';
     });
+
+    fetchSecurityContact();
 });
 
 const showModal = (message) => {
