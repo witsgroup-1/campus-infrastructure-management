@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const lastDate = document.getElementById('last-date'); 
     //const venue = document.getElementById('venue');
     const venueInput = document.querySelector('input[placeholder="Venue"]');
+    const venueDropdown = document.getElementById('venue-dropdown');
     const venueId = venueInput.dataset.venueId; // Get the selected venue ID from dataset
     const venueName = venueInput.value; // Get venue name from input field
     const search = document.getElementById('search-results');
@@ -42,6 +43,60 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching venue data:', error);
         }
     });*/
+
+    // Input event for the venue
+    venueInput.addEventListener('input', async function () {
+        const query = this.value;
+      
+        // Show dropdown only if there's input
+        if (query.length > 0) {
+            venueDropdown.classList.remove('hidden');
+            venueDropdown.innerHTML = ''; // Clear any previous options
+      
+            try {
+                const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                    },
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch venues');
+                
+                const venues = await response.json();
+                console.log('Fetched venues:', venues);
+
+                // Populate dropdown with matching venue options
+                venues.forEach(venue => {
+                    const option = document.createElement('option');
+                    option.value = venue.id; // Assuming the API returns an id for the venue
+                    option.textContent = venue.Name; // Assuming the API returns a name for the venue
+                    venueDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching venues:', error);
+            }
+        } else {
+            // Hide dropdown if input is cleared
+            venueDropdown.classList.add('hidden');
+        }
+    });
+      
+    // Handle selection from the dropdown
+    venueDropdown.addEventListener('change', function () {
+        const selectedVenue = this.options[this.selectedIndex];
+        venueInput.value = selectedVenue.text; // Set the input field to the selected venue
+        venueDropdown.classList.add('hidden'); // Hide dropdown after selection
+        venueInput.dataset.venueId = selectedVenue.value; // Store the selected venue ID
+    });
+      
+      // Handle selection from the dropdown (optional)
+      document.getElementById('venue-dropdown').addEventListener('change', function () {
+        const selectedVenue = this.options[this.selectedIndex].text;
+        document.getElementById('venue').value = selectedVenue; // Set the input field to the selected venue
+      });
+      
 
     // Attach event listener to the form submission
     scheduleForm.addEventListener('submit', async function (event) {
