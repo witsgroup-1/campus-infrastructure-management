@@ -90,9 +90,12 @@ async function setupStaffSearch(apiKey) {
       }
     });
 
-    staffDropdown.addEventListener('click', (event) => {
-      const selectedStaff = event.target.dataset.staffName;
-      const selectedStaffId = event.target.dataset.staffId;
+    staffDropdown.addEventListener('change', (event) => {
+      const selectedOption = event.target.options[event.target.selectedIndex];
+      const selectedStaff = selectedOption.dataset.staffName;
+      const selectedStaffId = selectedOption.dataset.staffId;
+      // const selectedStaff = event.target.dataset.staffName;
+      // const selectedStaffId = event.target.dataset.staffId;
 
       if (selectedStaff && selectedStaffId) {
         searchInput.value = selectedStaff;
@@ -105,10 +108,38 @@ async function setupStaffSearch(apiKey) {
   }
 }
 
+// function updateStaffDropdown(staffMembers) {
+//   const staffDropdown = document.getElementById('staff-dropdown');
+//   staffDropdown.innerHTML = ''; 
+
+//   if (staffMembers.length > 0) {
+//     staffMembers.forEach((staff) => {
+//       const option = document.createElement('option');
+//       option.classList.add('staff-option');
+//       option.textContent = `${staff.name} ${staff.surname}`;
+//       option.dataset.staffName = `${staff.name} ${staff.surname}`; // Store full name
+//       option.dataset.staffId = staff.id; 
+
+//       staffDropdown.appendChild(option);
+//     });
+
+//     staffDropdown.classList.remove('hidden'); // Show the dropdown
+//   } else {
+//     clearStaffDropdown(); // Hide if no results
+//   }
+// }
 function updateStaffDropdown(staffMembers) {
   const staffDropdown = document.getElementById('staff-dropdown');
-  staffDropdown.innerHTML = ''; 
+  staffDropdown.innerHTML = ''; // Clear existing options
 
+  // Add the unselectable placeholder option
+  const placeholderOption = document.createElement('option');
+  placeholderOption.textContent = 'Please select staff member';
+  placeholderOption.disabled = true; // Make it unselectable
+  placeholderOption.selected = true; // Make it the default selected option
+  staffDropdown.appendChild(placeholderOption);
+
+  // Populate dropdown with staff members
   if (staffMembers.length > 0) {
     staffMembers.forEach((staff) => {
       const option = document.createElement('option');
@@ -125,6 +156,7 @@ function updateStaffDropdown(staffMembers) {
     clearStaffDropdown(); // Hide if no results
   }
 }
+
 
 function clearStaffDropdown() {
   const staffDropdown = document.getElementById('staff-dropdown');
