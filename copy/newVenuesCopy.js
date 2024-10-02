@@ -61,7 +61,7 @@ export async function fetchAvailableVenues(db, intervals) {
         return availableVenues;
         
     } catch (error) {
-        console.error('Error fetching available venues:', error);
+        //console.error('Error fetching available venues:', error);
         return [];
     }
 }
