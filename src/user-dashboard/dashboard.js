@@ -243,15 +243,14 @@ const showModal = (message) => {
 };
 
 //const proxyUrl = 'https://api.allorigins.win/raw?url=';
-//const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/contacts'
-const securityUrl = 'https://polite-pond-04aadc51e.5.azurestaticapps.net/api/contacts';
+const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/contacts'
 const ourSecurityUrl = `https://campus-infrastructure-management.azurewebsites.net/api/securityInfo`;
 
 async function fetchSecurityContact() {
     try {
         const response = await fetch(securityUrl, {
             method: 'GET',
-            mode: 'no-cors',
+            //mode: 'no-cors',
             headers: {
                 'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json'
@@ -280,7 +279,7 @@ async function fetchSecurityContact() {
 
     } catch (error) {
         console.error('Error fetching security contact information:', error);
-        //fetchOurSecurityContact();
+        fetchOurSecurityContact();
     }
 }
 
