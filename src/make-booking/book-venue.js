@@ -1,6 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore, doc, getDoc , query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+// book-venue.js
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js"; // Updated to match system prompt version
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -17,6 +19,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Function to toggle loading indicator
+function toggleLoading(show) {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        if (show) {
+            loadingIndicator.classList.remove('hidden');
+        } else {
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+
+   //disable/enable UI elements during loading
+    const roomFilter = document.getElementById('roomFilter');
+    const searchInput = document.getElementById('searchInput');
+    if (roomFilter) roomFilter.disabled = show;
+    if (searchInput) searchInput.disabled = show;
+}
+
+toggleLoading(true); // Show loader at the start
 
 // Function to fetch user data using the API
 async function fetchUserData(uid) {
@@ -41,15 +63,19 @@ async function fetchUserData(uid) {
             return null;
         }
     } catch (error) {
+        console.error('Error fetching user data:', error);
         return null;
     }
 }
 
 async function fetchAndRenderBookings(userData) {
+   
+
     const roomFilterElement = document.getElementById('roomFilter');
     
     // Check if the roomFilterElement exists before accessing its value
     if (!roomFilterElement) {
+        toggleLoading(false); // Hide loader if element is missing
         return; // Exit the function if the element is missing
     }
 
@@ -75,9 +101,15 @@ async function fetchAndRenderBookings(userData) {
         if (response.ok) {
             const venues = await response.json();
             renderVenues(venues, userData);  // Render fetched venues with user-specific filters
-        } 
+        } else {
+            console.error('Failed to fetch venues:', response.statusText);
+            document.getElementById('bookingsContainer').innerHTML = '<p class="text-center text-red-500">Failed to load venues. Please try again later.</p>';
+        }
     } catch (error) {
-        // Handle fetch error silently
+        console.error('Error fetching venues:', error);
+        document.getElementById('bookingsContainer').innerHTML = '<p class="text-center text-red-500">An error occurred while loading venues.</p>';
+    } finally {
+        toggleLoading(false); // Hide loader after fetching and rendering
     }
 }
 
@@ -161,13 +193,13 @@ function getAllowedCategories(userData) {
         return ['Study Room'];
     } else if (role === 'Student' && isTutor && !isLecturer) {
         return ['Study Room', 'Tutorial Room'];
-    }  else if (role === 'Student' && !isTutor && isLecturer) {
-       return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
+    } else if (role === 'Student' && !isTutor && isLecturer) {
+        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
     } else if (role === 'Staff' && isLecturer) {
         return ['Tutorial Room', 'Exam Venue', 'Boardroom','Lecture Hall'];
     } else if (role === 'Staff' && !isLecturer && !isTutor) {
         return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
-    } else if ((role === 'Student'||role=="Staff") && isLecturer && isTutor) {
+    } else if ((role === 'Student' || role === "Staff") && isLecturer && isTutor) {
         return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
     }
     return [];
@@ -181,18 +213,6 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         window.location.href = "../index.html";  // Redirect to login page
     }
-});
-
-// Updated DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', async () => {
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userData = await fetchUserData(user.uid);
-            fetchAndRenderBookings(userData);
-        } else {
-            window.location.href = "../index.html";  // Redirect if no user
-        }
-    });
 });
 
 // Attach event listeners to filters and search input

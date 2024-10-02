@@ -20,6 +20,10 @@
         .content {
             flex: 1;
         }
+        .hidden {
+    display: none;
+}
+
     </style>
 </head>
 <body class="bg-white text-gray-800">
@@ -76,7 +80,9 @@
         </div>
     </div>
 </section>
-
+<div id="loadingIndicator" class="hidden absolute inset-0 flex justify-center items-center bg-gray-100 bg-opacity-70">
+    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#917248]"></div>
+</div>
 
 
 
