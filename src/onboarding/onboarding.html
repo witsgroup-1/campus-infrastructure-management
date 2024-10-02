@@ -94,7 +94,14 @@
         <!-- Full-width Header -->
         <header class="flex justify-between items-center w-full bg-[#003B5C] p-4 h-16 fixed left-0 top-0 right-0 z-10">
             <!-- Back Button as Arrow -->
-            <button id="backBtn" class="text-6xl text-[#917248] font-bold">&larr;</button>
+          
+
+
+            <button id="backBtn" class="absolute top-1/2 transform -translate-y-1/2 left-4" >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
 
             <!-- Dynamic Heading (Centered) -->
             <div class="flex-grow text-center">
@@ -259,7 +266,7 @@ if (userEmail) {
                 currentStep = 2;
                 showStep(currentStep);
             } else {
-                alert('Please fill out all required fields.');
+                alert('Please fill out all required fields to move on.');
             }
         });
 
@@ -268,7 +275,7 @@ if (userEmail) {
                 currentStep = 3;
                 showStep(currentStep);
             } else {
-                alert('Please fill out all required fields.');
+                alert('Please fill out all required fields to move on.');
             }
         });
 
