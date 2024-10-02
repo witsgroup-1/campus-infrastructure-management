@@ -1,5 +1,6 @@
 const express = require('express');
 const { db } = require("../src/firebaseInit.js");
+const fetch = require('node-fetch');
 const { collection, addDoc, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } = require("firebase/firestore"); 
 
 const securityRouter = express.Router();
@@ -75,6 +76,17 @@ securityRouter.delete('/securityInfo/:securityInfoId', async (req, res) => {
     } catch (error) {
         console.error('Error deleting security info:', error);
         res.status(500).send('Error deleting security info');
+    }
+});
+
+// Fetch security contacts from an external API
+securityRouter.get('/securityInfo/contacts', async (req, res) => {
+    try {
+        const response = await fetch('https://polite-pond-04aadc51e.5.azurestaticapps.net/api/contacts');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch data' });
     }
 });
 
