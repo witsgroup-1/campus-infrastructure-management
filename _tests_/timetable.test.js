@@ -1,5 +1,5 @@
 import './copies/timetable.Copy.js';
-import { displaySchedules, deleteSchedule, editSchedule, updateSchedule } from './copies/timetable.Copy.js';
+import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule } from './copies/timetable.Copy.js';
 
 global.fetch = jest.fn(() =>
     Promise.resolve({
@@ -286,11 +286,29 @@ describe('editSchedule', () => {
         expect(document.getElementById('start-date').value).toBe('2024-10-01');
         expect(document.getElementById('end-date').value).toBe('2024-12-01');
 
-        // Check if modal is shown
         //expect(modal.classList.contains('hidden')).toBe(false); 
     });
 });
 
+describe('closeModalFunction', () => {
+    let modal;
+
+    beforeEach(() => {
+        modal = {
+            classList: {
+                add: jest.fn() 
+            }
+        };
+
+        global.modal = modal; 
+    });
+
+    it('should add the "hidden" class to the modal', () => {
+        closeModal();
+
+        expect(modal.classList.add).toHaveBeenCalledWith('hidden');
+    });
+});
 
 
 describe('updateSchedule', () => {
@@ -422,3 +440,38 @@ describe('displaySchedules', () => {
         expect(firstRow.children[3].textContent.trim()).toBe('N/A'); 
     });
 });
+
+
+/*describe('updating the schedule when press update', () => {
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <input id="data-id" type="hidden" value="123" />
+            <input id="venue" value="Room A" />
+            <input id="course" value="Course 101" />
+            <input id="start-time" value="10:00" />
+            <input id="end-time" value="11:00" />
+            <input id="day" value="Monday" />
+            <input id="start-date" value="2024-10-01" />
+            <input id="end-date" value="2024-10-31" />
+            <button id="update">Update Schedule</button>
+        `;
+        
+        global.updateSchedule = jest.fn();
+    });
+
+    test('should call updateSchedule with correct parameters', () => {
+        const updateButton = document.getElementById('update');
+        updateButton.click();
+
+        expect(global.updateSchedule).toHaveBeenCalledWith('123', {
+            roomId: 'Room A',
+            courseId: 'Course 101',
+            startTime: '10:00',
+            endTime: '11:00',
+            daysOfWeek: 'Monday',
+            startDate: '2024-10-01',
+            endDate: '2024-10-31',
+        });
+    });
+});*/
+

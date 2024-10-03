@@ -43,27 +43,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Close the modal
-    closeModal.addEventListener('click', function () {
-        modal.classList.add('hidden');  // Hide the modal
-    });
-
-    // Handle modal form submission (Edit functionality)
-    document.getElementById('update').addEventListener('click', function () {
-        const id = document.getElementById('data-id').value;  // Assuming schedule ID is stored in a hidden field
-        const updatedSchedule = {
-            roomId: document.getElementById('venue').value,
-            courseId: document.getElementById('course').value,
-            startTime: document.getElementById('start-time').value,
-            endTime: document.getElementById('end-time').value,
-            daysOfWeek: document.getElementById('day').value,
-            startDate: document.getElementById('start-date').value,
-            endDate: document.getElementById('end-date').value,
-        };
-
-        updateSchedule(id, updatedSchedule);
-    });
+    closeModal.addEventListener('click', closeModal);
+    document.getElementById('update').addEventListener('click', onclickUpdateSchedule);
 });
+
+export function onclickUpdateSchedule(event) {
+    const id = document.getElementById('data-id').value; // Assuming schedule ID is stored in a hidden field
+    const updatedSchedule = {
+        roomId: document.getElementById('venue').value,
+        courseId: document.getElementById('course').value,
+        startTime: document.getElementById('start-time').value,
+        endTime: document.getElementById('end-time').value,
+        daysOfWeek: document.getElementById('day').value,
+        startDate: document.getElementById('start-date').value,
+        endDate: document.getElementById('end-date').value,
+    };
+
+    updateSchedule(id, updatedSchedule);
+}
+
+// Function to close the modal
+export function closeModal() {
+    modal.classList.add('hidden');  // Hide the modal
+}
+
 
 // Function to delete the schedule via API
 export async function deleteSchedule(id, deleteButton) {
@@ -82,11 +85,11 @@ export async function deleteSchedule(id, deleteButton) {
 
         // Remove the schedule from the UI
         const row = deleteButton.closest('tr'); // Find the closest table row
-        if (row && row.parentNode) { // Check if row exists and has a parent
+        /*if (row && row.parentNode) { // Check if row exists and has a parent
             row.remove(); // Remove the row from the table
         } else {
             console.error('Row not found for deletion.');
-        }
+        }*/
 
         alert('Schedule deleted successfully!');
     } catch (error) {
@@ -115,7 +118,7 @@ export function editSchedule(id, schedules) {
             hiddenField = document.createElement('input');
             hiddenField.type = 'hidden';
             hiddenField.id = 'data-id';
-            modal.appendChild(hiddenField); // This line might be failing if modal is null
+            modal.appendChild(hiddenField); 
         }
         hiddenField.value = id;
 
