@@ -34,6 +34,7 @@ export function displayVenues(venues) {
       venuesList.appendChild(venueBlock);
     });
   }
+  return venuesList ? venuesList.children : [];
 }
 
 export function createVenueBlock(name, capacity, category, features, building, id) {
@@ -71,37 +72,39 @@ export function initVenueManagement() {
   document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("venue-form");
     if (form) {
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const name = document.getElementById("name").value;
-        const capacity = document.getElementById("capacity").value;
-        const category = document.getElementById("category").value;
-        const features = document.getElementById("features").value;
-        const building = document.getElementById("building").value;
-
-        const venue = {
-          Name: name,
-          Capacity: capacity,
-          Category: category,
-          Features: features,
-          Building: building,
-          Booked: false
-        };
-
-        const success = await addVenue(venue);
-        if (success) {
-          alert('Venue added successfully');
-          form.reset();
-          const venues = await fetchVenues();
-          displayVenues(venues);
-        } else {
-          alert('Failed to add venue');
-        }
-      });
+      form.addEventListener("submit", handleFormSubmit);
     }
 
     const venues = await fetchVenues();
     displayVenues(venues);
   });
+}
+
+export async function handleFormSubmit(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const capacity = document.getElementById("capacity").value;
+  const category = document.getElementById("category").value;
+  const features = document.getElementById("features").value;
+  const building = document.getElementById("building").value;
+
+  const venue = {
+    Name: name,
+    Capacity: capacity,
+    Category: category,
+    Features: features,
+    Building: building,
+    Booked: false
+  };
+
+  const success = await addVenue(venue);
+  if (success) {
+    alert('Venue added successfully');
+    event.target.reset();
+    const venues = await fetchVenues();
+    displayVenues(venues);
+  } else {
+    alert('Failed to add venue');
+  }
 }
