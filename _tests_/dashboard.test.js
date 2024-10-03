@@ -1,5 +1,6 @@
-import { getUserDocumentByEmail, getGreetingMessage, setupAuthListener } from '../copy/dashboardCopy';
+import { getUserDocumentByEmail,setupAuthListener } from '../copy/dashboardCopy';
 import { collection, getDocs, getDoc } from 'firebase/firestore';
+
 
 jest.mock('firebase/firestore', () => ({
     collection: jest.fn(),
@@ -14,14 +15,14 @@ jest.mock('../copy/dashboardCopy', () => ({
 }));
 
 beforeEach(() => {
-    jest.spyOn(Storage.prototype, 'setItem'); // Mock localStorage.setItem
+    jest.spyOn(Storage.prototype, 'setItem'); 
     jest.spyOn(console, 'error').mockImplementation(() => {});
-    global.fetch = jest.fn(); // Mock fetch globally before each test
-    localStorage.clear(); // Clear localStorage before each test
+    global.fetch = jest.fn(); 
+    localStorage.clear(); 
 });
 
 afterEach(() => {
-    jest.restoreAllMocks(); // Restore all mocks
+    jest.restoreAllMocks(); 
 });
 
 describe('getUserDocumentByEmail', () => {
@@ -36,7 +37,7 @@ describe('getUserDocumentByEmail', () => {
                 empty: false,
                 docs: [{ id: mockUserId }],
             };
-            return mockQuerySnapshot.docs[0].id; // return user ID directly for the mock
+            return mockQuerySnapshot.docs[0].id; 
         });
     });
 
@@ -56,30 +57,11 @@ describe('getUserDocumentByEmail', () => {
 
 });
 
-describe('getGreetingMessage', () => {
-    it('should return correct greeting based on the hour of the day', () => {
-        const mockDate = (hour) => {
-            jest.setSystemTime(new Date(2022, 0, 1, hour)); // Mock date to specific hour
-        };
-
-        mockDate(10);
-        expect(getGreetingMessage()).toEqual({ message: 'Good morning', emoji: '🌅' });
-
-        mockDate(15);
-        expect(getGreetingMessage()).toEqual({ message: 'Good afternoon', emoji: '☀️' });
-
-        mockDate(18);
-        expect(getGreetingMessage()).toEqual({ message: 'Good evening', emoji: '🌇' });
-
-        mockDate(22);
-        expect(getGreetingMessage()).toEqual({ message: 'Goodnight', emoji: '🌙' });
-    });
-});
 
 describe('setupAuthListener', () => {
     beforeEach(() => {
-        jest.spyOn(Storage.prototype, 'setItem'); // Mock localStorage.setItem
-        jest.clearAllMocks(); // Clear mocks to ensure a fresh state
+        jest.spyOn(Storage.prototype, 'setItem'); 
+        jest.clearAllMocks(); 
     });
 
 
@@ -91,8 +73,8 @@ describe('setupAuthListener', () => {
 
         await setupAuthListener(mockAuth, mockDb);
 
-        expect(localStorage.setItem).not.toHaveBeenCalled(); // Should not set anything if no user
-        expect(mockGreetingElement.textContent).toBe(''); // Should not update greeting
+        expect(localStorage.setItem).not.toHaveBeenCalled(); 
+        expect(mockGreetingElement.textContent).toBe(''); 
     });
 });
 

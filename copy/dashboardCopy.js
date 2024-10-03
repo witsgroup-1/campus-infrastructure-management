@@ -31,20 +31,6 @@ export const getUserDocumentByEmail = async (db, email) => {
     }
 };
 
-export const getGreetingMessage = () => {
-    const now = new Date();
-    const hour = now.getHours();
-
-    if (hour >= 5 && hour < 12) {
-        return { message: 'Good morning', emoji: '🌅' };
-    } else if (hour >= 12 && hour < 17) {
-        return { message: 'Good afternoon', emoji: '☀️' };
-    } else if (hour >= 17 && hour < 21) {
-        return { message: 'Good evening', emoji: '🌇' };
-    } else {
-        return { message: 'Goodnight', emoji: '🌙' };
-    }
-};
 
 export const setupAuthListener = (auth, db) => {
     onAuthStateChanged(auth, async (user) => {
@@ -67,26 +53,6 @@ export const setupAuthListener = (auth, db) => {
             }
         }
     });
-};
-
-const handleUserRoles = (userData) => {
-    const isTutor = userData.isTutor || false;
-    const isLecturer = userData.isLecturer || false;
-    const role = userData.role || '';
-    const isAdmin = !isTutor && !isLecturer && role === 'Staff';
-
-    const adminLink = document.getElementById('admin-link');
-    if (isAdmin) {
-        adminLink.style.display = 'block';
-        adminLink.addEventListener('click', () => {
-            window.location.href = "../adminDashboard/adminDashboard.html";
-        });
-    } else {
-        adminLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            showModal("Oops! Only admins can access this.");
-        });
-    }
 };
 
 
