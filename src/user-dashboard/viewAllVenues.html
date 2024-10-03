@@ -20,6 +20,35 @@
         .content {
             flex: 1;
         }
+
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #917248; 
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            display: none; 
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #back-to-top {
+          display: none;
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 50;
+          background-color: #917248;
+          color: white;
+          padding: 10px 15px;
+          border-radius: 50%;
+          font-size: 20px;
+          cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800">
@@ -76,8 +105,9 @@
 
     <section id="bookingsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <!-- Booking boxes will be updated dynamically here -->
-    </section>
 
+    </section>
+    <div class="loader" id="loader"></div>
 
  
 

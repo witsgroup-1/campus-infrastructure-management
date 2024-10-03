@@ -263,13 +263,14 @@ const showModal = (message) => {
 
 //const proxyUrl = 'https://api.allorigins.win/raw?url=';
 const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/contacts'
+//const securityUrl = 'https://polite-pond-04aadc51e.5.azurestaticapps.net/api/contacts'
 const ourSecurityUrl = `https://campus-infrastructure-management.azurewebsites.net/api/securityInfo`;
 
 async function fetchSecurityContact() {
     try {
         const response = await fetch(securityUrl, {
             method: 'GET',
-            //mode: 'no-cors',
+           // mode: 'no-cors',
             headers: {
                 'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json'
@@ -281,26 +282,37 @@ async function fetchSecurityContact() {
         }
 
         const securityInfo = await response.json();
-    
+
         const section = document.getElementById('security_info');
         section.innerHTML = ''; 
 
-        securityInfo.forEach(info => {
-            const contact_details = document.createElement('div');
+        const usedIds = ['-O6xQK5q9Fou9kqC4DNL', '-O6xQN7-MLjFy6qUh0uQ', '-O6xQP17b0jz4OsdIPyC', '-O6xQRwE4VB5iab1PS-P'];
 
-            contact_details.innerHTML = `
-            <span class="text-xs text-white">${info.name}:</span>
-            <span class="text-xs text-gray-300">${info.phone}</span>
-            `;
-           // contact_details.textContent = `${info.Name}: ${info['Contact Number']}`;
-            section.appendChild(contact_details);
-        });
+        if (typeof securityInfo === 'object' && securityInfo !== null) {
+            Object.values(securityInfo).forEach(info => {
+                if(usedIds.includes(info.id)){
 
-    } catch (error) {
-        console.error('Error fetching security contact information:', error);
+                    const contact_details = document.createElement('div');
+
+                    const phoneNumbers = info.phone.join(', '); 
+                    
+                    contact_details.innerHTML = `
+                        <span class="text-xs text-white">${info.name}:</span>
+                        <span class="text-xs text-gray-300">${phoneNumbers}</span>
+                    `;
+                    section.appendChild(contact_details);
+                }
+            });
+        } else {
+            console.error('Unexpected data format for securityInfo:', securityInfo);
+        }
+
+    } catch (err) {
+        console.error('Error fetching security contact information:', err);
         fetchOurSecurityContact();
     }
 }
+
 
 async function fetchOurSecurityContact() {
     try {

@@ -73,17 +73,51 @@ fetch(url, {
 
 async function renderVenues() {
     const container = document.getElementById('bookingsContainer');
-    container.innerHTML = ''; // Clear existing venues
+    container.innerHTML = '';
+
+    const loader = document.getElementById('loader');
+    loader.style.display = "block"; // Show the loader
+
+    try {
+        // Fetch the venues from your API
+        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/venues', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Check if the response is ok (status 200)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        bookings = await response.json(); // Parse the response data
+    } catch (error) {
+        console.error('Error fetching venues:', error);
+        container.innerHTML = '<p class="text-center text-gray-500">Failed to load venues. Please try again later.</p>';
+        loader.style.display = "none"; // Hide the loader on error
+        return;
+    }
+
+    loader.style.display = "none"; // Hide the loader after data is fetched
 
     const user = auth.currentUser;
     
+    // Ensure the user is authenticated
+    if (!user) {
+        container.innerHTML = '<p class="text-center text-gray-500">Please log in to see venues.</p>';
+        return;
+    }
+
     const userData = await fetchUserData(user.uid);
     
     if (!userData) {
         console.error('No user data available.');
         return;
     }
-    
+
     const categoryFilter = document.getElementById('roomFilter').value;
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
     const allowedCategories = getAllowedCategories(userData);
@@ -131,6 +165,7 @@ async function renderVenues() {
     });
 }
 
+
 function getAllowedCategories(userData) {
     const role = userData.role || '';
     const isTutor = userData.isTutor || false;
@@ -152,14 +187,21 @@ function getAllowedCategories(userData) {
     return [];
 }
 
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userData = await fetchUserData(user.uid);
+        if (userData) {
+            renderVenues();
+        } else {
+            console.error('No user data available.');
+        }
+    } else {
+        console.error('No user is signed in.');
+    }
+});
+
+
 document.getElementById('roomFilter').addEventListener('change', renderVenues);
 document.getElementById('searchInput').addEventListener('input', renderVenues);
-
-document.addEventListener('DOMContentLoaded', renderVenues);
-
-
-document.getElementById('roomFilter').addEventListener('change', renderVenues);
-document.getElementById('searchInput').addEventListener('input', renderVenues);
-
 
 document.addEventListener('DOMContentLoaded', renderVenues);
