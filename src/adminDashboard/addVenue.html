@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Venues</title>
+  <title>Venue Management</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
@@ -23,32 +23,39 @@
     </div>
 
     <!-- Add Venue Form -->
-    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-      <h2 class="text-2xl font-bold mb-4 text-[#003B5C]">Add Venue</h2>
-      <form id="venue-form" class="space-y-4">
-        <div>
-          <label for="name" class="block text-gray-700">Name</label>
-          <input type="text" id="name" class="w-full p-2 border rounded" required>
-        </div>
-        <div>
-          <label for="capacity" class="block text-gray-700">Capacity</label>
-          <input type="number" id="capacity" class="w-full p-2 border rounded" required>
-        </div>
-        <div>
-          <label for="category" class="block text-gray-700">Category</label>
-          <input type="text" id="category" class="w-full p-2 border rounded" required>
-        </div>
-        <div>
-          <label for="features" class="block text-gray-700">Features</label>
-          <textarea id="features" class="w-full p-2 border rounded" required></textarea>
-        </div>
-        <div>
-          <label for="building" class="block text-gray-700">Building</label>
-          <input type="text" id="building" class="w-full p-2 border rounded" required>
-        </div>
-        <button type="submit" class="bg-[#003B5C] text-white p-2 rounded hover:bg-[#002642]">Add Venue</button>
-      </form>
+<div class="bg-white p-6 rounded-lg shadow-md mb-8">
+  <h2 class="text-2xl font-bold mb-4 text-[#003B5C]">Add Venue</h2>
+  <form id="venue-form" class="space-y-4">
+    <div>
+      <label for="name" class="block text-gray-700">Name</label>
+      <input type="text" id="name" class="w-full p-2 border rounded" required>
     </div>
+    <div>
+      <label for="capacity" class="block text-gray-700">Capacity</label>
+      <input type="number" id="capacity" class="w-full p-2 border rounded" required>
+    </div>
+    <div>
+      <label for="category" class="block text-gray-700">Category</label>
+      <select id="category" class="block w-full bg-[#003B5C] text-white border border-gray-300 rounded-lg p-2 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <option value="">Select Category</option>
+        <option value="Lecture Hall">Lecture Hall</option>
+        <option value="Tutorial Room">Tutorial Room</option>
+        <option value="Boardroom">Boardroom</option>
+        <option value="Exam Venue">Exam Venue</option>
+        <option value="Study Room">Study Room</option>
+      </select>
+    </div>
+    <div>
+      <label for="features" class="block text-gray-700">Features</label>
+      <textarea id="features" class="w-full p-2 border rounded" required></textarea>
+    </div>
+    <div>
+      <label for="building" class="block text-gray-700">Building</label>
+      <input type="text" id="building" class="w-full p-2 border rounded" required>
+    </div>
+    <button type="submit" class="bg-[#003B5C] text-white p-2 rounded hover:bg-[#002642]">Add Venue</button>
+  </form>
+</div>
 
     <!-- Existing Venues List -->
     <div class="bg-white p-6 rounded-lg shadow-md">
