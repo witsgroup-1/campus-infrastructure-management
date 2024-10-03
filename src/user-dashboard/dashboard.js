@@ -41,23 +41,44 @@ const getUserDocumentByEmail = async (email) => {
 };
 
 
+const getGreetingMessage = () => {
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour >= 5 && hour < 12) {
+        return { message: 'Good morning', emoji: '🌅' }; // Sunrise emoji
+    } else if (hour >= 12 && hour < 17) {
+        return { message: 'Good afternoon', emoji: '☀️' }; // Sun emoji
+    } else if (hour >= 17 && hour < 21) {
+        return { message: 'Good evening', emoji: '🌇' }; // Sunset emoji
+    } else {
+        return { message: 'Goodnight', emoji: '🌙' }; // Moon emoji
+    }
+};
+
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const email = user.email;
 
         localStorage.setItem('userEmail', email);
 
-        
         const userDocId = await getUserDocumentByEmail(email);
         if (userDocId) {
             localStorage.setItem('userId', userDocId);
             const userDoc = await getDoc(doc(db, 'users', userDocId)); 
 
-           
+            // Fetch the name from the document
+            const userName = userDoc.data().name || 'User';  // Default to 'User' if name not found
+
+            // Get the appropriate greeting and emoji based on the time of day
+            const { message, emoji } = getGreetingMessage();
+            const greetingElement = document.getElementById('userGreeting');
+            greetingElement.textContent = `${emoji} ${message}, ${userName}!`;
+
             const isTutor = userDoc.data().isTutor || false;
             const isLecturer = userDoc.data().isLecturer || false;
             const role = userDoc.data().role || '';
-
             const isAdmin = !isTutor && !isLecturer && role === 'Staff';
 
             if (isAdmin) {
@@ -67,13 +88,14 @@ onAuthStateChanged(auth, async (user) => {
                 });
             } else {
                 document.getElementById('admin-link').addEventListener('click', (event) => {
-                    event.preventDefault()
+                    event.preventDefault();
                     showModal("Oops! Only admins can access this.");
                 });
             }
         }
     }
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const menuIcon = document.getElementById('menu-icon');
@@ -93,9 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('User email:', userEmail);
         console.log("userId:",userId);
         // Use the email (e.g., display it, use it in queries, etc.)
-        document.getElementById('userEmailDisplay').textContent = `Logged in as: ${userEmail}`;
-    } else {
-        console.log('No email found');
     }
 
     const getSidebarWidth = () => {
@@ -244,13 +263,14 @@ const showModal = (message) => {
 
 //const proxyUrl = 'https://api.allorigins.win/raw?url=';
 const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/contacts'
+//const securityUrl = 'https://polite-pond-04aadc51e.5.azurestaticapps.net/api/contacts'
 const ourSecurityUrl = `https://campus-infrastructure-management.azurewebsites.net/api/securityInfo`;
 
 async function fetchSecurityContact() {
     try {
         const response = await fetch(securityUrl, {
             method: 'GET',
-            //mode: 'no-cors',
+           // mode: 'no-cors',
             headers: {
                 'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json'
@@ -262,26 +282,37 @@ async function fetchSecurityContact() {
         }
 
         const securityInfo = await response.json();
-    
+
         const section = document.getElementById('security_info');
         section.innerHTML = ''; 
 
-        securityInfo.forEach(info => {
-            const contact_details = document.createElement('div');
+        const usedIds = ['-O6xQK5q9Fou9kqC4DNL', '-O6xQN7-MLjFy6qUh0uQ', '-O6xQP17b0jz4OsdIPyC', '-O6xQRwE4VB5iab1PS-P'];
 
-            contact_details.innerHTML = `
-            <span class="text-xs text-white">${info.name}:</span>
-            <span class="text-xs text-gray-300">${info.phone}</span>
-            `;
-           // contact_details.textContent = `${info.Name}: ${info['Contact Number']}`;
-            section.appendChild(contact_details);
-        });
+        if (typeof securityInfo === 'object' && securityInfo !== null) {
+            Object.values(securityInfo).forEach(info => {
+                if(usedIds.includes(info.id)){
 
-    } catch (error) {
-        console.error('Error fetching security contact information:', error);
+                    const contact_details = document.createElement('div');
+
+                    const phoneNumbers = info.phone.join(', '); 
+                    
+                    contact_details.innerHTML = `
+                        <span class="text-xs text-white">${info.name}:</span>
+                        <span class="text-xs text-gray-300">${phoneNumbers}</span>
+                    `;
+                    section.appendChild(contact_details);
+                }
+            });
+        } else {
+            console.error('Unexpected data format for securityInfo:', securityInfo);
+        }
+
+    } catch (err) {
+        console.error('Error fetching security contact information:', err);
         fetchOurSecurityContact();
     }
 }
+
 
 async function fetchOurSecurityContact() {
     try {

@@ -1,202 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Venue</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            background: #FFFFFF;
-        }
-        .container {
-            position: relative;
-            width: 100%;
-            max-width: 1440px;
-            min-height: 100vh;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .arrow-left {
-            position: absolute;
-            width: 138px;
-            height: 120px;
-            left: 48px;
-            top: 49px;
-        }
-        .arrow-icon {
-            position: absolute;
-            left: 20.83%;
-            right: 20.83%;
-            top: 20.83%;
-            bottom: 20.83%;
-            border: 4px solid #1E1E1E;
-            border-right: none;
-            border-bottom: none;
-            width: 40px;
-            height: 40px;
-            transform: rotate(-45deg);
-        }
-        .title {
-            width: 100%;
-            max-width: 989px;
-            margin: 0 auto 40px;
-            font-weight: 400;
-            font-size: 64px;
-            line-height: 77px;
-            color: #1D44AC;
-            text-align: center;
-        }
-        .form-container {
-            width: 100%;
-            max-width: 1274px;
-            margin: 0 auto;
-            background: #003B5C;
-            padding: 40px;
-            box-sizing: border-box;
-        }
-        .form-field {
-            margin-bottom: 20px;
-        }
-        .form-label {
-            display: block;
-            color: #FFFFFF;
-            font-size: 24px;
-            line-height: 29px;
-            margin-bottom: 10px;
-        }
-        .form-input {
-            width: 100%;
-            height: 63px;
-            background: #D9D9D9;
-            border: none;
-            font-size: 18px;
-            padding: 0 10px;
-            box-sizing: border-box;
-        }
-        .submit-button {
-            width: 100%;
-            height: 63px;
-            background: #1D44AC;
-            border: none;
-            color: #FFFFFF;
-            font-size: 24px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        .submit-button:hover {
-            background: #163A8C;
-        }
-        .message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 18px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venue Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container">
-    	<a href="adminDashboard.html">
-    		<div class="arrow-left">
-            	<div class="arrow-icon"></div>
-        	</div>
-    	</a>
-        <h1 class="title">Add Venue</h1>
-        <div class="form-container">
-            <form id="addVenueForm">
-                <div class="form-field">
-                    <label class="form-label" for="venue-name">Venue Name</label>
-                    <input class="form-input" type="text" id="venue-name" name="Name" required>
-                </div>
-                <div class="form-field">
-                    <label class="form-label" for="location">Location</label>
-                    <input class="form-input" type="text" id="location" name="Building" required>
-                </div>
-                <div class="form-field">
-                    <label class="form-label" for="capacity">Capacity</label>
-                    <input class="form-input" type="number" id="capacity" name="Capacity" required>
-                </div>
-                <div class="form-field">
-                    <label class="form-label" for="category">Category</label>
-                    <input class="form-input" type="text" id="category" name="Category" required>
-                </div>
-                <div class="form-field">
-                    <label class="form-label" for="features">Features (comma-separated)</label>
-                    <input class="form-input" type="text" id="features" name="Features">
-                </div>
-                <div class="form-field">
-                    <input class="submit-button" type="submit" value="Submit">
-                </div>
-            </form>
-            <div id="message" class="message"></div>
-        </div>
+<body class="bg-gray-100">
+  <div class="container mx-auto py-8">
+    <h1 class="text-4xl font-bold mb-6 text-center text-[#003B5C]">Venue Management</h1>
+    
+    <!-- Campus Map Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold mb-4 text-[#003B5C]">Wits Braamfontein Campus Map</h2>
+      <div class="aspect-w-16 aspect-h-9">
+        <iframe class="w-full h-[400px] border-4 border-[#fbb03b] rounded-lg"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1147.6927759270374!2d28.031835215823118!3d-26.192540721826155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e950c1ad317a273%3A0x1022f982a25a5ac0!2sSenate%20House%2C%20University%20of%20the%20Witwatersrand%2C%201%20Jan%20Smuts%20Ave%2C%20Johannesburg%2C%202000!5e0!3m2!1sen!2sza!4v1694979370489!5m2!1sen!2sza"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
     </div>
 
-    <script>
-        const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-        const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
+    <!-- Add Venue Form -->
+<div class="bg-white p-6 rounded-lg shadow-md mb-8">
+  <h2 class="text-2xl font-bold mb-4 text-[#003B5C]">Add Venue</h2>
+  <form id="venue-form" class="space-y-4">
+    <div>
+      <label for="name" class="block text-gray-700">Name</label>
+      <input type="text" id="name" class="w-full p-2 border rounded" required>
+    </div>
+    <div>
+      <label for="capacity" class="block text-gray-700">Capacity</label>
+      <input type="number" id="capacity" class="w-full p-2 border rounded" required>
+    </div>
+    <div>
+      <label for="category" class="block text-gray-700">Category</label>
+      <select id="category" class="block w-full bg-[#003B5C] text-white border border-gray-300 rounded-lg p-2 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <option value="">Select Category</option>
+        <option value="Lecture Hall">Lecture Hall</option>
+        <option value="Tutorial Room">Tutorial Room</option>
+        <option value="Boardroom">Boardroom</option>
+        <option value="Exam Venue">Exam Venue</option>
+        <option value="Study Room">Study Room</option>
+      </select>
+    </div>
+    <div>
+      <label for="features" class="block text-gray-700">Features</label>
+      <textarea id="features" class="w-full p-2 border rounded" required></textarea>
+    </div>
+    <div>
+      <label for="building" class="block text-gray-700">Building</label>
+      <input type="text" id="building" class="w-full p-2 border rounded" required>
+    </div>
+    <button type="submit" class="bg-[#003B5C] text-white p-2 rounded hover:bg-[#002642]">Add Venue</button>
+  </form>
+</div>
 
-        document.getElementById('addVenueForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const venueData = Object.fromEntries(formData.entries());
-            
-            // Convert Capacity to number
-            venueData.Capacity = parseInt(venueData.Capacity);
-            
-            // Convert Features to array
-            if (venueData.Features) {
-                venueData.Features = venueData.Features.split(',').map(feature => feature.trim());
-            } else {
-                venueData.Features = [];
-            }
+    <!-- Existing Venues List -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold mb-4 text-[#003B5C]">Existing Venues</h2>
+      <div id="venues-list"></div>
+    </div>
+  </div>
 
-            try {
-                const response = await fetch(`${apiBaseUrl}/venues`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': apiKey
-                    },
-                    body: JSON.stringify(venueData)
-                });
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
 
-                if (!response.ok) {
-                    throw new Error('Failed to add venue');
-                }
+      const form = document.getElementById("venue-form");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-                const result = await response.json();
-                showMessage('Venue added successfully!', 'success');
-                document.getElementById('addVenueForm').reset();
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Failed to add venue. Please try again.', 'error');
-            }
-        });
+        const name = document.getElementById("name").value;
+        const capacity = document.getElementById("capacity").value;
+        const category = document.getElementById("category").value;
+        const features = document.getElementById("features").value;
+        const building = document.getElementById("building").value;
 
-        function showMessage(message, type) {
-            const messageElement = document.getElementById('message');
-            messageElement.textContent = message;
-            messageElement.className = `message ${type}`;
-            setTimeout(() => {
-                messageElement.textContent = '';
-                messageElement.className = 'message';
-            }, 5000);
+        const venue = {
+          Name: name,
+          Capacity: capacity,
+          Category: category,
+          Features: features,
+          Building: building,
+          Booked: false
+        };
+
+        try {
+          const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/venues', {
+            method: 'POST',
+            headers: {
+              'x-api-key': apiKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(venue)
+          });
+
+          if (response.ok) {
+            alert('Venue added successfully');
+            form.reset();
+            fetchVenues();
+          } else {
+            alert('Failed to add venue');
+          }
+        } catch (error) {
+          console.error('Error adding venue:', error);
         }
-    </script>
+      });
+
+      async function fetchVenues() {
+        try {
+          const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/venues', {
+            method: 'GET',
+            headers: {
+              'x-api-key': apiKey,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            const venues = await response.json();
+            displayVenues(venues);
+          } else {
+            console.error('Failed to fetch venues');
+          }
+        } catch (error) {
+          console.error('Error fetching venues:', error);
+        }
+      }
+
+      function displayVenues(venues) {
+        const venuesList = document.getElementById("venues-list");
+        venuesList.innerHTML = '';
+        venues.forEach(venue => {
+          const venueBlock = createVenueBlock(venue.Name, venue.Capacity, venue.Category, venue.Features, venue.Building, venue.id);
+          venuesList.appendChild(venueBlock);
+        });
+      }
+
+      function createVenueBlock(name, capacity, category, features, building, id) {
+        const block = document.createElement('div');
+        block.classList.add('bg-gray-200', 'p-4', 'rounded-md', 'mb-2', 'cursor-pointer');
+        block.innerHTML = `
+          <strong class="text-[#003B5C]">Name: ${name}</strong><br>
+          <small class="text-gray-500">Capacity: ${capacity}</small><br>
+          <small class="text-gray-500">Category: ${category}</small><br>
+          <small class="text-gray-500">Features: ${features}</small><br>
+          <small class="text-gray-500">Building: ${building}</small>
+        `;
+        return block;
+      }
+
+      fetchVenues();
+    });
+  </script>
 </body>
 </html>

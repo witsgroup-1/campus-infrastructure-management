@@ -64,56 +64,6 @@ export  function formatDate(date) {
     }
   }
   
-let currentPageUpcomingDesktop = 1;
-let currentPagePastDesktop = 1;
-let currentPageUpcomingMobile = 1;
-let currentPagePastMobile = 1;
-
-const itemsPerPageDesktop = 5;
-const itemsPerPageMobile = 2;
-
-export function displayBookings(bookings) {
-  const scheduledContent = document.getElementById('scheduled-content');
-  const pastContent = document.getElementById('in-progress-content');
-  const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
-  const mobilePastContent = document.getElementById('mobile-in-progress-content');
-
-  // Clear any existing bookings content
-  scheduledContent.innerHTML = '';
-  pastContent.innerHTML = '';
-  mobileScheduledContent.innerHTML = '';
-  mobilePastContent.innerHTML = '';
-
-  const now = new Date();
-
-  // Separate upcoming and past bookings
-  const upcomingBookings = bookings.filter(booking => new Date(booking.start_time) > now);
-  const pastBookings = bookings.filter(booking => new Date(booking.start_time) <= now);
-
-
-  const paginatedUpcomingDesktop = paginateBookings(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop);
-  const paginatedPastDesktop = paginateBookings(pastBookings, currentPagePastDesktop, itemsPerPageDesktop);
-
-  
-  const paginatedUpcomingMobile = paginateBookings(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile);
-  const paginatedPastMobile = paginateBookings(pastBookings, currentPagePastMobile, itemsPerPageMobile);
-
- 
-  renderDesktopBookings(paginatedUpcomingDesktop, scheduledContent, 'upcoming');
-  renderDesktopBookings(paginatedPastDesktop, pastContent, 'past');
-
- 
-  renderMobileBookings(paginatedUpcomingMobile, mobileScheduledContent, 'upcoming');
-  renderMobileBookings(paginatedPastMobile, mobilePastContent, 'past');
-
-  
-  renderPaginationControls(upcomingBookings, currentPageUpcomingDesktop, itemsPerPageDesktop, scheduledContent, 'desktop', 'upcoming');
-  renderPaginationControls(pastBookings, currentPagePastDesktop, itemsPerPageDesktop, pastContent, 'desktop', 'past');
-
- 
-  renderPaginationControls(upcomingBookings, currentPageUpcomingMobile, itemsPerPageMobile, mobileScheduledContent, 'mobile', 'upcoming');
-  renderPaginationControls(pastBookings, currentPagePastMobile, itemsPerPageMobile, mobilePastContent, 'mobile', 'past');
-}
 
 export function paginateBookings(bookings, page, itemsPerPage) {
   const start = (page - 1) * itemsPerPage;
@@ -224,35 +174,3 @@ export function renderPaginationControls(bookings, currentPage, itemsPerPage, co
 
   container.appendChild(paginationControls);
 }
-
-
-  
-  // Function to handle booking cancellation
-  function cancelBooking(bookingId) {
-    alert(`Booking with ID ${bookingId} cancelled (You would add logic to delete the booking).`);
-    // Add logic to delete the booking from the server
-  }
-  
-  // Function to handle rebooking
-  function bookAgain(bookingId) {
-    alert(`Booking with ID ${bookingId} being booked again (You would add logic to create a new booking).`);
-    // Add logic to create a new booking based on the past booking
-  }
-  
-
-  export async function loadUserBookings(userId) {
-    showLoading(); // Display loading state while fetching
-    const bookings = await fetchUserBookings(userId);
-    displayBookings(bookings);
-  }
-  
-  
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      loadUserBookings(user.uid); // Load bookings for the signed-in user
-    } else {
-      console.log("No user is signed in.");
-      
-    }
-  });
-  
