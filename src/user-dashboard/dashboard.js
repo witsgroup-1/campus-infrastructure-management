@@ -262,6 +262,8 @@ async function fetchSecurityContact() {
         }
 
         const securityInfo = await response.json();
+        console.log(securityInfo); // Add this line to check the structure
+
     
         const section = document.getElementById('security_info');
         section.innerHTML = ''; 
