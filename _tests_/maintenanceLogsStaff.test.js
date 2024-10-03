@@ -64,7 +64,7 @@ describe('setupStaffSearch', () => {
 
     // Verify that the dropdown is populated with staff members
     const dropdown = document.getElementById('staff-dropdown');
-    expect(dropdown.children.length).toBe(2);
+    expect(dropdown.children.length).toBe(3);
     expect(dropdown.classList).not.toContain('hidden');
   });
 
@@ -105,28 +105,43 @@ describe('setupStaffSearch', () => {
   });
 
 test('handles staff selection from dropdown', () => {
-  setupStaffSearch(apiKey); // Ensure this is called first
+  setupStaffSearch(apiKey); // Ensure setup is called first
 
   const searchInput = document.getElementById('assigned-to');
   const dropdown = document.getElementById('staff-dropdown');
 
-  // Populate dropdown with an option 
+
+  dropdown.innerHTML = '';
+
+  // Create and append a default "choose" option (if needed)
+  const defaultOption = document.createElement('option');
+  defaultOption.textContent = 'Choose staff...';
+  defaultOption.value = ''; 
+  dropdown.appendChild(defaultOption);
+
+  // Create an option with dataset attributes
   const option = document.createElement('option');
   option.dataset.staffName = 'Jane Doe';
   option.dataset.staffId = '1';
+  option.value = '1';
   option.textContent = 'Jane Doe';
   dropdown.appendChild(option);
- 
+
   dropdown.classList.remove('hidden');
 
-  // Simulate a click event on the option
-  option.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  // Ensure the correct index is set
+  dropdown.selectedIndex = 1;
+  
+  // Simulate change event on the dropdown
+  fireEvent.change(dropdown);
 
   // Verify that input value and data attributes are updated
   expect(searchInput.value).toBe('Jane Doe');
   expect(searchInput.dataset.staffId).toBe('1');
+
+  // Verify that the dropdown is hidden
   expect(dropdown.classList).toContain('hidden');
 });
 
-
 });
+

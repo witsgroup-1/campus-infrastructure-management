@@ -94,12 +94,12 @@ async function setupStaffSearch(apiKey) {
       const selectedOption = event.target.options[event.target.selectedIndex];
       const selectedStaff = selectedOption.dataset.staffName;
       const selectedStaffId = selectedOption.dataset.staffId;
-      // const selectedStaff = event.target.dataset.staffName;
-      // const selectedStaffId = event.target.dataset.staffId;
+  
 
       if (selectedStaff && selectedStaffId) {
         searchInput.value = selectedStaff;
         searchInput.dataset.staffId = selectedStaffId;
+        staffDropdown.classList.add('hidden');
         clearStaffDropdown();
       }
     });

@@ -21,6 +21,9 @@
     },
     "scripts": {
         "test": "jest sh node_modules/.bin/jest ./_tests_",
+        "test:playwright": "playwright test",  
+        "coverage:merge": "nyc merge .nyc_output && nyc report --reporter=html",  
+        "coverage": "npm run test && npm run test:playwright && npm run coverage:merge",
         "start": "node app",
         "build:css": "npx postcss src/styles.css -o src/output.css"
     },
@@ -59,6 +62,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jest-fetch-mock": "^3.0.3",
         "jsdom": "^24.1.1",
+        "nyc": "^17.1.0",
         "postcss": "^8.4.41",
         "postcss-cli": "^11.0.0",
         "tailwindcss": "^3.4.10"
