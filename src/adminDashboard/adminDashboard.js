@@ -31,56 +31,6 @@ async function fetchData(endpoint) {
     }
 }
 
-       
-        // function displayMaintenanceRequests(requests) {
-        //     const container = document.getElementById('maintenanceRequests');
-        //     container.innerHTML = '';
-
-        //     requests.slice(0, 2).forEach((request) => {
-        //         const requestElement = document.createElement('div');
-        //         requestElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center rounded';
-        //         requestElement.innerHTML = `
-        //             <span class="font-inter text-[16px]">${request.description}</span>
-        //             <div>
-        //                 <button onclick="handleMaintenanceAction('assign', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Assign</button>
-        //                 <button onclick="handleMaintenanceAction('track', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Track</button>
-        //                 <button onclick="handleMaintenanceAction('update', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
-        //             </div>
-        //         `;
-        //         container.appendChild(requestElement);
-        //     });
-        // }
-
-        /*function displayMaintenanceRequests(requests) {
-            const container = document.getElementById('reports-container');
-            const noReportsMessage = document.getElementById('no-bookings-message');
-            
-            // Clear previous requests
-            container.innerHTML = '';
-        
-            // Check if there are requests
-            if (requests.length === 0) {
-                noReportsMessage.classList.remove('hidden');
-                return; // Exit if there are no requests
-            } else {
-                noReportsMessage.classList.add('hidden'); // Hide message if there are requests
-            }
-        
-            // Display requests, limit to 2
-            requests.slice(0, 2).forEach((request) => {
-                const requestElement = document.createElement('div');
-                requestElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center rounded';
-                requestElement.innerHTML = `
-                    <span class="font-inter text-[16px]">${request.description}</span>
-                    <div>
-                        <button onclick="handleMaintenanceAction('assign', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Assign</button>
-                        <button onclick="handleMaintenanceAction('track', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Track</button>
-                        <button onclick="handleMaintenanceAction('update', ${request.id})" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none">Update</button>
-                    </div>
-                `;
-                container.appendChild(requestElement);
-            });
-        }*/
 
             async function fetchBookings() {
                 const data = await fetchData('/Bookings');
@@ -121,48 +71,8 @@ async function fetchData(endpoint) {
                 container.appendChild(bookingElement);
             });
         }
-        
-        //commented this out i dont understand what it does.
-        /*function displaySchedules(schedules) {
-            const container = document.getElementById('schedulesList');
-            container.innerHTML = '';
-
-            schedules.slice(0, 2).forEach((schedule) => {
-                const scheduleElement = document.createElement('div');
-                scheduleElement.className = 'bg-custom-light-blue p-4 flex justify-between items-center rounded';
-                scheduleElement.innerHTML = `
-                    <span class="font-inter text-[16px]">
-                        Room: ${schedule.roomId}, Course: ${schedule.courseId}, 
-                        Time: ${schedule.startTime} - ${schedule.endTime}
-                    </span>
-                    <div>
-                        <button onclick="handleScheduleAction('edit', '${schedule.scheduleId}')" class="font-inter font-normal text-[20px] text-black hover:text-blue-600 focus:text-blue-600 focus:outline-none mr-2">Edit</button>
-                        <button onclick="handleScheduleAction('delete', '${schedule.scheduleId}')" class="font-inter font-normal text-[20px] text-black hover:text-red-600 focus:text-red-600 focus:outline-none">Delete</button>
-                    </div>
-                `;
-                container.appendChild(scheduleElement);
-            });
-        }*/
-
-        // function handleMaintenanceAction(action, requestId) {
-        //     console.log(`${action} action for maintenance request ${requestId}`);
-        //     // Implement the logic for each action (assign, track, update) here
-        // }
-
-        function handleBookingAction(action, bookingId) {
-            console.log(`${action} action for booking ${bookingId}`);
-            // Implement the logic for each action (accept, reject) here
-        }
-
-        function handleScheduleAction(action, scheduleId) {
-            console.log(`${action} action for schedule ${scheduleId}`);
-            // Implement the logic for each action (edit, delete) here
-        }
-
-        // Fetch data when the page loads
-        //fetchMaintenanceRequests();
+       
         fetchBookings();
-        //fetchSchedules();
 
         document.addEventListener('DOMContentLoaded', () => {
             const menuIcon = document.getElementById('menu-icon');

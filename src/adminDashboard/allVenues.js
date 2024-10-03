@@ -1,6 +1,9 @@
+import { FirebaseConfig } from '../FirebaseConfig.js';
+import { getDocs, collection, query, where} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
 let bookings = [];
 
-
+const db = new FirebaseConfig().getFirestoreInstance();
 const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';
 
 fetch(url, {
@@ -47,12 +50,11 @@ function renderBookings() {
         return;
     }
 
-    // Create booking boxes
+   
     filteredBookings.forEach(booking => {
         const bookingBox = document.createElement('div');
         bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
-        // Booking Info
         const bookingInfo = document.createElement('div');
         bookingInfo.className = 'flex-shrink-0';
         bookingInfo.innerHTML = `
@@ -61,19 +63,45 @@ function renderBookings() {
         `;
         bookingBox.appendChild(bookingInfo);
 
-        // Book button for all bookings
+
         const actionButtons = document.createElement('div');
         actionButtons.className = 'flex flex-row space-x-2';
 
         const bookButton = document.createElement('button');
         bookButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
-        bookButton.textContent = 'Book';
+        bookButton.textContent = 'Status';
         
-        // Add click event listener to the button
-        bookButton.onclick = function() {
-            // Redirect to the booking details page, passing the booking ID or any other info through the URL
-            window.location.href = `../make-booking/booking-details.html?bookingId=${booking.id}`;
-        };
+        bookButton.onclick = async function() {
+          const bookingId = booking.id;
+          const maintenanceRequestsRef = collection(db, 'maintenanceRequests');
+      
+          try {
+              
+              const q = query(maintenanceRequestsRef, where('roomId', '==', bookingId));
+              const querySnapshot = await getDocs(q);
+      
+              let statusMessage;
+              let issueType;
+              if (!querySnapshot.empty) {
+                  // If the query returns a document, fetch its status
+                  querySnapshot.forEach((doc) => {
+                      const data = doc.data();
+
+                      statusMessage = `Status: ${data.status}`;
+                      issueType = `Issue: ${data.issueType}`;
+                  });
+              } else {
+                  statusMessage = 'Status: Available (No Maintenance Scheduled)';
+                   issueType = ''
+              }
+      
+              showModal(statusMessage, issueType);
+      
+          } catch (error) {
+              console.error('Error fetching maintenance status:', error);
+          }
+      };
+      
         
         actionButtons.appendChild(bookButton);
         bookingBox.appendChild(actionButtons);
@@ -82,6 +110,34 @@ function renderBookings() {
     });
 }
 
+function showModal(statusMessage, issueType) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50';
+
+  const modalContent = document.createElement('div');
+  modalContent.className = 'bg-white p-6 rounded-lg text-center';
+
+ 
+  const statusText = document.createElement('p');
+  statusText.textContent = statusMessage;
+
+  const issueText = document.createElement('p');
+  issueText.textContent = issueType;
+
+  const closeButton = document.createElement('button');
+  closeButton.textContent = 'Close';
+  closeButton.className = 'bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-700';
+  closeButton.onclick = function() {
+      document.body.removeChild(modal); 
+  };
+
+  
+  modalContent.appendChild(statusText);
+  modalContent.appendChild(issueText);
+  modalContent.appendChild(closeButton);
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+}
 
 
 // Attach event listeners to filters and search input

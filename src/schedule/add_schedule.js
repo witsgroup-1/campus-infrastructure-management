@@ -2,7 +2,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const scheduleForm = document.getElementById('schedule_form');
     const recurringSelect = document.getElementById('recurring-select');
     const lastDate = document.getElementById('last-date'); 
-    const venue = document.getElementById('venue');
+    //const venue = document.getElementById('venue');
+    const venueInput = document.querySelector('input[placeholder="Venue"]');
+    const venueId = venueInput.dataset.venueId; // Get the selected venue ID from dataset
+    const venueDropdown = document.getElementById('venue-dropdown'); 
+    const venueName = venueInput.value; // Get venue name from input field
     const search = document.getElementById('search-results');
 
     // Event listener to show/hide the last date field based on 'Recurring' selection
@@ -39,6 +43,58 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching venue data:', error);
         }
     });*/
+
+    venueInput.addEventListener('input', async function () {
+        const query = this.value;
+    
+        // Show dropdown only if there's input
+        if (query.length > 0) {
+            venueDropdown.classList.remove('hidden');
+            venueDropdown.innerHTML = ''; // Clear any previous options
+    
+            try {
+                const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                    },
+                });
+    
+                if (!response.ok) throw new Error('Failed to fetch venues');
+    
+                const venues = await response.json();
+                console.log('Fetched venues:', venues);
+    
+                // Populate dropdown with matching venue options
+                venues.forEach(venue => {
+                    const option = document.createElement('option');
+                    option.value = venue.id; // Assuming the API returns an id for the venue
+                    option.textContent = venue.Name; // Assuming the API returns a name for the venue
+                    venueDropdown.appendChild(option);
+                });
+    
+                // Hide dropdown if no venues found
+                if (venues.length === 0) {
+                    venueDropdown.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error fetching venues:', error);
+            }
+        } else {
+            // Hide dropdown if input is cleared
+            venueDropdown.classList.add('hidden');
+        }
+    });
+    
+    // Handle selection from the dropdown
+    venueDropdown.addEventListener('change', function () {
+        const selectedVenue = this.options[this.selectedIndex];
+        venueInput.value = selectedVenue.text; // Set the input field to the selected venue
+        venueDropdown.classList.add('hidden'); // Hide dropdown after selection
+        venueInput.dataset.venueId = selectedVenue.value; // Store the selected venue ID
+    });
+    
 
     // Attach event listener to the form submission
     scheduleForm.addEventListener('submit', async function (event) {
@@ -133,47 +189,47 @@ async function createBookingsForRecurring(userId, roomId, startDate, startTime, 
     }
 }
 
-// POST single booking
 async function createBooking(userId, roomId, date, start_time, end_time, purpose) {
-    const bookingData = {
-        userId,
-        roomId,
-        start_time,
-        end_time,
-        date,
-        purpose,
-        status: 'Pending', // Add status if necessary
-        venueId: roomId // Assuming venueId and roomId are the same
-    };
 
-    console.log(bookingData); // Log booking data for debugging
+  const bookingData = {
+      userId,
+      roomId,
+      start_time, 
+      end_time,
+      date,
+      purpose,
+      status: 'Pending',
+      venueId: roomId
+  };
 
-    try {
-        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
-            method: 'POST',
-            headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bookingData)
-        });
+  console.log(bookingData); 
+  
+  try {
+      const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
+          method: 'POST',
+          headers: {
+              'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bookingData)
+      });
 
-        if (!response.ok) {
-            let errorData;
-            try {
-                errorData = await response.json();
-            } catch (jsonError) {
-                errorData = await response.text();
-            }
-            console.error(`Booking creation failed with status ${response.status}:`, errorData);
-            throw new Error(`Error creating booking: ${response.statusText}`);
-        }
+      if (!response.ok) {
+          let errorData;
+          try {
+              errorData = await response.json();
+          } catch (jsonError) {
+              errorData = await response.text();
+          }
+          console.error(`Booking creation failed with status ${response.status}:`, errorData);
+          throw new Error(`Error creating booking: ${response.statusText}`);
+      }
 
-        const result = await response.json();
-        console.log(`Booking created successfully:`, result);
-    } catch (error) {
-        console.error('Error occurred during booking creation:', error);
-    }
+      const result = await response.json();
+      console.log(`Booking created successfully:`, result);
+  } catch (error) {
+      console.error('Error occurred during booking creation:', error);
+  }
 }
 
 
