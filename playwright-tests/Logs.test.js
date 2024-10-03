@@ -10,6 +10,7 @@ test.describe('Maintenance Requests Page Tests', () => {
   });
 
   test('should fetch and display maintenance requests correctly', async ({ page }) => {
+    await page.coverage.startJSCoverage();
     // Wait for the maintenance requests to load
     await page.waitForSelector('#scheduled-content');
     const scheduled = await page.locator('#scheduled-content').count();
@@ -19,10 +20,12 @@ test.describe('Maintenance Requests Page Tests', () => {
     expect(scheduled).toBeGreaterThan(0);
     expect(inProgress).toBeGreaterThan(0);
     expect(completed).toBeGreaterThan(0);
+
+    const coverage = await page.coverage.stopJSCoverage();
   });
 
   test('should show more requests when "Show More" button is clicked in mobile view', async ({ page }) => {
-    
+    await page.coverage.startJSCoverage();
     // Emulate mobile viewport
     await page.setViewportSize({ width: 375, height: 812 });
 
@@ -41,9 +44,12 @@ test.describe('Maintenance Requests Page Tests', () => {
     const allRequests = await page.locator('#mobile-scheduled-content').count();
     
     expect(allRequests).toBeGreaterThan(1); // Ensure more requests are shown
+
+    const coverage = await page.coverage.stopJSCoverage();
   });
 
   test('should search and display staff results', async ({ page }) => {
+      await page.coverage.startJSCoverage();
        // Open the popup where the 'assigned-to' search input is located
        await page.click('.bg-gray-200.p-4.rounded-md.mb-2.cursor-pointer'); 
        await page.waitForSelector('#detailsModal', { state: 'visible' });
@@ -62,9 +68,12 @@ test.describe('Maintenance Requests Page Tests', () => {
     const optionsCount = await page.locator('#staff-dropdown').count();
     
     expect(optionsCount).toBeGreaterThan(0); // Ensure staff options are displayed
+
+    const coverage = await page.coverage.stopJSCoverage();
   });
 
   test('should open request details and update request', async ({ page }) => {
+    await page.coverage.startJSCoverage();
     // Click on the first request to open the popup modal
     await page.click('.bg-gray-200.p-4.rounded-md.mb-2.cursor-pointer');
     await page.waitForSelector('#detailsModal', { state: 'visible' });
@@ -78,6 +87,8 @@ test.describe('Maintenance Requests Page Tests', () => {
     // Check if the popup is closed
     const modalIsHidden = await page.locator('#detailsModal').isHidden();
     expect(modalIsHidden).toBeTruthy();
+
+    const coverage = await page.coverage.stopJSCoverage();
   });
 
 });

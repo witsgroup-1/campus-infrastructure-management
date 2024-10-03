@@ -1,5 +1,4 @@
 
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
@@ -48,11 +47,9 @@ onAuthStateChanged(auth, async (user) => {
       alert('Please select a valid venue from the dropdown.');
       venueInput.value = ''; // Clear the input field
       venueInput.dataset.venueId = '';
-      clearVenueDropdown(); // Clear and hide dropdown
+      clearVenueDropdown(venueDropdown); // Clear and hide dropdown
       return;
     }
-
-    
 
     const requestData = {
       assignedTo: 'none',
@@ -103,20 +100,19 @@ onAuthStateChanged(auth, async (user) => {
       if (!response.ok) throw new Error('Failed to fetch venues');
 
       const venues = await response.json();
-      updateVenueDropdown(venues); // Populate the dropdown with venues
+      updateVenueDropdown(venues, venueDropdown); // Populate the dropdown with venues
     } catch (error) {
       // console.error("Error fetching venues:", error);
-      clearVenueDropdown(); // Clear the dropdown in case of an error
+      clearVenueDropdown(venueDropdown); // Clear the dropdown in case of an error
     }
   } else {
-    clearVenueDropdown(); // Clear dropdown if input is too short
+    clearVenueDropdown(venueDropdown); // Clear dropdown if input is too short
   }
 });
 
 // Function to update the dropdown with fetched venues
-function updateVenueDropdown(venues) {
-  clearVenueDropdown(); // Clear any previous entries
-  
+function updateVenueDropdown(venues, venueDropdown) {
+  clearVenueDropdown(venueDropdown); // Clear any previous entries
   // Add a default option that is not selectable
   const defaultOption = document.createElement('option');
   defaultOption.textContent = 'Please select a venue...';
@@ -130,11 +126,10 @@ function updateVenueDropdown(venues) {
       option.textContent = venue.Name;
       option.dataset.id = venue.id; 
       venueDropdown.appendChild(option);
-      console.log("venue dropdown final log in update,", venueDropdown.innerHTML);
     });
     venueDropdown.classList.remove('hidden'); 
   } else {
-    clearVenueDropdown(); 
+    clearVenueDropdown(venueDropdown); 
   }
 }
 
@@ -146,19 +141,18 @@ venueDropdown.addEventListener('change', (event) => {
   // Update input field with selected venue name
   venueInput.value = venueName; 
   venueInput.dataset.venueId = venueId; 
-  clearVenueDropdown(); // Clear the dropdown after selection
+  clearVenueDropdown(venueDropdown); // Clear the dropdown after selection
 });
 
 // Function to clear the dropdown
-function clearVenueDropdown() {
-  //console.log('in clearVenueDropdown', venueDropdown.innerHTML);
+function clearVenueDropdown(venueDropdown) {
   venueDropdown.innerHTML = ''; // Clear the dropdown content
-  //console.log('in clearVenueDropdown - should clear', venueDropdown.innerHTML);
+
   venueDropdown.classList.add('hidden'); // Hide the dropdown
 }
 
 // Ensure dropdown is hidden initially
-clearVenueDropdown();
+clearVenueDropdown(venueDropdown);
 
 window.updateVenueDropdown = updateVenueDropdown;
 window.clearVenueDropdown = clearVenueDropdown;
