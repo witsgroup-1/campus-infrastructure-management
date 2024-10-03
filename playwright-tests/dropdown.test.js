@@ -27,9 +27,9 @@ test.describe('Venue Dropdown Integration Tests', () => {
     const dropdown = await page.$('#venue-dropdown');
     const options = await dropdown.$$('option');
 
-    expect(options.length).toBe(2);
-    expect(await options[0].textContent()).toBe('Room 101');
-    expect(await options[1].textContent()).toBe('Room 102');
+    expect(options.length).toBe(3);
+    expect(await options[1].textContent()).toBe('Room 101');
+    expect(await options[2].textContent()).toBe('Room 102');
   });
 
   test('should update venue input when an option is selected', async ({ page }) => {

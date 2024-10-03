@@ -174,27 +174,43 @@ describe('Venue Dropdown Functionality', () => {
   let venueDropdown, venueInput;
 
   beforeEach(() => {
+    require('./copies/maintenanceReportsCopy');
     document.body.innerHTML = `
-      <div id="venue-dropdown" class="hidden"></div>
-      <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
-    `;
-    venueDropdown = document.getElementById('venue-dropdown');
-    venueInput = document.getElementById('venueInput');
+    <input type="text" id="venue-input" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md" required>
+    <select id="venue-dropdown" class="w-full mt-1 p-2 border rounded-md"></select>
+  `;
+  
+  venueDropdown = document.getElementById('venue-dropdown');
+  venueInput = document.getElementById('venue-input'); 
+  
+    //venueDropdown = document.getElementById('venue-dropdown');
+    //venueInput = document.getElementById('venueInput');
 
     window.updateVenueDropdown = updateVenueDropdown;
     window.clearVenueDropdown = clearVenueDropdown;
 
-    console.log('Initial venueDropdown:', venueDropdown.innerHTML);
   });
+  test('selecting a venue updates the input field', () => {
+    // Set up options
+    const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
+    window.updateVenueDropdown(venues);
+    
+    // Simulate changing the dropdown
+    const changeEvent = new Event('change');
+    venueDropdown.value = '123'; // This assumes that the first option has a value
+    venueDropdown.dispatchEvent(changeEvent);
 
+    // Verify input field is updated
+    expect(venueInput.value).toBe('Room 101'); // Assuming 'Room 101' is the first option
+    expect(venueInput.dataset.venueId).toBe('123');
+});
   test('updateVenueDropdown should populate and show dropdown', () => {
     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
-    
-    console.log('Before calling updateVenueDropdown', venueDropdown.innerHTML);
-    console.log(venues);
+    updateVenueDropdown(venues);
     // Call the function from the script
     window.updateVenueDropdown(venues);
-
+    console.log('Current classes:', venueDropdown.classList);
+    //expect(venueDropdown.classList).not.toContain('hidden');
     console.log('After calling updateVenueDropdown', venueDropdown.innerHTML);
 
     // Assert that the dropdown has the correct options
@@ -219,5 +235,10 @@ describe('Venue Dropdown Functionality', () => {
     expect(venueDropdown.classList).toContain('hidden');
   });
 });
+
+
+
+
+
 
 

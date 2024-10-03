@@ -45,7 +45,6 @@ test.describe('Maintenance Requests Page Tests', () => {
 
   test('should search and display staff results', async ({ page }) => {
        // Open the popup where the 'assigned-to' search input is located
-       //await page.click('.request-block');
        await page.click('.bg-gray-200.p-4.rounded-md.mb-2.cursor-pointer'); 
        await page.waitForSelector('#detailsModal', { state: 'visible' });
 
@@ -68,9 +67,7 @@ test.describe('Maintenance Requests Page Tests', () => {
   test('should open request details and update request', async ({ page }) => {
     // Click on the first request to open the popup modal
     await page.click('.bg-gray-200.p-4.rounded-md.mb-2.cursor-pointer');
-  
-    // Wait for modal to open
-    await page.waitForSelector('#detailsModal');
+    await page.waitForSelector('#detailsModal', { state: 'visible' });
   
     // Change status to 'In Progress'
     await page.selectOption('#status-select', 'In Progress');

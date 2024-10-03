@@ -67,7 +67,7 @@ onAuthStateChanged(auth, async (user) => {
     };
 
     try {
-      const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
+      const response = await fetch('http://localhost:3000/api/maintenanceRequests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,86 +86,13 @@ onAuthStateChanged(auth, async (user) => {
     }
   });
 
-  // Function to handle venue input changes and fetch matching venues
-  //venueInput.addEventListener('input', async (event) => {
-  //   const query = event.target.value;
-
-  //   if (query.length >= 2) {
-  //     try {
-  //       const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'x-api-key': apiKey,
-  //         },
-  //       });
-
-  //       if (!response.ok) throw new Error('Failed to fetch venues');
-  //       const venues = await response.json();
-  //       updateVenueDropdown(venues);
-  //     } catch (error) {
-  //       clearVenueDropdown();
-  //       //console.error('Error fetching venues:', error);
-  //     }
-  //   } else {
-  //     clearVenueDropdown();
-  //   }
-  // });
-
-  // // Function to update the dropdown with fetched venues
-  // function updateVenueDropdown(venues) {
-  //   clearVenueDropdown();
-  //   if (venues.length > 0) {
-  //     venues.forEach(venue => {
-  //       const option = document.createElement('option');
-  //       option.textContent = venue.Name;
-  //       option.dataset.id = venue.id; // Store the venue ID in dataset
-  //       venueDropdown.appendChild(option);
-  //     });
-  //     venueDropdown.classList.remove('hidden');
-  //   } else {
-  //     clearVenueDropdown();
-  //   }
-  // }
-
-  // // Handle selection from the dropdown
-  // venueDropdown.addEventListener('click', (event) => {
-  //   if (event.target.tagName === 'OPTION') {
-  //     const selectedOption = event.target;
-  //     const venueId = selectedOption.dataset.id;
-  //     const venueName = selectedOption.textContent;
-
-  //     venueInput.value = venueName; // Update input field with selected name
-  //     venueInput.dataset.venueId = venueId; // Store the selected venue ID
-  //     clearVenueDropdown(); // Clear dropdown after selection
-  //   }
-
-  //   document.querySelector('#venue-dropdown').addEventListener('change', (event) => {
-  //     const selectedValue = event.target.value;  // Get the selected optionzzz
-  //     const inputField = document.querySelector('input[placeholder="Venue"]');
-  //     if (inputField) {
-  //       inputField.value = selectedValue;  // Update the input field with selected value
-  //     }
-  //   });
-
-
-
-  // });
-
-  // // Function to clear the dropdown
-  // function clearVenueDropdown() {
-  //   venueDropdown.innerHTML = ''; // Clear dropdown content
-  //   venueDropdown.classList.add('hidden'); // Hide dropdown
-  // }
-
-
  // Handle input in the venue input field
  venueInput.addEventListener('input', async (event) => {
   const query = event.target.value;
 
   if (query.length >= 2) {
     try {
-      const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
+      const response = await fetch(`http://localhost:3000/api/venues?name=${query}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
