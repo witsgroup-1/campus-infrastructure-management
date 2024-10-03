@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Maintenance Requests Page Tests', () => {
   const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-  const baseURL = 'http://localhost:3000/maintenance/maintenanceLogs.html';
+  const baseURL = 'https://campus-infrastructure-management.azurewebsites.net/maintenance/maintenanceLogs.html';
 
   test.beforeEach(async ({ page }) => {
 

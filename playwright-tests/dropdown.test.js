@@ -4,7 +4,7 @@ test.describe('Venue Dropdown Integration Tests', () => {
 
   // Before each test, navigate to the correct page
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/maintenance/maintenanceReports.html'); 
+    await page.goto('https://campus-infrastructure-management.azurewebsites.net/maintenance/maintenanceReports.html'); 
 
     // Wait for the page to fully load before proceeding
     await page.waitForLoadState('domcontentloaded');
