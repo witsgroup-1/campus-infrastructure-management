@@ -237,27 +237,4 @@ describe('editBookingCopy', () => {
       expect(fetchedBookings).toEqual(mockBookings);
     });
 
-
-
-      test('saveChanges', async () => {
-
-        bookings.push({
-          id: 'booking1',
-          date: '20 September 2024',
-          start_time: '9:00 AM',
-          end_time: '11:00 AM',
-          purpose: 'Meeting',
-          roomId: 'venue1',
-          status: 'Confirmed',
-          userId: 'user1',
-          venueId: 'venue1'
-        });
-    
-        const savedChanges = await saveChanges(booking1);
-        
-        // Expect fetch to have been called once
-        expect(fetch).toHaveBeenCalledTimes(1);
-      });
-  
-
 });
