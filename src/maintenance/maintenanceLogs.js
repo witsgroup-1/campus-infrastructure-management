@@ -1,11 +1,13 @@
 
-
+//wait for dom to load
 document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
     //https://campus-infrastructure-management.azurewebsites.net
     //http://localhost:3000
+
+    //get maintenance requests
     const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
       method: 'GET',
       headers: {
@@ -28,9 +30,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       return false;
   });
-
-
-
     // Display all requests for desktop view
     displayRequestsForDesktop(scheduledRequests, 'scheduled-content');
     displayRequestsForDesktop(inProgressRequests, 'in-progress-content');
@@ -41,10 +40,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayInitialRequestsForMobile(inProgressRequests, 'mobile-in-progress-content', 'show-more-in-progress');
     displayInitialRequestsForMobile(completedRequests, 'mobile-completed-content', 'show-more-completed');
 
-    //setupStaffSearch(apiKey);
-
   } catch (error) {
-    console.error('Error fetching maintenance requests:', error);
+    console.error('Error fetching maintenance requests');
+    //robustness
+    alert('Something went wrong, please try again later');
   }
 });
 
@@ -56,12 +55,13 @@ function displayRequestsForDesktop(requests, containerId) {
     container.appendChild(block);
   });
 }
-
+//function to set up the data for the staff drop down
 async function setupStaffSearch(apiKey) {
   const searchInput = document.getElementById('assigned-to');
   const staffDropdown = document.getElementById('staff-dropdown');
 
   if (searchInput) {
+    //get all the staff memebers (admin)
     searchInput.addEventListener('input', async (event) => {
       const query = event.target.value;
 
@@ -89,16 +89,17 @@ async function setupStaffSearch(apiKey) {
         clearStaffDropdown();
       }
     });
-
+    //event listener to check for changes (so if you click a staff memeber)
     staffDropdown.addEventListener('change', (event) => {
       const selectedOption = event.target.options[event.target.selectedIndex];
       const selectedStaff = selectedOption.dataset.staffName;
       const selectedStaffId = selectedOption.dataset.staffId;
   
-
+      
       if (selectedStaff && selectedStaffId) {
         searchInput.value = selectedStaff;
         searchInput.dataset.staffId = selectedStaffId;
+        //hid and clear once we have the selected value
         staffDropdown.classList.add('hidden');
         clearStaffDropdown();
       }
@@ -107,27 +108,7 @@ async function setupStaffSearch(apiKey) {
     console.warn('Assigned To input not found on the page.');
   }
 }
-
-// function updateStaffDropdown(staffMembers) {
-//   const staffDropdown = document.getElementById('staff-dropdown');
-//   staffDropdown.innerHTML = ''; 
-
-//   if (staffMembers.length > 0) {
-//     staffMembers.forEach((staff) => {
-//       const option = document.createElement('option');
-//       option.classList.add('staff-option');
-//       option.textContent = `${staff.name} ${staff.surname}`;
-//       option.dataset.staffName = `${staff.name} ${staff.surname}`; // Store full name
-//       option.dataset.staffId = staff.id; 
-
-//       staffDropdown.appendChild(option);
-//     });
-
-//     staffDropdown.classList.remove('hidden'); // Show the dropdown
-//   } else {
-//     clearStaffDropdown(); // Hide if no results
-//   }
-// }
+//functionn to update the list in the staff dropdown
 function updateStaffDropdown(staffMembers) {
   const staffDropdown = document.getElementById('staff-dropdown');
   staffDropdown.innerHTML = ''; // Clear existing options
@@ -186,16 +167,19 @@ function displayInitialRequestsForMobile(requests, containerId, buttonId) {
 }
 
 
-
+//function to create a request block based on the maintenance reports
 function createRequestBlock(roomName, createdAt, timestamp, status, id, request) {
   const displayDate = status === "Scheduled" ? createdAt : timestamp;
 
+  //create the html for the block
   const block = document.createElement('div');
   block.classList.add('bg-gray-200', 'p-4', 'rounded-md', 'mb-2', 'cursor-pointer');
   block.innerHTML = `
     <strong class="text-[#003B5C]">Venue: ${roomName}</strong><br> 
     <small class="text-gray-500">${displayDate}</small> 
   `;
+
+  //macke it clickable
   block.addEventListener('click', () => openPopup(id, request));
   return block;
 }
@@ -205,10 +189,12 @@ function createRequestBlock(roomName, createdAt, timestamp, status, id, request)
 function openPopup(id, request) {
   const { roomName, description, issueType, assignedTo, status, createdAt, timestamp } = request;
 
+  //the date they show is conditional
   const displayDate = status === "Scheduled"
       ? new Date(createdAt.seconds * 1000).toLocaleString()
       : timestamp ? new Date(timestamp.seconds * 1000).toLocaleString() : 'Not Set';
 
+  //generate the html  
   document.getElementById('modal-content').innerHTML = `
     <p><strong>Room ID:</strong> ${roomName}</p>
     <p><strong>Description:</strong> ${description}</p>
@@ -235,10 +221,11 @@ function openPopup(id, request) {
 
   document.getElementById('detailsModal').classList.remove('hidden');
 
-  // Call setupStaffSearch, and since it's async, don't forget the async keyword here
+  // Call setupStaffSearch
   setupStaffSearch('QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW');
 }
 
+//function to save changes to the maintenance request db via API
 async function saveChanges(id) {
   const updatedStatus = document.getElementById('status-select').value;
   const updatedAssignedTo = document.getElementById('assigned-to').value;
@@ -255,6 +242,7 @@ async function saveChanges(id) {
     ...(timestamp ? { timestamp } : {})
   };
  //https://campus-infrastructure-management.azurewebsites.net
+ //update the requests
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
     const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/${id}`, {
@@ -279,6 +267,8 @@ async function saveChanges(id) {
   }
 }
 
+
+//if they close the popup - this function hides it for us
 function closePopup() {
   document.getElementById('detailsModal').classList.add('hidden');
 }
