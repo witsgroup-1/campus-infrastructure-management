@@ -1,5 +1,120 @@
+document.addEventListener('DOMContentLoaded', function () {
+    const scheduleForm = document.getElementById('schedule_form');
+    const recurringSelect = document.getElementById('recurring-select');
+    const venueInput = document.querySelector('input[placeholder="Venue"]');
+    const venueDropdown = document.getElementById('venue-dropdown'); 
+
+    recurringSelect.addEventListener('change', recurringBooking);
+
+    venueInput.addEventListener('input', function () {
+        const query = this.value;
+        venueList(query); 
+    });
+    
+    venueDropdown.addEventListener('change', venueSelection);
+    
+    scheduleForm.addEventListener('submit', submitSchedules);
+
+});
+
+export function recurringBooking() {
+    if (recurringSelect.value === 'true') {
+        lastDate.style.display = 'flex';
+    } else {
+        lastDate.style.display = 'none';
+    }
+}
+
+// Function to fetch venues and update the dropdown
+export async function venueList(query) {
+    if (query.length > 0) {
+        venueDropdown.classList.remove('hidden');
+        venueDropdown.innerHTML = ''; // Clear any previous options
+
+        try {
+            const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                },
+            });
+
+            if (!response.ok) throw new Error('Failed to fetch venues');
+
+            const venues = await response.json();
+            console.log('Fetched venues:', venues);
+
+            // Populate dropdown with matching venue options
+            venues.forEach(venue => {
+                const option = document.createElement('option');
+                option.value = venue.id; // Assuming the API returns an id for the venue
+                option.textContent = venue.Name; // Assuming the API returns a name for the venue
+                venueDropdown.appendChild(option);
+            });
+
+            // Hide dropdown if no venues found
+            if (venues.length === 0) {
+                venueDropdown.classList.add('hidden');
+            }
+        } catch (error) {
+            console.error('Error fetching venues:', error);
+        }
+    } else {
+        venueDropdown.classList.add('hidden');
+    }
+}
+
+
+export function venueSelection() {
+    const selectedVenue = this.options[this.selectedIndex];
+    venueInput.value = selectedVenue.text;
+    venueDropdown.classList.add('hidden');
+    venueInput.dataset.venueId = selectedVenue.value;
+}
+
+export async function submitSchedules(event) {
+    event.preventDefault();
+
+    const userId = document.getElementById('name').value.trim();
+    const courseId = document.getElementById('course').value.trim();
+    const roomId = document.getElementById('venue').value.trim();
+    const daysOfWeek = document.getElementById('day').value;
+    const startTime = document.getElementById('time_from').value;
+    const endTime = document.getElementById('time_to').value;
+    const startDate = document.getElementById('date').value;
+    const recurring = document.getElementById('recurringSelect').value.trim();
+    let endDate = document.getElementById('end-date').value;
+
+    // Set endDate to empty if not recurring
+    if (!endDate && recurring === 'false') {
+        endDate = '';
+    }
+
+    // Check if any required field is empty
+    if (!userId || !courseId || !roomId || !daysOfWeek || !startTime || !endTime || !startDate || (recurring === 'true' && !endDate)) {
+        alert('Please fill in all required fields!');
+        return;
+    }
+
+    try {
+        await Promise.all([
+            createSchedule(userId, courseId, roomId, daysOfWeek, startDate, endDate, startTime, recurring, endTime),
+            createBookingsForRecurring(userId, roomId, startDate, startTime, endTime, courseId, recurring, endDate)
+        ]);
+
+        alert('Schedule and booking successfully created!');
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while creating the schedule or booking.');
+    }
+}
+
+
+// POST schedules
 export async function createSchedule(userId, courseId, roomId, daysOfWeek, startDate, endDate, startTime, recurring, endTime) {
     const scheduleData = {
+        //id: sharedId, // Use sharedId for the schedule
         userId,
         courseId,
         roomId,
@@ -11,10 +126,10 @@ export async function createSchedule(userId, courseId, roomId, daysOfWeek, start
         endDate
     };
 
-    const response = await fetch('http://localhost:3000/api/schedules', {
+    const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules', {
         method: 'POST',
         headers: {
-            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(scheduleData)
@@ -23,9 +138,11 @@ export async function createSchedule(userId, courseId, roomId, daysOfWeek, start
     if (!response.ok) {
         throw new Error('Error creating schedule');
     }
-    return await response.json(); 
+
+    return await response.json();
 }
 
+// POST bookings
 export async function createBookingsForRecurring(userId, roomId, startDate, startTime, endTime, purpose, recurring, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -37,36 +154,35 @@ export async function createBookingsForRecurring(userId, roomId, startDate, star
     }
     
     // Create bookings for each week if recurring is true
-    else{
-        let currentDate = start;
-        while (currentDate <= end) {
-            const date = currentDate.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
-            await createBooking(userId, roomId, date, startTime, endTime, purpose);
-            currentDate.setDate(currentDate.getDate() + 7); // Move to the next week
-        }
+    let currentDate = start;
+    while (currentDate <= end) {
+        const date = currentDate.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
+        await createBooking(userId, roomId, date, startTime, endTime, purpose);
+        currentDate.setDate(currentDate.getDate() + 7); // Move to the next week
     }
 }
 
-// POST single booking
+// Create individual booking
 export async function createBooking(userId, roomId, date, start_time, end_time, purpose) {
     const bookingData = {
+        //id: sharedId, // Use the same sharedId for the booking
         userId,
         roomId,
-        start_time,
+        start_time, 
         end_time,
         date,
         purpose,
-        status: 'Pending', // Add status if necessary
-        venueId: roomId // Assuming venueId and roomId are the same
+        status: 'Pending',
+        venueId: roomId
     };
 
-    console.log(bookingData); // Log booking data for debugging
-
+    console.log(bookingData); 
+    
     try {
-        const response = await fetch('http://localhost:3000/api/Bookings', {
+        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/bookings', {
             method: 'POST',
             headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(bookingData)
@@ -89,5 +205,4 @@ export async function createBooking(userId, roomId, date, start_time, end_time, 
         console.error('Error occurred during booking creation:', error);
     }
 }
-
 

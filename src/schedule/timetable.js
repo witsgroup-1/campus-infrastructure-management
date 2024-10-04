@@ -1,10 +1,8 @@
 let schedules = [];
-
-// Fetch schedules from API with API key
 fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules', {
     method: 'GET',
     headers: {
-        'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
         'Content-Type': 'application/json'
     }
 })
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('edit-modal');
     const closeModal = document.getElementById('close-modal');
     
-    // Event delegation on tableBody
     tableBody.addEventListener('click', async function (event) {
         const deleteButton = event.target.closest('.delete-btn');
         const editButton = event.target.closest('.edit-btn');
@@ -39,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
                         method: 'DELETE',
                         headers: {
-                            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                             'Content-Type': 'application/json'
                         }
                     });
@@ -48,13 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         throw new Error(`API error: ${response.statusText}`);
                     }
 
-                    // First, delete from the schedules database
                     await deleteFromSchedules(id);
-                    
-                    // If successful, delete from the bookings database
                     await deleteFromBookings(id);
-        
-                    // Remove the row from the table
                     deleteButton.closest('tr').remove();
                     alert('Schedule deleted successfully!');
                 } catch (error) {
@@ -69,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const schedule = schedules.find(sch => sch.id === id);
 
             if (schedule) {
-                // Populate modal input fields for editing
                 document.getElementById('venue').value = schedule.roomId || '';
                 document.getElementById('course').value = schedule.courseId || '';
                 document.getElementById('start-time').value = schedule.startTime || '';
@@ -78,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('start-date').value = schedule.startDate || '';
                 document.getElementById('end-date').value = schedule.endDate || '';
 
-                // Store schedule ID in a hidden field (can be created dynamically)
                 if (!document.getElementById('data-id')) {
                     const hiddenField = document.createElement('input');
                     hiddenField.type = 'hidden';
@@ -89,21 +79,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('data-id').value = id;
                 }
                 
-                modal.classList.remove('hidden');  // Show the modal
+                modal.classList.remove('hidden'); 
             }
         }
     });
 
     // Close the modal
     closeModal.addEventListener('click', function () {
-        modal.classList.add('hidden');  // Hide the modal
+        modal.classList.add('hidden');  
     });
 
-// Handle modal form submission (Edit functionality)
 document.getElementById('update').addEventListener('click', async function () {
-    const id = document.getElementById('data-id').value;  // Assuming schedule ID is stored in a hidden field
+    const id = document.getElementById('data-id').value;  
 
-    // Data for the schedule update (first database)
     const updatedSchedule = {
         roomId: document.getElementById('venue').value,
         courseId: document.getElementById('course').value,
@@ -125,11 +113,10 @@ document.getElementById('update').addEventListener('click', async function () {
     };*/
 
     try {
-        // First API call to update the schedule in the first database
         const schedule_db = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
             method: 'PUT',
             headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(updatedSchedule),
@@ -143,7 +130,7 @@ document.getElementById('update').addEventListener('click', async function () {
        /* const booking_db = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${id}`, {
             method: 'PUT',
             headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(updatedSchedule),  // Use the different structure for bookings
@@ -154,8 +141,8 @@ document.getElementById('update').addEventListener('click', async function () {
         }*/
 
         alert('Schedule and booking updated successfully in both databases!');
-        modal.classList.add('hidden');  // Hide the modal after saving
-        displaySchedules();  // Reload or refresh the schedules
+        modal.classList.add('hidden');
+        displaySchedules(); 
     } catch (error) {
         console.error('Error updating schedule and booking:', error);
         alert('Failed to update the schedule and booking in both databases.');
@@ -206,7 +193,7 @@ async function deleteFromSchedules(id) {
     const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
         method: 'DELETE',
         headers: {
-            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
             'Content-Type': 'application/json'
         }
     });
@@ -221,7 +208,7 @@ async function deleteFromBookings(id) {
     const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/bookings/${id}`, {
         method: 'DELETE',
         headers: {
-            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
             'Content-Type': 'application/json'
         }
     });
