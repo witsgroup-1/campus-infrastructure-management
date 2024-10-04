@@ -15,34 +15,32 @@ test.describe('Bookings Management Tests', () => {
 
 
   test('should allow filtering bookings by status', async ({ page }) => {
-    await page.selectOption('#statusFilter', 'confirmed'); // Change 'confirmed' to whatever status you want to filter
-    await page.waitForTimeout(1000); // Wait for the filter to apply (replace with a better wait strategy if possible)
+    await page.selectOption('#statusFilter', 'confirmed');
+    await page.waitForTimeout(1000); 
 
     const filteredBookingsCount = await page.locator('#bookingsContainer').count();
-    expect(filteredBookingsCount).toBeGreaterThan(0); // Adjust based on your expected outcome
+    expect(filteredBookingsCount).toBeGreaterThan(0); 
   });
 
   // test('should allow filtering bookings by room type', async ({ page }) => {
-  //   await page.selectOption('#roomFilter', 'Lecture Hall'); // Change to the desired filter
+  //   await page.selectOption('#roomFilter', 'Lecture Hall'); 
   //   await page.waitForTimeout(1000); // Wait for the filter to apply
 
   //   const filteredBookingsCount = await page.locator('#bookingsContainer .booking').count();
-  //   expect(filteredBookingsCount).toBeGreaterThan(0); // Adjust based on your expected outcome
+  //   expect(filteredBookingsCount).toBeGreaterThan(0); 
   // });
 
   test('should allow editing a booking', async ({ page }) => {
-    // Assuming each booking has an edit button
     await page.click('button[data-action="edit"]');
-    // Verify that the edit page is opened (you can check for specific elements)
     expect(page.url()).toContain('editBooking.html');
   });
 
   // test('should allow accepting a booking', async ({ page }) => {
   //   // Click on the accept button of the first booking
-  //   await page.click('button[data-action="accept"]'); // Adjust selector accordingly
+  //   await page.click('button[data-action="accept"]'); 
   //   // Check for the alert and accept it
   //   page.on('dialog', async dialog => {
-  //     expect(dialog.message()).toBe('Booking successfully confirmed and notification sent.'); // Adjust message accordingly
+  //     expect(dialog.message()).toBe('Booking successfully confirmed and notification sent.'); 
   //     await dialog.accept();
   //   });
   // });

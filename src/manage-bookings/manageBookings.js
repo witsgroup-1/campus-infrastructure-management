@@ -250,7 +250,6 @@ function renderBookings() {
         
         const bookingData=getBookingInfo(bookingId);
 
-        // Destructure the necessary fields from bookingData
         const { userId, venueId, roomId, start_time, end_time, purpose, date } = bookingData;
         const url3 =`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${purpose}`
         const url4 =`https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}/date/bookings/${purpose}`
@@ -296,7 +295,7 @@ function renderBookings() {
         // Fetch the venue name
         const venueData= getRoomInfo(venueId);
 
-        const venueName = venueData.Name; // Assuming venueData contains a 'name' field
+        const venueName = venueData.Name;
 
         // Create a notification message
         const notificationMessage = `Your previously accepted booking for ${purpose} on ${date} from ${start_time} to ${end_time} at ${venueName} has been cancelled. Reason: ${reasonForCancellation}. We apologize for the inconvenience.`;
@@ -331,13 +330,13 @@ async function acceptBooking(id) {
     const bookingId = id;  
     const url = `https://campus-infrastructure-management.azurewebsites.net/api/bookings/id/${bookingId}`; 
     const url2= `https://campus-infrastructure-management.azurewebsites.net/api/bookings/${bookingId}`;
-    let bookingData;  // Use let to allow re-assignment
+    let bookingData; 
 
     try {
         // Fetch the booking data
         const bookingData=getBookingInfo(bookingId)
 
-        // Destructure the necessary fields from bookingData
+       
         const { userId, venueId, roomId, start_time, end_time, purpose, date } = bookingData;
         const url3 =`https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${purpose}`
         const url4 =`https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}/date/bookings/${purpose}`
@@ -384,7 +383,7 @@ async function acceptBooking(id) {
         const venueData=getRoomInfo(bookingData.venueId)
 
         console.log(venueData); 
-        const venueName = venueData.Name; // Assuming venueData contains a 'Name' field
+        const venueName = venueData.Name; 
 
         // Create a notification message
         const notificationMessage = `Your booking for ${purpose} on ${bookingData.date} from ${start_time} to ${end_time} at ${venueName} has been successfully confirmed.`;
