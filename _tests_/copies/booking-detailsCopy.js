@@ -1,6 +1,9 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, getDoc, addDoc, Timestamp, doc, getDocs } from "firebase/firestore";
+// booking-detailsCopy.js
+
+// Import Firebase SDK and Firestore
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { getFirestore, collection, getDoc, addDoc, Timestamp, doc, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -29,6 +32,7 @@ function toggleLoading(show) {
 
 // Function to fetch a venue by its ID via API
 async function getVenueById(venueId) {
+   
     const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues/${venueId}`;
 
     try {
@@ -47,9 +51,11 @@ async function getVenueById(venueId) {
         const venueData = await response.json();
         return venueData; // Venue data from API
     } catch (error) {
+        console.error('Error fetching venue from API:', error);
         return null;
     }
 }
+
 
 // Function to fetch bookings for a specific date via API
 async function fetchBookingsForDate(venueId, bookingDate) {
@@ -60,7 +66,7 @@ async function fetchBookingsForDate(venueId, bookingDate) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey
+                'x-api-key': apiKey // Include your API key if needed
             }
         });
 
@@ -71,14 +77,18 @@ async function fetchBookingsForDate(venueId, bookingDate) {
         const bookings = await response.json();
         return bookings; // Return the bookings data
     } catch (error) {
+        console.error('Error fetching bookings from API:', error);
         return [];
     }
 }
 
+
 function convertToDate(timestamp) {
     if (timestamp.seconds) {
+        // Firestore timestamp format
         return new Date(timestamp.seconds * 1000);
     } else {
+        // Assume it's already a valid Date object or ISO string
         return new Date(timestamp);
     }
 }
@@ -88,6 +98,7 @@ function hasTimeConflict(startTime, endTime, existingBookings) {
         const existingStart = convertToDate(booking.startTime);
         const existingEnd = convertToDate(booking.endTime);
 
+        // Check for any overlap
         if (
             (startTime >= existingStart && startTime < existingEnd) ||
             (endTime > existingStart && endTime <= existingEnd) ||
@@ -99,21 +110,44 @@ function hasTimeConflict(startTime, endTime, existingBookings) {
     return false;
 }
 
+
+
 // Function to submit the booking
-async function submitBooking(userId, bookingData, venueBookingData, venueId, bookingDate, venueName, bookingDataCollection) {
-    toggleLoading(true);
+async function submitBooking(
+    userId,
+    bookingData,
+    venueBookingData,
+    venueId,
+    bookingDate,
+    venueName,
+    bookingDataCollection,
+    dependencies = {}
+) {
+    const {
+        toggleLoadingFn = toggleLoading,
+        fetchBookingsForDateFn = fetchBookingsForDate,
+        hasTimeConflictFn = hasTimeConflict,
+        alertFn = alert,
+        clearFormFn = clearForm,
+    } = dependencies;
+
+    toggleLoadingFn(true);
     try {
         // Fetch existing bookings for the selected date
-        const existingBookings = await fetchBookingsForDate(venueId, bookingDate);
+        const existingBookings = await fetchBookingsForDateFn(venueId, bookingDate);
 
         // Check for time conflicts
-        const startTime = bookingData.start_time.toDate();
-        const endTime = bookingData.end_time.toDate();
+        const startTime = bookingData.start_time instanceof Date
+            ? bookingData.start_time
+            : bookingData.start_time.toDate();
+        const endTime = bookingData.end_time instanceof Date
+            ? bookingData.end_time
+            : bookingData.end_time.toDate();
 
-        if (hasTimeConflict(startTime, endTime, existingBookings)) {
-            alert(`The venue is already booked between ${startTime.toLocaleTimeString()} and ${endTime.toLocaleTimeString()}. Please choose a different time.`);
-            toggleLoading(false);
-            return;
+        if (hasTimeConflictFn(startTime, endTime, existingBookings)) {
+            alertFn(`The venue is already booked between ${startTime.toLocaleTimeString()} and ${endTime.toLocaleTimeString()}. Please choose a different time.`);
+            toggleLoadingFn(false);
+            return; // Stop the booking process if there is a conflict
         }
 
         // Proceed with booking if no conflicts
@@ -121,13 +155,17 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey 
+                'x-api-key': apiKey
             },
             body: JSON.stringify(bookingData)
         });
-        
+
         if (!userBookingResponse.ok) {
-            toggleLoading(false);
+            // Handle error response from the API
+            const errorText = await userBookingResponse.text();
+            console.error('Error posting booking to API:', userBookingResponse.status, errorText);
+            alertFn('Failed to post booking to the server API.');
+            toggleLoadingFn(false);
             return;
         }
 
@@ -137,13 +175,16 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey 
+                'x-api-key': apiKey
             },
             body: JSON.stringify(venueBookingData)
         });
 
         if (!venueResponse.ok) {
-            toggleLoading(false);
+            const errorText = await venueResponse.text();
+            console.error('Error adding booking to venues:', venueResponse.status, errorText);
+            alertFn('Failed to add booking to venue.');
+            toggleLoadingFn(false);
             return;
         }
 
@@ -154,25 +195,30 @@ async function submitBooking(userId, bookingData, venueBookingData, venueId, boo
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey 
+                'x-api-key': apiKey
             },
             body: JSON.stringify(bookingDataCollection)
         });
 
         if (!dataCollectionResponse.ok) {
-            toggleLoading(false);
+            const errorText = await dataCollectionResponse.text();
+            console.error('Error posting venue booking to API:', dataCollectionResponse.status, errorText);
+            alertFn('Failed to post venue booking to the server API.');
         } else {
             const responseData = await dataCollectionResponse.json();
-            alert(`Booking confirmed for ${venueName} at ${startTime.toLocaleTimeString()}.`);
-            clearForm();
+            alertFn(`Booking confirmed for ${venueName} at ${startTime.toLocaleTimeString()}.`);
+            clearFormFn();
         }
 
     } catch (error) {
-        alert('An unexpected error occurred while booking.');
+        console.error('Error posting booking:', error);
+        alertFn('An unexpected error occurred while booking.');
     } finally {
-        toggleLoading(false);
+        toggleLoadingFn(false); // Ensure loading is stopped
     }
 }
+
+
 
 // Function to clear the form
 function clearForm() {
@@ -185,7 +231,7 @@ function clearForm() {
 function isFutureDateTime(bookingDate, startTime) {
     const currentDateTime = new Date();
     const bookingDateTime = new Date(`${bookingDate}T${startTime}:00`);
-    return bookingDateTime > currentDateTime;
+    return bookingDateTime > currentDateTime;  // Ensure the selected booking time is in the future
 }
 
 // Function to validate the form
@@ -208,65 +254,76 @@ function isFormValid() {
     return true;
 }
 
-// List of all available time slots
-const allTimeSlots = [
-    "08:00 - 08:45",
-    "09:00 - 09:45",
-    "10:15 - 11:00",
-    "11:15 - 12:00",
-    "12:30 - 13:15",
-    "14:15 - 15:00",
-    "15:15 - 16:00",
-    "16:15 - 17:00",
-    "17:15 - 18:00",
-    "18:15 - 19:00",
-    "19:15 - 20:00",
-    "20:15 - 21:00",
-    "21:15 - 22:00",
-    "22:15 - 23:00",
-    "23:15 - 00:00"
-];
+async function handleBooking(userId, bookingId, venueData, dependencies = {}) {
+    const {
+        getTimestampFn = Timestamp.fromDate,
+        getElementByIdFn = document.getElementById,
+        submitBookingFn = submitBooking, // Default to original submitBooking
+    } = dependencies;
 
-// Function to update the available time slots dropdown
-async function updateAvailableTimeSlots(venueId, bookingDate) {
-    const bookedSlots = await fetchBookingsForDate(venueId, bookingDate) || [];
-    
-    // Ensure bookedSlots is an array
-    const bookedTimes = bookedSlots.map(booking => {
-      const startTime = new Date(booking.startTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const endTime = new Date(booking.endTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      return `${startTime} - ${endTime}`;
-    });
-  
-    const availableTimeSlots = allTimeSlots.filter(slot => !bookedTimes.includes(slot));
-  
-    const timeSlotSelect = document.getElementById('timeSlot');
-    timeSlotSelect.innerHTML = ''; 
-    availableTimeSlots.forEach(slot => {
-      const option = document.createElement('option');
-      option.value = slot;
-      option.textContent = slot;
-      timeSlotSelect.appendChild(option);
-    });
-  
-    if (availableTimeSlots.length === 0) {
-      const noSlotsOption = document.createElement('option');
-      noSlotsOption.value = '';
-      noSlotsOption.textContent = 'No available slots';
-      timeSlotSelect.appendChild(noSlotsOption);
-    }
-  }
-  
+    const bookingDateInput = getElementByIdFn('bookingDate');
+    const bookingDate = bookingDateInput.value;
+    const timeSlot = getElementByIdFn('timeSlot').value;
+    const bookingPurpose = getElementByIdFn('bookingPurpose').value;
+    const [startTime, endTime] = timeSlot.split(' - ');
+
+    const startDateTime = new Date(`${bookingDate}T${startTime}:00`);
+    const endDateTime = new Date(`${bookingDate}T${endTime}:00`);
+
+    const startTimestamp = getTimestampFn(startDateTime);
+    const endTimestamp = getTimestampFn(endDateTime);
+
+    const bookingData = {
+        venue_id: bookingId,
+        start_time: startTimestamp,
+        end_time: endTimestamp,
+        purpose: bookingPurpose,
+    };
+
+    const venueBookingData = {
+        booker: userId,
+        startTime: startTimestamp,
+        endTime: endTimestamp,
+        purpose: bookingPurpose,
+        createdAt: Timestamp.now(),
+    };
+
+    const bookingDataCollection = {
+        status: 'approved',
+        date: bookingDate,
+        start_time: startTime,
+        end_time: endTime,
+        purpose: bookingPurpose,
+        userId: userId,
+        venueId: bookingId,
+    };
+
+    // Use submitBookingFn from dependencies
+    await submitBookingFn(
+        userId,
+        bookingData,
+        venueBookingData,
+        bookingId,
+        bookingDate,
+        venueData.Name,
+        bookingDataCollection
+    );
+}
+
+
+
 
 // Initialize booking functionality
 window.onload = function () {
     const params = new URLSearchParams(window.location.search);
-    const bookingId = params.get('bookingId');
+    const bookingId = params.get('bookingId');  // This is the venueId
 
     if (!bookingId) {
+        console.error('No bookingId provided in URL');
         return;
     }
 
+    // Fetch venue details from Firestore using the venue ID
     getVenueById(bookingId).then(venueData => {
         if (!venueData) {
             alert("No venue data found.");
@@ -276,69 +333,39 @@ window.onload = function () {
         document.getElementById("venueName").textContent = `${venueData.Name} (${venueData.Category})`;
 
         const bookingDateInput = document.getElementById('bookingDate');
-        bookingDateInput.addEventListener('change', async function () {
-            const bookingDate = bookingDateInput.value;
-            if (bookingDate) {
-                await updateAvailableTimeSlots(bookingId, bookingDate);
-            }
-        });
 
+        // Track the user's authentication state
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userId = user.uid;
+              
 
+                // Add event listener to the 'Book Now' button
                 const bookNowBtn = document.getElementById('bookNowBtn');
                 bookNowBtn.addEventListener('click', async function () {
                     if (!isFormValid()) return;
-
-                    const bookingDate = bookingDateInput.value;
-                    const timeSlot = document.getElementById('timeSlot').value;
-                    const bookingPurpose = document.getElementById('bookingPurpose').value;
-                    const [startTime, endTime] = timeSlot.split(' - ');
-
-                    const startDateTime = new Date(`${bookingDate}T${startTime}:00`);
-                    const endDateTime = new Date(`${bookingDate}T${endTime}:00`);
-
-                    const startTimestamp = Timestamp.fromDate(startDateTime);
-                    const endTimestamp = Timestamp.fromDate(endDateTime);
-
-                    if (timeSlot) {
-                        const bookingData = {
-                            "venue_id": bookingId,
-                            "start_time": startTimestamp,
-                            "end_time": endTimestamp,
-                            "purpose": bookingPurpose
-                        };
-
-                        const venueBookingData = {
-                            booker: user.uid,
-                            startTime: startTimestamp,
-                            endTime: endTimestamp,
-                            purpose: bookingPurpose,
-                            createdAt: Timestamp.now()
-                        };
-
-                        const bookingDataCollection = {
-                            "status": "approved",
-                            "date": bookingDate,
-                            "start_time": startTime,
-                            "end_time": endTime,
-                            "purpose": bookingPurpose,
-                            "userId": userId,
-                            "venueId": bookingId
-                        };
-
-                        await submitBooking(userId, bookingData, venueBookingData, bookingId, bookingDate, venueData.Name, bookingDataCollection);
-                    } else {
-                        alert("Venue booked for that time, sorry.");
-                    }
+                    await handleBooking(userId, bookingId, venueData);
                 });
+                
             } else {
-                window.location.href = "../index.html";
+                
+                window.location.href = "../index.html";  // Redirect to login page
             }
         });
     });
 };
 
-// Export all functions for testing
-module.exports = { getVenueById, fetchBookingsForDate, submitBooking, isFormValid, updateAvailableTimeSlots };
+
+// Export functions for testing
+module.exports = {
+    isFormValid,
+    toggleLoading,
+    getVenueById,
+    fetchBookingsForDate,
+    convertToDate,
+    hasTimeConflict,
+    submitBooking,
+    clearForm,
+    isFutureDateTime,
+    handleBooking 
+};
