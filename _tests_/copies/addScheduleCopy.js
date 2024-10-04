@@ -1,21 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const scheduleForm = document.getElementById('schedule_form');
-    const recurringSelect = document.getElementById('recurring-select');
-    const venueInput = document.querySelector('input[placeholder="Venue"]');
-    const venueDropdown = document.getElementById('venue-dropdown'); 
-
-    recurringSelect.addEventListener('change', recurringBooking);
-
-    venueInput.addEventListener('input', function () {
-        const query = this.value;
-        venueList(query); 
-    });
-    
-    venueDropdown.addEventListener('change', venueSelection);
-    
-    scheduleForm.addEventListener('submit', submitSchedules);
-
-});
 
 export function recurringBooking() {
     if (recurringSelect.value === 'true') {
