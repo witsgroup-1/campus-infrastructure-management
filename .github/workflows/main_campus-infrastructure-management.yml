@@ -6,7 +6,7 @@ name: Build and deploy Node.js app to Azure Web App - campus-infrastructure-mana
 on:
   push:
     branches:
-      - main
+      - Chloe-#2
   workflow_dispatch:
 
 jobs:

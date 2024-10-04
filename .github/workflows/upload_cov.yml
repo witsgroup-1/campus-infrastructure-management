@@ -3,7 +3,7 @@ name: Run tests and upload coverage
 on: 
   push:
     branches:
-      - main  # Specify your main branch here
+      - Chloe-#2  # Specify your main branch here
 
 jobs:
   test:
