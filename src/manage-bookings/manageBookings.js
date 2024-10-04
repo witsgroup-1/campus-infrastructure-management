@@ -118,24 +118,28 @@ function renderBookings() {
 
           // Only add the edit button
           if (booking.status.toLowerCase() != "pending") {
-              const editButton = document.createElement('button');
-              editButton.className = 'bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
-              editButton.textContent = 'Edit';
-              editButton.onclick = () => editBooking(booking.id);
-              actionButtons.appendChild(editButton);
-          }
+            const editButton = document.createElement('button');
+            editButton.className = 'bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
+            editButton.textContent = 'Edit';
+            editButton.setAttribute('data-action', 'edit');  // Add a data attribute for reference
+            editButton.onclick = () => editBooking(booking.id);
+            actionButtons.appendChild(editButton);
+        }
+        
 
           // Adding cancel, accept, and reject buttons based on booking status
           if (booking.status.toLowerCase() === 'confirmed' || booking.status.toLowerCase()==='accepted' ||booking.status.toLowerCase()==='approved') {
               const cancelButton = document.createElement('button');
               cancelButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
               cancelButton.textContent = 'Cancel';
+              cancelButton.setAttribute('data-action', 'cancel');
               cancelButton.onclick = () => cancelBooking(booking.id);
               actionButtons.appendChild(cancelButton);
           } else if (booking.status.toLowerCase() === 'pending') {
               const acceptButton = document.createElement('button');
               acceptButton.className = 'bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 focus:outline-none';
               acceptButton.textContent = 'Accept';
+              acceptButton.setAttribute('data-action', 'accept')
               acceptButton.onclick = () => acceptBooking(booking.id);
               actionButtons.appendChild(acceptButton);
 
