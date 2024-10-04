@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = auth.currentUser;
             if (user) {
                 const userData = await fetchUserData(user.uid);
-                fetchAndRenderBookings(userData); // Fetch venues after typing in search
+                fetchAndRenderBookings(userData);
             }
         });
     }

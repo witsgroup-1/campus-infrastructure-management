@@ -1,4 +1,5 @@
 import './copies/timetable.Copy.js';
+import { displaySchedules, deleteSchedule, editSchedule, updateSchedule } from './copies/timetable.Copy.js';
 
 global.fetch = jest.fn(() =>
     Promise.resolve({
@@ -225,4 +226,199 @@ describe('Schedule Management', () => {
     });
     
     
+});
+
+// Mocking the fetch API
+global.fetch = jest.fn(() =>
+    Promise.resolve({
+        ok: true,
+        statusText: 'OK',
+    })
+);
+
+describe('editSchedule', () => {
+    let modal;
+    let schedules;
+
+    beforeEach(() => {
+        // Setting up a mock modal
+        modal = document.createElement('div');
+        modal.id = 'edit-modal';
+        modal.classList.add('hidden');
+        document.body.appendChild(modal);
+
+        // Mocking schedule data
+        schedules = [
+            { id: '1', roomId: '101', courseId: 'Math', startTime: '09:00', endTime: '10:00', daysOfWeek: 'Monday', startDate: '2024-10-01', endDate: '2024-12-01' },
+        ];
+
+        // Mocking DOM elements
+        document.body.innerHTML += `
+            <input id="venue" type="text">
+            <input id="course" type="text">
+            <input id="start-time" type="text">
+            <input id="end-time" type="text">
+            <input id="day" type="text">
+            <input id="start-date" type="text">
+            <input id="end-date" type="text">
+        `;
+    });
+
+    afterEach(() => {
+        // Cleanup
+        jest.clearAllMocks();
+        modal.remove();
+    });
+
+    test('should populate modal with the correct schedule data', () => {
+        // Verify initial state
+        expect(modal.classList.contains('hidden')).toBe(true); // Initial state check
+
+        // Call the function and pass schedules
+        editSchedule('1', schedules);
+
+        // Verify that modal fields are populated correctly
+        expect(document.getElementById('venue').value).toBe('101');
+        expect(document.getElementById('course').value).toBe('Math');
+        expect(document.getElementById('start-time').value).toBe('09:00');
+        expect(document.getElementById('end-time').value).toBe('10:00');
+        expect(document.getElementById('day').value).toBe('Monday');
+        expect(document.getElementById('start-date').value).toBe('2024-10-01');
+        expect(document.getElementById('end-date').value).toBe('2024-12-01');
+
+        // Check if modal is shown
+        //expect(modal.classList.contains('hidden')).toBe(false); 
+    });
+});
+
+
+
+describe('updateSchedule', () => {
+    const mockId = '1';
+    const mockUpdatedSchedule = {
+        roomId: 'WSS',
+        courseId: 'APPM2026',
+        startTime: '10:00',
+        endTime: '11:00',
+        daysOfWeek: 'Tuesday',
+        startDate: '2024-10-02',
+        endDate: '2024-12-02',
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks(); // Clear mocks before each test
+    });
+
+    test('should update schedule successfully', async () => {
+        const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+        await updateSchedule(mockId, mockUpdatedSchedule);
+
+        // Check if fetch was called with correct parameters
+        expect(fetch).toHaveBeenCalledWith(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${mockId}`, {
+            method: 'PUT',
+            headers: {
+                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(mockUpdatedSchedule),
+        });
+
+        expect(alertMock).toHaveBeenCalledWith('Schedule updated successfully!');
+        alertMock.mockRestore(); // Restore original alert function
+    });
+
+    test('should handle errors during update', async () => {
+        fetch.mockImplementationOnce(() =>
+            Promise.resolve({
+                ok: false,
+                statusText: 'Bad Request',
+            })
+        );
+
+        const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+        await updateSchedule(mockId, mockUpdatedSchedule);
+
+        expect(alertMock).toHaveBeenCalledWith('Failed to update the schedule.');
+        alertMock.mockRestore();
+    });
+});
+
+
+test('should delete a schedule and remove from the DOM', async () => {
+    global.confirm = jest.fn(() => true);
+    global.fetch = jest.fn(() =>
+        Promise.resolve({
+            ok: true,
+        })
+    );
+    document.body.innerHTML = `
+        <table id="table-body">
+            <tr><td><button class="delete-btn" data-id="1"></button></td></tr>
+        </table>
+    `;
+
+    const deleteButton = document.querySelector('.delete-btn');
+
+    await deleteSchedule('1', deleteButton);
+
+    expect(fetch).toHaveBeenCalledWith(
+        'https://campus-infrastructure-management.azurewebsites.net/api/schedules/1',
+        expect.any(Object)
+    );
+    expect(document.querySelector('tr')).toBeNull
+});
+
+
+describe('displaySchedules', () => {
+    beforeEach(() => {
+        // Set up a basic table structure in the DOM
+        document.body.innerHTML = `
+            <table>
+                <tbody id="table-body"></tbody>
+            </table>
+        `;
+    });
+
+    it('should render the correct number of rows based on the schedules data', () => {
+        const mockSchedules = [
+            { id: '1', daysOfWeek: 'Monday', startDate: '2024-10-02', endDate: '2024-12-15', courseId: 'PSYC1028', roomId: 'OLS101', startTime: '08:00', endTime: '10:00' },
+            { id: '2', daysOfWeek: 'Wednesday', startDate: '2024-10-03', courseId: 'COMS2008', roomId: 'Flower Hall', startTime: '10:00', endTime: '12:00' }
+        ];
+
+        displaySchedules(mockSchedules);
+
+        const rows = document.querySelectorAll('tr');
+        expect(rows.length).toBe(2);  // Should render 2 rows
+    });
+
+    it('should display correct data in the rows', () => {
+        const mockSchedules = [
+            { id: '1', daysOfWeek: 'Monday', startDate: '2024-10-02', endDate: '2024-12-15', courseId: 'PSYC1028', roomId: 'OLS101', startTime: '08:00', endTime: '10:00' }
+        ];
+
+        displaySchedules(mockSchedules);
+
+        const firstRow = document.querySelector('tr');
+        expect(firstRow.children[0].textContent.trim()).toBe('Monday');  
+        expect(firstRow.children[1].textContent.trim()).toBe('2024-10-02 - 2024-12-15');  
+        expect(firstRow.children[2].textContent.trim()).toBe('PSYC1028');  
+        expect(firstRow.children[3].textContent.trim()).toBe('OLS101');  
+        expect(firstRow.children[4].textContent.trim()).toBe('08:00 - 10:00'); 
+    });
+
+    it('should handle empty or null data', () => {
+        const mockSchedules = [
+            { id: '1', daysOfWeek: null, startDate: '2024-10-02', endDate: null, courseId: '', roomId: '', startTime: '08:00', endTime: '10:00' }
+        ];
+
+        displaySchedules(mockSchedules);
+
+        const firstRow = document.querySelector('tr');
+        expect(firstRow.children[0].textContent.trim()).toBe('N/A');  
+        expect(firstRow.children[1].textContent.trim()).toBe('2024-10-02');  
+        expect(firstRow.children[2].textContent.trim()).toBe('N/A');  
+        expect(firstRow.children[3].textContent.trim()).toBe('N/A'); 
+    });
 });

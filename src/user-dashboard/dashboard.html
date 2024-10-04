@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-
 </head>
 <body class="bg-gray-100">
     <div class="w-full h-2 bg-[#003B5C]"></div>
@@ -77,8 +76,7 @@
             <a href="../adminDashboard/adminDashboard.html" id="admin-link" class="flex items-center space-x-2" style="display: none;">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Admin Dashboard</span>
-            </a>
-    
+
             <!-- Log Out -->
             <a href="../login/login.html" id="logout" class="flex items-center space-x-2">
                 <i class="fas fa-sign-out-alt"></i>
@@ -87,9 +85,9 @@
         </nav>
     </div>
     
-    
-    
-<p id="userEmailDisplay"></p>
+
+    <p id="userGreeting" class="text-xl font-semibold text-blue-950 m-4"></p>
+
 
     <!-- Available Venues Section -->
     <main class="min-h-screen p-8">
@@ -139,14 +137,10 @@
     
 
     <footer class="bg-[#003B5C] text-white flex justify-around">
-        <!--Security API stub-->
-        <section class="text-center p-2">
-            <p class="text-[#917248]">Security Contact Information:</p>
-            <p class="text-xs">East Campus: (011) 717 4444 / 6666</p>
-            <p class="text-xs">West Campus (011) 717 1842.</p>
-            <p class="text-xs">Health Sciences Campus: (011) 717 2222 / 2232</p>
-            <p class="text-xs">Education Campus: (011) 717 3340</p>
+        <section class="text-center pt-2 text-[#917248]"><h2>Security Contacts</h2>
+        <section id="security_info" class="text-center p-2">
         </section>
+    </section>
 
         <section class="text-center p-9">
             <p>&copy; 2024 Infrastructure Management</p>
