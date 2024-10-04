@@ -108,7 +108,8 @@ async function fetchAvailableVenues() {
                     Name: venueData.Name,
                     Capacity: venueData.Capacity,
                     Features: venueData.Features || [],
-                    Building: venueData.Building
+                    Building: venueData.Building,
+                    Category: venueData.Category
                 });
             }
         });
@@ -151,16 +152,19 @@ function showVenueInfo(venue) {
     modalTitle.innerText = venue.Name;
 
     let content = `<strong>Building:</strong> ${venue.Building || 'N/A'}`;
+    content += `<br><strong>Category:</strong> ${venue.Category || 'N/A'}`;
 
     if (venue.Features && venue.Features.length > 0) {
         content += `<br><strong>Features:</strong> <ul>${venue.Features.map(feature => `<li>${feature}</li>`).join('')}</ul>`;
     }
+
     modalContent.innerHTML = content;
 
-   
+    // Show the modal
     const venueModal = document.getElementById('venueModal');
     venueModal.classList.remove('hidden');
 }
+
 
 function closeModal() {
     const venueModal = document.getElementById('venueModal');

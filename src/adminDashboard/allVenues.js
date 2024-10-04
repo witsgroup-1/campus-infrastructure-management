@@ -6,6 +6,8 @@ let bookings = [];
 const db = new FirebaseConfig().getFirestoreInstance();
 const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';
 
+toggleLoading(true);
+
 fetch(url, {
     method: 'GET',
     headers: {
@@ -20,25 +22,24 @@ fetch(url, {
     return response.json();
   })
   .then(data => {
-    bookings = data;  // Store fetched venues in the bookings array
-    console.log(bookings);
-    renderBookings();  // Render bookings after fetching data
+    bookings = data; 
+    renderBookings();
   })
   .catch(error => {
     console.error('Error fetching venues:', error);
-  });
-
-
-  function renderBookings() {
     const container = document.getElementById('bookingsContainer');
-    const loader = document.getElementById('loader');
+    container.innerHTML = '<p class="text-center text-red-500">Error fetching venues. Please try again.</p>';
+});
 
-   
-    loader.style.display = "block";
-    container.innerHTML = ''; 
+
+function renderBookings() {
+    const container = document.getElementById('bookingsContainer');
 
     const categoryFilter = document.getElementById('roomFilter').value;
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+   
+    toggleLoading(true);
 
     
     const filteredBookings = bookings.filter(booking => {
@@ -47,14 +48,16 @@ fetch(url, {
         return matchesCategory && matchesSearch;
     });
 
+   
     setTimeout(() => {
-        loader.style.display = "none";
         
+        container.innerHTML = ''
         if (filteredBookings.length === 0) {
-            container.innerHTML = '<p class="text-center text-gray-500">No venues found.</p>';
-            return;
+            toggleLoading(true);
+            return; 
         }
 
+       
         filteredBookings.forEach(booking => {
             const bookingBox = document.createElement('div');
             bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
@@ -81,33 +84,51 @@ fetch(url, {
                 try {
                     const q = query(maintenanceRequestsRef, where('roomId', '==', bookingId));
                     const querySnapshot = await getDocs(q);
-
-                    let statusMessage;
-                    let issueType;
+            
+                    // Default message assuming no maintenance
+                    let statusMessage = 'Status: Available (No Maintenance Scheduled)'; 
+                    let issueType = ''; // Default issueType
+            
                     if (!querySnapshot.empty) {
+                        // Check if any maintenance requests indicate ongoing issues
+                        let hasActiveMaintenance = false;
+            
                         querySnapshot.forEach((doc) => {
                             const data = doc.data();
-                            statusMessage = `Status: ${data.status}`;
-                            issueType = `Issue: ${data.issueType}`;
+                            if (data.status === 'In Progress' || data.status === 'Scheduled') {
+                                statusMessage = `Status: Under Maintenance`;
+                                issueType = `Issue: ${data.issueType}`;
+                                hasActiveMaintenance = true; 
+                            } else if (data.status === 'Completed') {
+                                
+                                statusMessage = 'Status: Available (No Maintenance Scheduled)';
+                            }
                         });
-                    } else {
-                        statusMessage = 'Status: Available (No Maintenance Scheduled)';
-                        issueType = '';
-                    }
-
+            
+                        // If there's no active maintenance but completed records exist
+                        if (!hasActiveMaintenance && statusMessage === 'Status: Available (No Maintenance Scheduled)') {
+                            statusMessage = 'Status: Available (No Maintenance Scheduled)';
+                            issueType = ''; // Clear any issues
+                        }
+                    } 
+            
                     showModal(statusMessage, issueType);
-
                 } catch (error) {
                     console.error('Error fetching maintenance status:', error);
                 }
             };
-
+            
             actionButtons.appendChild(bookButton);
             bookingBox.appendChild(actionButtons);
             container.appendChild(bookingBox);
         });
+
+        
+        toggleLoading(false); 
     }, 1000);
 }
+
+
 
 
 function showModal(statusMessage, issueType) {
@@ -137,6 +158,23 @@ function showModal(statusMessage, issueType) {
   modalContent.appendChild(closeButton);
   modal.appendChild(modalContent);
   document.body.appendChild(modal);
+}
+
+function toggleLoading(show) {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        if (show) {
+            loadingIndicator.classList.remove('hidden');
+        } else {
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+
+   //disable/enable UI elements during loading
+    const roomFilter = document.getElementById('roomFilter');
+    const searchInput = document.getElementById('searchInput');
+    if (roomFilter) roomFilter.disabled = show;
+    if (searchInput) searchInput.disabled = show;
 }
 
 

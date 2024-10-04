@@ -19,7 +19,7 @@ const db = getFirestore(app);
 //thru each id in there to find which venues are booked, these ids contain venue name, start time and end time
 
 const categoryToImage = {
-    "Exam Venue": ["img/examHall.jpg", "img/examHall2.jpg"],
+    "Exam Venue": ["img/examHall.jpg", "img/examHall2.jpg","img/lectureRooms1.jpeg"],
     "Lecture Room": ["img/lectureRooms.jpeg"],
     "Tutorial Room": ["img/tutorialRoom.png", "img/libraryStudyRoom.jpg"],
     "Lab Room": ["img/labRooms0.jpg", "img/labRooms1.jpg"],

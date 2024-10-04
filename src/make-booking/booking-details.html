@@ -37,7 +37,7 @@
         
        
         
-        <!-- Booking Details Container -->
+   
         <!-- Booking Details Container -->
 <section class="p-4 flex flex-col md:flex-row md:justify-between max-w-7xl mx-auto">
     <!-- Form Section -->
@@ -73,11 +73,40 @@
             </select>
         </div>
 
+  
         <!-- Purpose Input -->
-        <div class="mb-6">
-            <label for="bookingPurpose" class="block text-gray-700 text-sm font-semibold mb-2">Purpose of Booking</label>
-            <textarea id="bookingPurpose" class="block w-full bg-white border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter the purpose for this booking..." rows="4"></textarea>
-        </div>
+<div class="mb-6">
+    <label for="bookingPurpose" class="block text-gray-700 text-sm font-semibold mb-2">Purpose of Booking</label>
+    <select id="bookingPurpose" class="block w-full bg-white border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Study Room -->
+        <option value="Group Study">Group Study</option>
+        <option value="Solo Study">Solo Study</option>
+        <option value="Tutoring Session">Tutoring Session</option>
+        <option value="Research Session">Research Session</option>
+
+        <!-- Lecture Hall -->
+        <option value="Lecture">Lecture</option>
+        <option value="Guest Lecture">Guest Lecture</option>
+        <option value="Workshop">Workshop</option>
+        <option value="Seminar">Seminar</option>
+
+        <!-- Exam Venue -->
+        <option value="Examination">Examination</option>
+        <option value="Mock Exam">Mock Exam</option>
+        <option value="Test">Test</option>
+        <option value="Assessment">Assessment</option>
+
+        <!-- Boardroom -->
+        <option value="Meeting">Meeting</option>
+        <option value="Departmental Meeting">Departmental Meeting</option>
+        <option value="Presentation">Presentation</option>
+        <option value="Interview">Interview</option>
+
+        <!-- Other -->
+        <option value="Other">Other</option>
+    </select>
+</div>
+
 
         <!-- Book Button and Loading Indicator -->
         <div class="relative">
