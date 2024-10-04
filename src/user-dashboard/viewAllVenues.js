@@ -96,16 +96,14 @@ async function renderVenues() {
         bookings = await response.json(); // Parse the response data
     } catch (error) {
         console.error('Error fetching venues:', error);
-        container.innerHTML = '<p class="text-center text-gray-500">Failed to load venues. Please try again later.</p>';
-        loader.style.display = "none"; // Hide the loader on error
+        loader.style.display = "block"; // Hide the loader on error
         return;
     }
 
-    loader.style.display = "none"; // Hide the loader after data is fetched
 
     const user = auth.currentUser;
     
-    // Ensure the user is authenticated
+   
     if (!user) {
         container.innerHTML = '<p class="text-center text-gray-500">Please log in to see venues.</p>';
         return;

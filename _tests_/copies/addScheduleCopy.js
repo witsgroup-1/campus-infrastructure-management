@@ -1,21 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const scheduleForm = document.getElementById('schedule_form');
-    const recurringSelect = document.getElementById('recurring-select');
-    const venueInput = document.querySelector('input[placeholder="Venue"]');
-    const venueDropdown = document.getElementById('venue-dropdown'); 
-
-    recurringSelect.addEventListener('change', recurringBooking);
-
-    venueInput.addEventListener('input', function () {
-        const query = this.value;
-        venueList(query); 
-    });
-    
-    venueDropdown.addEventListener('change', venueSelection);
-    
-    scheduleForm.addEventListener('submit', submitSchedules);
-
-});
 
 export function recurringBooking() {
     if (recurringSelect.value === 'true') {
@@ -36,7 +18,7 @@ export async function venueList(query) {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                    'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 },
             });
 
@@ -129,7 +111,7 @@ export async function createSchedule(userId, courseId, roomId, daysOfWeek, start
     const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules', {
         method: 'POST',
         headers: {
-            'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG', // Use your actual API key
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(scheduleData)
@@ -182,7 +164,7 @@ export async function createBooking(userId, roomId, date, start_time, end_time, 
         const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/bookings', {
             method: 'POST',
             headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(bookingData)

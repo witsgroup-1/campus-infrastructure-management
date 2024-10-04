@@ -129,42 +129,46 @@ describe('Venue Dropdown Functionality', () => {
   let venueDropdown, venueInput;
 
   beforeEach(() => {
-    // Set up a mock DOM before each test
+    require('./copies/maintenanceReportsCopy');
     document.body.innerHTML = `
-      <div id="venue-dropdown" class="hidden"></div>
-      <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
-    `;
+    <input type="text" id="venue-input" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md" required>
+    <select id="venue-dropdown" class="hidden w-full mt-1 p-2 border rounded-md" innerHTML=""></select>
+  `;
+  
+  venueDropdown = document.getElementById('venue-dropdown');
+  venueInput = document.getElementById('venue-input'); 
 
-    // Get the DOM elements
-    venueDropdown = document.getElementById('venue-dropdown');
-    venueInput = document.getElementById('venueInput');
+  window.updateVenueDropdown = updateVenueDropdown;
+  window.clearVenueDropdown = clearVenueDropdown;
 
-    // Ensure that the functions are assigned to the window
-    window.updateVenueDropdown = updateVenueDropdown;
-    window.clearVenueDropdown = clearVenueDropdown;
   });
 
   test('updateVenueDropdown should populate and show dropdown', () => {
     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
-
-    //call the function from the script
-    window.updateVenueDropdown(venues);
-
+    updateVenueDropdown(venues, venueDropdown);
+    // Call the function from the script
+    window.updateVenueDropdown(venues, venueDropdown);
+    
     // Assert that the dropdown has the correct options
     expect(venueDropdown.innerHTML).toContain('Room 101');
     expect(venueDropdown.innerHTML).toContain('Room 102');
+
     expect(venueDropdown.classList).not.toContain('hidden');
   });
 
   test('clearVenueDropdown should clear the dropdown', () => {
-    venueDropdown.innerHTML = '<option>Room 101</option>';
-    // Call the actual function 
-    window.clearVenueDropdown();
 
+    venueDropdown.innerHTML = '<option data-id="123">Room 101</option>';
+    // Call the actual function 
+    window.clearVenueDropdown(venueDropdown);
 
     // Assert that the dropdown is cleared and hidden
     expect(venueDropdown.innerHTML).toBe('');
     expect(venueDropdown.classList).toContain('hidden');
   });
 });
+
+
+
+
 
