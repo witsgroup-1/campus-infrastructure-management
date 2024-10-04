@@ -4,6 +4,7 @@ test.describe('Bookings Management Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Replace 'http://localhost:3000' with the URL of your app
     await page.goto('https://campus-infrastructure-management.azurewebsites.net/manage-bookings/manageBookings.html'); 
+    await page.waitForLoadState('domcontentloaded');
     await page.coverage.startJSCoverage();
   });
 

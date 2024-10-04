@@ -10,7 +10,7 @@ test.describe('Bookings Management Tests', () => {
 
   test.afterEach(async ({ page }) => {
     const coverage = await page.coverage.stopJSCoverage();
-    await codecov.upload({ coverage });
+
   });
 
 
