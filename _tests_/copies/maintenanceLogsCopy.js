@@ -1,10 +1,7 @@
-
 document.addEventListener("DOMContentLoaded", async () => {
-  //console.log('Script loaded');
+
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
-    //const apiKey = document.querySelector('meta[name="api-key"]').getAttribute('content');
-   
     //https://campus-infrastructure-management.azurewebsites.net
     //http://localhost:3000
     const response = await fetch('http://localhost:3000/api/maintenanceRequests', {
@@ -19,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const scheduledRequests = maintenanceRequests.filter(req => req.status === 'Scheduled');
     const inProgressRequests = maintenanceRequests.filter(req => req.status === 'In Progress');
-    //const completedRequests = maintenanceRequests.filter(req => req.status === 'Completed');
+
     const completedRequests = maintenanceRequests.filter(req => {
       if (req.status === 'Completed') {
           const now = new Date();
@@ -83,7 +80,6 @@ async function setupStaffSearch(apiKey) {
           const staffMembers = await response.json();
           updateStaffDropdown(staffMembers);
         } catch (error) {
-          console.error('Error fetching staff:', error);
           clearStaffDropdown(); // Clear dropdown on error
         }
       } else {
@@ -91,14 +87,15 @@ async function setupStaffSearch(apiKey) {
       }
     });
 
-    staffDropdown.addEventListener('click', (event) => {
-      const selectedStaff = event.target.dataset.staffName;
-      const selectedStaffId = event.target.dataset.staffId;
+    staffDropdown.addEventListener('change', (event) => {
+      const selectedOption = event.target.options[event.target.selectedIndex];
+      const selectedStaff = selectedOption.dataset.staffName;
+      const selectedStaffId = selectedOption.dataset.staffId;
 
       if (selectedStaff && selectedStaffId) {
         searchInput.value = selectedStaff;
         searchInput.dataset.staffId = selectedStaffId;
-        clearStaffDropdown();
+        staffDropdown.classList.add('hidden');
       }
     });
   } else {
@@ -108,8 +105,16 @@ async function setupStaffSearch(apiKey) {
 
 function updateStaffDropdown(staffMembers) {
   const staffDropdown = document.getElementById('staff-dropdown');
-  staffDropdown.innerHTML = ''; // Clear previous results
+  staffDropdown.innerHTML = ''; // Clear existing options
 
+  // Add the unselectable placeholder option
+  const placeholderOption = document.createElement('option');
+  placeholderOption.textContent = 'Please select staff member';
+  placeholderOption.disabled = true; // Make it unselectable
+  placeholderOption.selected = true; // Make it the default selected option
+  staffDropdown.appendChild(placeholderOption);
+
+  // Populate dropdown with staff members
   if (staffMembers.length > 0) {
     staffMembers.forEach((staff) => {
       const option = document.createElement('option');
@@ -127,13 +132,14 @@ function updateStaffDropdown(staffMembers) {
   }
 }
 
+
 function clearStaffDropdown() {
   const staffDropdown = document.getElementById('staff-dropdown');
   staffDropdown.innerHTML = ''; // Clear dropdown
   staffDropdown.classList.add('hidden'); // Hide dropdown
 }
 
-// Function to display one request initially for mobile and add Show More functionality
+// Function to display one request initially for mobile
 function displayInitialRequestsForMobile(requests, containerId, buttonId) {
   const container = document.getElementById(containerId);
   if (requests.length > 0) {
@@ -238,7 +244,8 @@ async function saveChanges(id) {
     if (response.ok) {
       console.log('Request updated successfully');
       closePopup();
-     
+      
+
     } else {
       console.log('Failed to update request');
     }
@@ -250,7 +257,6 @@ async function saveChanges(id) {
 function closePopup() {
   document.getElementById('detailsModal').classList.add('hidden');
 }
-
 
 
 
