@@ -1,5 +1,5 @@
 import './copies/timetable.Copy.js';
-import { displaySchedules, deleteSchedule, editSchedule, updateSchedule } from './copies/timetable.Copy.js';
+import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule } from './copies/timetable.Copy.js';
 
 global.fetch = jest.fn(() =>
     Promise.resolve({
@@ -286,11 +286,29 @@ describe('editSchedule', () => {
         expect(document.getElementById('start-date').value).toBe('2024-10-01');
         expect(document.getElementById('end-date').value).toBe('2024-12-01');
 
-        // Check if modal is shown
         //expect(modal.classList.contains('hidden')).toBe(false); 
     });
 });
 
+describe('closeModalFunction', () => {
+    let modal;
+
+    beforeEach(() => {
+        modal = {
+            classList: {
+                add: jest.fn() 
+            }
+        };
+
+        global.modal = modal; 
+    });
+
+    it('should add the "hidden" class to the modal', () => {
+        closeModal();
+
+        expect(modal.classList.add).toHaveBeenCalledWith('hidden');
+    });
+});
 
 
 describe('updateSchedule', () => {
@@ -422,3 +440,4 @@ describe('displaySchedules', () => {
         expect(firstRow.children[3].textContent.trim()).toBe('N/A'); 
     });
 });
+
