@@ -21,7 +21,7 @@
     },
     "scripts": {
         "test": "jest sh node_modules/.bin/jest ./_tests_",
-        "test:playwright": "playwright test --collect-coverage",
+        "test:playwright": "playwright test",
         "coverage:merge": "nyc merge .nyc_output && nyc report --reporter=cobertura",
         "coverage": "npm run test && npm run test:playwright && npm run coverage:merge",
         "start": "node app",
