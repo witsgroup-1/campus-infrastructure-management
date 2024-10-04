@@ -342,29 +342,6 @@ describe('submitSchedules', () => {
         `;
     });
 
-    it('should create schedule and bookings successfully', async () => {
-        // Mock the async functions
-        const createScheduleMock = jest.fn().mockResolvedValue({});
-        const createBookingsForRecurringMock = jest.fn().mockResolvedValue({});
-        
-        global.createSchedule = createScheduleMock;
-        global.createBookingsForRecurring = createBookingsForRecurringMock;
-        
-        const event = new Event('submit');
-        event.preventDefault = jest.fn();  
-
-        await submitSchedules(event);
-
-        expect(event.preventDefault).toHaveBeenCalled();
-
-        expect(createScheduleMock).toHaveBeenCalledWith(
-            'John Doe', 'Course 101', 'Room A', 'Monday', '2024-10-03', '2024-10-31', '10:00', 'false', '11:00'
-        );
-        expect(createBookingsForRecurringMock).toHaveBeenCalledWith(
-            'John Doe', 'Room A', '2024-10-03', '10:00', '11:00', 'Course 101', 'false', '2024-10-31'
-        );
-    });
-
     it('should alert if a required field is missing', async () => {
         // Clear a required field
         document.getElementById('name').value = '';

@@ -441,37 +441,3 @@ describe('displaySchedules', () => {
     });
 });
 
-
-/*describe('updating the schedule when press update', () => {
-    beforeEach(() => {
-        document.body.innerHTML = `
-            <input id="data-id" type="hidden" value="123" />
-            <input id="venue" value="Room A" />
-            <input id="course" value="Course 101" />
-            <input id="start-time" value="10:00" />
-            <input id="end-time" value="11:00" />
-            <input id="day" value="Monday" />
-            <input id="start-date" value="2024-10-01" />
-            <input id="end-date" value="2024-10-31" />
-            <button id="update">Update Schedule</button>
-        `;
-        
-        global.updateSchedule = jest.fn();
-    });
-
-    test('should call updateSchedule with correct parameters', () => {
-        const updateButton = document.getElementById('update');
-        updateButton.click();
-
-        expect(global.updateSchedule).toHaveBeenCalledWith('123', {
-            roomId: 'Room A',
-            courseId: 'Course 101',
-            startTime: '10:00',
-            endTime: '11:00',
-            daysOfWeek: 'Monday',
-            startDate: '2024-10-01',
-            endDate: '2024-10-31',
-        });
-    });
-});*/
-
