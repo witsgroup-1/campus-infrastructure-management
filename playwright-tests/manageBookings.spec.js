@@ -1,16 +1,17 @@
 const { test, expect } = require('@playwright/test');
+const codecov = require('codecov');
 
 test.describe('Bookings Management Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Replace 'http://localhost:3000' with the URL of your app
     await page.goto('https://campus-infrastructure-management.azurewebsites.net/manage-bookings/manageBookings.html'); 
     await page.coverage.startJSCoverage();
   });
 
   test.afterEach(async ({ page }) => {
-
-    await page.coverage.stopJSCoverage();
+    const coverage = await page.coverage.stopJSCoverage();
+    await codecov.upload({ coverage });
   });
+
 
   test('should allow filtering bookings by status', async ({ page }) => {
     await page.selectOption('#statusFilter', 'confirmed'); // Change 'confirmed' to whatever status you want to filter
