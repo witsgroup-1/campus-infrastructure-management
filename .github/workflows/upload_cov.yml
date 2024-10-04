@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Run tests with coverage
-        run: npx jest --coverage --coverageReporters=cobertura
+        run: npx jest --coverage --coverageReporters=cobertura --testPathPattern=/_tests_/
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
