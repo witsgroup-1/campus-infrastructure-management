@@ -1,9 +1,10 @@
 const { test, expect } = require('@playwright/test');
-const codecov = require('codecov');
+
 
 test.describe('Bookings Management Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('https://campus-infrastructure-management.azurewebsites.net/manage-bookings/manageBookings.html'); 
+    await page.goto('https://campus-infrastructure-management.azurewebsites.net/manage-bookings/manageBookings.html');
+    await page.waitForLoadState('domcontentloaded'); 
     await page.coverage.startJSCoverage();
   });
 
