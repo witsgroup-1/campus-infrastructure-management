@@ -1,7 +1,9 @@
+// booking-detailsCopy.js
+
 // Import Firebase SDK and Firestore
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, collection, getDoc, addDoc, Timestamp, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { getFirestore, collection, getDoc, addDoc, Timestamp, doc, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -252,6 +254,63 @@ function isFormValid() {
     return true;
 }
 
+async function handleBooking(userId, bookingId, venueData, dependencies = {}) {
+    const {
+        getTimestampFn = Timestamp.fromDate,
+        getElementByIdFn = document.getElementById,
+        submitBookingFn = submitBooking, // Default to original submitBooking
+    } = dependencies;
+
+    const bookingDateInput = getElementByIdFn('bookingDate');
+    const bookingDate = bookingDateInput.value;
+    const timeSlot = getElementByIdFn('timeSlot').value;
+    const bookingPurpose = getElementByIdFn('bookingPurpose').value;
+    const [startTime, endTime] = timeSlot.split(' - ');
+
+    const startDateTime = new Date(`${bookingDate}T${startTime}:00`);
+    const endDateTime = new Date(`${bookingDate}T${endTime}:00`);
+
+    const startTimestamp = getTimestampFn(startDateTime);
+    const endTimestamp = getTimestampFn(endDateTime);
+
+    const bookingData = {
+        venue_id: bookingId,
+        start_time: startTimestamp,
+        end_time: endTimestamp,
+        purpose: bookingPurpose,
+    };
+
+    const venueBookingData = {
+        booker: userId,
+        startTime: startTimestamp,
+        endTime: endTimestamp,
+        purpose: bookingPurpose,
+        createdAt: Timestamp.now(),
+    };
+
+    const bookingDataCollection = {
+        status: 'approved',
+        date: bookingDate,
+        start_time: startTime,
+        end_time: endTime,
+        purpose: bookingPurpose,
+        userId: userId,
+        venueId: bookingId,
+    };
+
+    // Use submitBookingFn from dependencies
+    await submitBookingFn(
+        userId,
+        bookingData,
+        venueBookingData,
+        bookingId,
+        bookingDate,
+        venueData.Name,
+        bookingDataCollection
+    );
+}
+
+
 
 
 // Initialize booking functionality
@@ -285,52 +344,28 @@ window.onload = function () {
                 const bookNowBtn = document.getElementById('bookNowBtn');
                 bookNowBtn.addEventListener('click', async function () {
                     if (!isFormValid()) return;
-
-                    const bookingDate = bookingDateInput.value;
-                    const timeSlot = document.getElementById('timeSlot').value;
-                    const bookingPurpose = document.getElementById('bookingPurpose').value;
-                    const [startTime, endTime] = timeSlot.split(' - ');
-
-                    const startDateTime = new Date(`${bookingDate}T${startTime}:00`);
-                    const endDateTime = new Date(`${bookingDate}T${endTime}:00`);
-
-                    const startTimestamp = Timestamp.fromDate(startDateTime);
-                    const endTimestamp = Timestamp.fromDate(endDateTime);
-
-                    const bookingData = {
-                        "venue_id": bookingId,
-                        "start_time": startTimestamp,
-                        "end_time": endTimestamp,
-                        "purpose": bookingPurpose
-                    };
-
-                    const venueBookingData = {
-                        booker: user.uid,
-                        startTime: startTimestamp,
-                        endTime: endTimestamp,
-                        purpose: bookingPurpose,
-                        createdAt: Timestamp.now()
-                    };
-
-                    const bookingDataCollection = {
-                       
-                        "status": "approved",
-                        "date": bookingDate,
-                        "start_time": startTime,
-                        "end_time": endTime,
-                        "purpose": bookingPurpose,
-                        "userId": userId,
-                        "venueId": bookingId
-                        
-                    };
-                  
-
-                    await submitBooking(userId, bookingData, venueBookingData, bookingId, bookingDate, venueData.Name, bookingDataCollection);
+                    await handleBooking(userId, bookingId, venueData);
                 });
+                
             } else {
                 
                 window.location.href = "../index.html";  // Redirect to login page
             }
         });
     });
+};
+
+
+// Export functions for testing
+module.exports = {
+    isFormValid,
+    toggleLoading,
+    getVenueById,
+    fetchBookingsForDate,
+    convertToDate,
+    hasTimeConflict,
+    submitBooking,
+    clearForm,
+    isFutureDateTime,
+    handleBooking 
 };
