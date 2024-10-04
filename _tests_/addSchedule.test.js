@@ -343,44 +343,35 @@ describe('submitSchedules', () => {
     });
 
     it('should alert if a required field is missing', async () => {
-        // Clear a required field
         document.getElementById('name').value = '';
 
-        // Mock alert function
         global.alert = jest.fn();
 
-        // Create a fake event and call the submit function
         const event = new Event('submit');
-        event.preventDefault = jest.fn();  // Mock preventDefault
+        event.preventDefault = jest.fn();
 
         await submitSchedules(event);
 
-        // Assert that preventDefault was called
+
         expect(event.preventDefault).toHaveBeenCalled();
 
-        // Ensure the alert was called due to missing required field
         expect(global.alert).toHaveBeenCalledWith('Please fill in all required fields!');
     });
 
     it('should alert on error when creating schedule or bookings fails', async () => {
-        // Mock the async functions to throw an error
         const createScheduleMock = jest.fn().mockRejectedValue(new Error('Schedule creation failed'));
         const createBookingsForRecurringMock = jest.fn().mockResolvedValue({});
 
-        // Replace global functions with mocks
         global.createSchedule = createScheduleMock;
         global.createBookingsForRecurring = createBookingsForRecurringMock;
 
-        // Mock alert function
         global.alert = jest.fn();
 
-        // Create a fake event and call the submit function
         const event = new Event('submit');
-        event.preventDefault = jest.fn();  // Mock preventDefault
+        event.preventDefault = jest.fn(); 
 
         await submitSchedules(event);
 
-        // Ensure alert was called due to the error
         expect(global.alert).toHaveBeenCalledWith('An error occurred while creating the schedule or booking.');
     });
 });
