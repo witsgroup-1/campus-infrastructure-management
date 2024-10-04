@@ -5,14 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Venue Management</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="bg-gray-100">
   <div class="container mx-auto py-8">
-    <h1 class="text-4xl font-bold mb-6 text-center text-[#003B5C]">Venue Management</h1>
+    <header>
+      <h1 class="text-4xl font-bold mb-6 text-center text-[#003B5C]">Venue Management</h1>
+    </header>
+  
     
     <!-- Campus Map Section -->
     <div class="mb-8">
+      
       <h2 class="text-2xl font-bold mb-4 text-[#003B5C]">Wits Braamfontein Campus Map</h2>
+      <button class="absolute top-4 left-4" onclick="window.history.back()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#003B5C]">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      
       <div class="aspect-w-16 aspect-h-9">
         <iframe class="w-full h-[400px] border-4 border-[#fbb03b] rounded-lg"
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1147.6927759270374!2d28.031835215823118!3d-26.192540721826155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e950c1ad317a273%3A0x1022f982a25a5ac0!2sSenate%20House%2C%20University%20of%20the%20Witwatersrand%2C%201%20Jan%20Smuts%20Ave%2C%20Johannesburg%2C%202000!5e0!3m2!1sen!2sza!4v1694979370489!5m2!1sen!2sza"
@@ -45,10 +56,17 @@
         <option value="Study Room">Study Room</option>
       </select>
     </div>
-    <div>
       <label for="features" class="block text-gray-700">Features</label>
-      <textarea id="features" class="w-full p-2 border rounded" required></textarea>
-    </div>
+      <div id="features" class="w-full p-2 border rounded">
+        <label><input type="checkbox" value="Projector"> Projector</label><br>
+        <label><input type="checkbox" value="Whiteboard"> Whiteboard</label><br>
+        <label><input type="checkbox" value="Air Conditioning"> Air Conditioning</label><br>
+        <label><input type="checkbox" value="Wi-Fi"> Wi-Fi</label><br>
+        <label><input type="checkbox" value="Mic"> Mic</label>
+        <label><input type="checkbox" value="Desks"> Desks</label>
+        <label><input type="checkbox" value="Charger Ports"> Charger Ports</label>
+      </div>
+      
     <div>
       <label for="building" class="block text-gray-700">Building</label>
       <input type="text" id="building" class="w-full p-2 border rounded" required>
@@ -75,8 +93,17 @@
         const name = document.getElementById("name").value;
         const capacity = document.getElementById("capacity").value;
         const category = document.getElementById("category").value;
-        const features = document.getElementById("features").value;
+        const featuresDiv = document.getElementById("features");
         const building = document.getElementById("building").value;
+
+        const getSelectedFeatures = () => {
+        let selectedFeatures = [];
+        const checkboxes = featuresDiv.querySelectorAll('input[type="checkbox"]:checked');
+        checkboxes.forEach(checkbox => selectedFeatures.push(checkbox.value));
+        return selectedFeatures;
+      };
+
+        const features = getSelectedFeatures();
 
         const venue = {
           Name: name,
