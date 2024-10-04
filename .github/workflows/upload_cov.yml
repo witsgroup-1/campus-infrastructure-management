@@ -1,7 +1,9 @@
 name: Run tests and upload coverage
 
 on: 
-  push
+  push:
+    branches:
+      - main  # Specify your main branch here
 
 jobs:
   test:
@@ -15,16 +17,17 @@ jobs:
 
       - name: Set up Node
         uses: actions/setup-node@v4
-        
+        with:
+          node-version: '16'  # Specify the Node.js version
 
       - name: Install dependencies
         run: npm install
-        
-        #maybe better to type npm run test npx jest --coverage
-      - name: Run tests
-        run: npm run test --if-present
+
+      - name: Run tests with coverage
+        run: npx jest --coverage --coverageReporters=cobertura
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/cobertura-coverage.xml  # Adjust the path if necessary
