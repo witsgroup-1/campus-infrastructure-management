@@ -296,9 +296,17 @@ function renderBookings() {
         const venueData= getRoomInfo(venueId);
 
         const venueName = venueData.Name;
+        const start_time_string = convertToLocalTimeString(bookingData.start_time);
+        const end_time_string = convertToLocalTimeString(bookingData.end_time);
+        const date_time_string =convertToLocalTimeString(bookingData.date)
+
+        // Debugging log
+        console.log('Start Time:', start_time_string);
+        console.log('End Time:', end_time_string);
+        console.log(`Date: ${date_time_string}`);
 
         // Create a notification message
-        const notificationMessage = `Your previously accepted booking for ${purpose} on ${date} from ${start_time} to ${end_time} at ${venueName} has been cancelled. Reason: ${reasonForCancellation}. We apologize for the inconvenience.`;
+        const notificationMessage = `Your previously accepted booking for ${purpose} on ${date_time_string.substring(0,10)} from ${start_time_string.substring(12,17)} to ${end_time_string.substring(12,17)} at ${venueName} has been cancelled. Reason: ${reasonForCancellation}. We apologize for the inconvenience.`;
 
         // Add the notification to the user's subcollection
         const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
@@ -384,9 +392,17 @@ async function acceptBooking(id) {
 
         console.log(venueData); 
         const venueName = venueData.Name; 
+        const start_time_string = convertToLocalTimeString(bookingData.start_time);
+        const end_time_string = convertToLocalTimeString(bookingData.end_time);
+        const date_time_string =convertToLocalTimeString(bookingData.date)
+
+        // Debugging log
+        console.log('Start Time:', start_time_string);
+        console.log('End Time:', end_time_string);
+        console.log(`Date: ${date_time_string}`);
 
         // Create a notification message
-        const notificationMessage = `Your booking for ${purpose} on ${bookingData.date} from ${start_time} to ${end_time} at ${venueName} has been successfully confirmed.`;
+        const notificationMessage = `Your booking for ${purpose} on ${date_time_string.substring(0,10)} from ${start_time_string.substring(12,17)} to ${end_time_string.substring(12,17)} at ${venueName} has been successfully confirmed.`;
 
         // Ensure notifications subcollection exists
         const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
@@ -474,9 +490,20 @@ async function rejectBooking(id) {
       
       const venueInfo=getRoomInfo(bookingData.venueId);
 
-      const venueName = venueInfo.Name; 
+      const venueName = venueInfo.Name;
+
+      const start_time_string = convertToLocalTimeString(bookingData.start_time);
+      const end_time_string = convertToLocalTimeString(bookingData.end_time);
+      const date_time_string =convertToLocalTimeString(bookingData.date)
+
+      // Debugging log
+      console.log('Start Time:', start_time_string);
+      console.log('End Time:', end_time_string);
+      console.log(`Date: ${date_time_string}`);
+
+      
       // Create a notification message
-      const notificationMessage = `We regret to inform you that your booking for ${purpose} on ${date} from ${start_time} to ${end_time} at ${venueName} has been rejected. We apologize for the inconvenience caused. Please consider booking another venue for your purpose.`;
+      const notificationMessage = `We regret to inform you that your booking for ${purpose} on ${date_time_string.substring(0,10)} from ${start_time_string.substring(12,17)} to ${end_time_string.substring(12,17)} at ${venueName} has been rejected. We apologize for the inconvenience caused. Please consider booking another venue for your purpose.`;
 
       // Add the notification to the user's subcollection
       const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/notifications`;
