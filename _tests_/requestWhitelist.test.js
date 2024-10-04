@@ -21,11 +21,11 @@ jest.mock('firebase/auth', () => ({
 }));
 
 beforeEach(() => {
-    jest.clearAllMocks(); // Reset mocks before each test
+    jest.clearAllMocks();
 });
 
 describe('Whitelist Requests', () => {
-    const mockDb = {}; // Mock db object
+    const mockDb = {}; 
 
     beforeEach(() => {
         jest.clearAllMocks();
