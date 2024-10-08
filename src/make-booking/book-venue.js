@@ -90,7 +90,10 @@ function getAllowedCategories(userData) {
 let currentPage = 1;
 const PAGE_SIZE = 10; // Number of venues to display per page
 
+
 async function fetchAndRenderBookings(userData) {
+    toggleLoading(true); // Show loader at the start
+
     const categoryFilter = document.getElementById('roomFilter').value || '';
     let apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues`;
     if (categoryFilter) {
@@ -108,7 +111,7 @@ async function fetchAndRenderBookings(userData) {
 
         if (response.ok) {
             venues = await response.json(); // Assign fetched venues to the global variable
-            renderVenues(venues, userData);
+            await renderVenues(venues, userData); // Wait for rendering to finish
         } else {
             console.error('Failed to fetch venues:', response.statusText);
             document.getElementById('bookingsContainer').innerHTML = '<p class="text-center text-red-500">Failed to load venues. Please try again later.</p>';
@@ -117,11 +120,33 @@ async function fetchAndRenderBookings(userData) {
         console.error('Error fetching venues:', error);
         document.getElementById('bookingsContainer').innerHTML = '<p class="text-center text-red-500">An error occurred while loading venues.</p>';
     } finally {
-        toggleLoading(false);
+        toggleLoading(false); // Hide loader after fetching venues
     }
 }
 
-function renderVenues(venues, userData) {
+async function checkMaintenanceStatus(venueId) {
+    const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/venue/${venueId}`;
+    
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY 
+            }
+        });
+
+        if (response.ok) {
+            const maintenanceRequests = await response.json();
+            return maintenanceRequests.length > 0; // Return true if there are requests
+        }
+    } catch (error) {
+        console.error('Error checking maintenance status:', error);
+    }
+    
+    return false; // Return false if there was an error or no requests found
+}
+async function renderVenues(venues, userData) {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing venues
 
@@ -146,22 +171,47 @@ function renderVenues(venues, userData) {
         return;
     }
 
-    paginatedVenues.forEach(venue => {
+    // Create an array of promises to check maintenance status for all venues
+    const maintenanceChecks = paginatedVenues.map(async (venue) => {
+        const isUnderMaintenance = await checkMaintenanceStatus(venue.id);
+        return { venue, isUnderMaintenance }; // Return venue and its maintenance status
+    });
+
+    // Wait for all maintenance checks to complete
+    const venuesWithMaintenanceStatus = await Promise.all(maintenanceChecks);
+
+    // Render the venues based on their maintenance status
+    venuesWithMaintenanceStatus.forEach(({ venue, isUnderMaintenance }) => {
         const venueBox = document.createElement('div');
         venueBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
-        venueBox.innerHTML = `
-            <div class="flex-shrink-0">
-                <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
-                <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
-                <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
-            </div>
-            <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none" onclick="window.location.href='booking-details.html?bookingId=${venue.id}'">Book</button>
-        `;
+
+        if (isUnderMaintenance) {
+            venueBox.innerHTML = `
+                <div class="flex-shrink-0">
+                    <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
+                    <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
+                    <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
+                    <p class="text-red-500">This venue is currently under maintenance.</p>
+                </div>
+            `;
+        } else {
+            venueBox.innerHTML = `
+                <div class="flex-shrink-0">
+                    <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
+                    <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
+                    <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
+                </div>
+                <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none" onclick="window.location.href='booking-details.html?bookingId=${venue.id}'">Book</button>
+            `;
+        }
+
         container.appendChild(venueBox);
     });
 
     setupPagination(totalPages, userData); // Pass userData to setupPagination
 }
+
+
 
 function setupPagination(totalPages, userData) {
     const paginationContainer = document.getElementById('paginationControls');
@@ -222,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         roomFilterElement.addEventListener('change', async () => {
             const user = auth.currentUser;
             if (user) {
+                toggleLoading(true); // Show loader at the start
                 const userData = await fetchUserData(user.uid);
                 fetchAndRenderBookings(userData); // Fetch venues after changing filter
             }
