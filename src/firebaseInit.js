@@ -7,7 +7,7 @@ const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = 
 
 
 const firebaseConfig = {
-  apiKey: process.env.APP_API_KEY,
+  apiKey: process.env.API_KEY_1,
   authDomain: process.env.APP_AUTH_DOMAIN,
   projectId: process.env.APP_PROJECT_ID,
   storageBucket: process.env.APP_STORAGE_BUCKET,
