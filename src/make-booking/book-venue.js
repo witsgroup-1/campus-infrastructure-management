@@ -211,8 +211,6 @@ async function renderVenues(venues, userData) {
     setupPagination(totalPages, userData); // Pass userData to setupPagination
 }
 
-
-
 function setupPagination(totalPages, userData) {
     const paginationContainer = document.getElementById('paginationControls');
     paginationContainer.innerHTML = `
@@ -221,17 +219,23 @@ function setupPagination(totalPages, userData) {
         <button id="nextPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
     `;
 
-    document.getElementById('prevPage').onclick = () => {
+    // Previous Page Button
+    document.getElementById('prevPage').onclick = async () => {
         if (currentPage > 1) {
             currentPage--;
-            renderVenues(venues, userData); // Use the global venues variable
+            toggleLoading(true); // Show loader when changing pages
+            await renderVenues(venues, userData); // Wait for rendering to finish
+            toggleLoading(false); // Hide loader after rendering
         }
     };
 
-    document.getElementById('nextPage').onclick = () => {
+    // Next Page Button
+    document.getElementById('nextPage').onclick = async () => {
         if (currentPage < totalPages) {
             currentPage++;
-            renderVenues(venues, userData); // Use the global venues variable
+            toggleLoading(true); // Show loader when changing pages
+            await renderVenues(venues, userData); // Wait for rendering to finish
+            toggleLoading(false); // Hide loader after rendering
         }
     };
 }
