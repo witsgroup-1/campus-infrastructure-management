@@ -23,7 +23,6 @@ async function isEmailWhitelisted(email) {
     const whitelistCollection = collection(db, 'whitelist');
     const q = query(whitelistCollection, where('emailInput', '==', email));
     const querySnapshot = await getDocs(q);
-    console.log(`Checking if ${email} is whitelisted...`);
     if (!querySnapshot.empty) {
         return true;
     } else {
