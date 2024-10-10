@@ -13,27 +13,20 @@
   
   <!-- Page Header -->
   <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-    <!-- <button class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</button> -->
-    <!-- <a href="../user-dashboard/dashboard.html" class="text-6xl text-[#917248] font-bold absolute top-0 left-4">&larr;</a> -->
-    
-<button class="absolute inset-y-0 my-auto left-4" onclick="window.history.length > 1 ? window.history.back() : window.location.href='../user-dashboard/dashboard.html'">
+
+<button class="absolute inset-y-0 my-auto left-4 p-2" style="padding: 10px; cursor: pointer; z-index: 10;" onclick="window.history.length > 1 ? window.history.back() : window.location.href='../user-dashboard/dashboard.html'">
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
   </svg>
 </button>
+
     <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Report</h1>
   </header>
 
   <!--Main Content -->
   <main class="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8 items-start relative px-8">
     <form class="space-y-6 lg:w-3/4">
-      
-      <!--Name and Surname -->
-      <label class="block text-lg text-[#003B5C] font-medium">
-        Name and Surname
-        <input type="text" placeholder="Name and Surname" class="block w-full mt-1 p-2 border rounded-md"  required>
-      </label>
-      
+          
       <!--Report Type -->
       <label class="block text-lg text-[#003B5C] font-medium">
         Report Type
@@ -50,7 +43,7 @@
       <!--Venue -->
       <label class="block text-lg text-[#003B5C] font-medium">
         Venue
-        <input type="text" id="venue-input" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md"  required>
+        <input type="text" id="venue-input" placeholder="Search by venue" class="block w-full mt-1 p-2 border rounded-md"  required>
         <select id="venue-dropdown" class="hidden w-full mt-1 p-2 border rounded-md"></select>
       </label>
 
@@ -62,7 +55,7 @@
       </label>
 
       <!--Submit Button -->
-      <button type="submit" class="block w-full bg-[#917248] text-white p-3 rounded-md font-semibold">Submit</button>
+      <button type="submit" id="submitBtn" class="block w-full bg-[#917248] text-white p-3 rounded-md font-semibold">Submit</button>
     </form>
 
     <!--Image for Desktop Version -->
