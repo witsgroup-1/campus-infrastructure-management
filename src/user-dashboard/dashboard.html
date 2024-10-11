@@ -9,6 +9,28 @@
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <style>
+        .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .modal-content {
+          background: #fff;
+          padding: 20px;
+          text-align: center;
+          border-radius: 5px;
+        }
+        .hidden { display: none; }
+      
+      </style>
+
 </head>
 <body class="bg-gray-100">
     <div class="w-full h-2 bg-[#003B5C]"></div>
@@ -109,13 +131,25 @@
         
         
         <section class="mt-8">
-            <a href="../bookings/yourBookings.html"><h2 class="text-xl font-semibold text-[#003B5C] mb-4">Your upcoming bookings...</h2></a>
+            <a href="../bookings/yourBookings.html"><h2 class="text-xl font-semibold text-[#003B5C] mb-4">Your bookings...</h2></a>
             <div id="no-bookings-message" class="hidden text-center">
                 <p  class="text-lg font-semibold text-[#003B5C] mt-4">No upcoming bookings</p>
             </div>
             <div id="bookings-container" class="space-y-4">
               <!-- Bookings will be dynamically inserted here -->
             </div>
+            <div id="cancelModal" class="modal hidden">
+                <div class="modal-content">
+                  <div class="flex justify-between">
+                    <p id="cancelBooking" class="font-semibold text-[#003B5C] mt-4 text-center">Cancel Booking</p>
+                  </div>
+                  <p id="modalMessage" class="mt-2">Are you sure you want to cancel this booking?</p>
+                  <button id="confirmCancelBtn" class="mt-2 px-4 py-2 bg-[#917248] text-white rounded">Yes, Cancel</button>
+                  <button id="closeModalBtn" class="mt-2 px-4 py-2 bg-[#917248] text-white rounded">Close</button>
+                  <div id="loadingMessage" class="hidden">Cancelling...</div>
+                </div>
+              </div>
+              
             <br>
             <a id="see-more-button" href="../bookings/yourBookings.html" class = "hidden">See More</a>
         </section>
@@ -150,7 +184,6 @@
     <script type= "module" src = "dashboard.js"></script>
     <script type = "module" src = "viewBookings.js"></script>
     <script type = "module" src = "../login/login.js"></script>
-    <script type = "module" src = "viewAllVenues.js"></script>
     <script type = "module" src = "availVenues.js"></script>
 </body>
 </html>

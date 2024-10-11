@@ -116,6 +116,9 @@ async function populateVenues() {
         if (lastVenue) {
             const lastVenueElement = document.createElement('div');
             lastVenueElement.classList.add('relative');
+            lastVenueElement.addEventListener('click', () => {
+                window.location.href = 'availVenues.html'
+            })
 
             const lastImgElement = document.createElement('img');
             lastImgElement.classList.add('w-full', 'h-40', 'object-cover');
