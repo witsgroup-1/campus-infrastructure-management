@@ -36,19 +36,22 @@ test.describe('Venue Dropdown Integration Tests', () => {
     const coverage = await page.coverage.stopJSCoverage();
   });
 
+
   test('should update venue input when an option is selected', async ({ page }) => {
     await page.coverage.startJSCoverage();
-    
+  
     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
+    console.log("venues ", venues);
   
     // Populate the dropdown
     await page.evaluate((venues) => {
-      window.updateVenueDropdown(venues);
+      const venueDropdown = document.getElementById('venue-dropdown');
+      window.updateVenueDropdown(venues, venueDropdown);  // Pass the venueDropdown as an argument
     }, venues);
   
     // Check dropdown is populated
     const dropdownOptions = await page.$$('#venue-dropdown option');
-    console.log('Dropdown options count:', dropdownOptions.length);
+    //console.log('Dropdown options count:', dropdownOptions.length);
     if (dropdownOptions.length === 0) {
       throw new Error('Dropdown not populated');
     }
@@ -56,19 +59,21 @@ test.describe('Venue Dropdown Integration Tests', () => {
     // Select an option
     await page.selectOption('#venue-dropdown', { label: 'Room 101' });
   
-    //Check if the input is being updated
+    // Wait for the input to be attached
+    await page.waitForSelector('input[placeholder="Search by venue"]', { state: 'attached' });
+  
+    // Check if the input is being updated
     await page.evaluate(() => {
-      const venueInput = document.querySelector('input[placeholder="Venue"]');
+      const venueInput = document.querySelector('input[placeholder="Search by venue"]');
       console.log('Current value in input:', venueInput.value);
     });
   
-    // Wait for the input to be attached
-    await page.waitForSelector('input[placeholder="Venue"]', { state: 'attached' });
-  
     // Assert that the input field is updated correctly
-    const venueInput = await page.$('input[placeholder="Venue"]');
+    const venueInput = await page.$('input[placeholder="Search by venue"]');
     const value = await venueInput.inputValue();
     expect(value).toBe('Room 101');
+  
+    // Stop the JS coverage
     const coverage = await page.coverage.stopJSCoverage();
   });
   
