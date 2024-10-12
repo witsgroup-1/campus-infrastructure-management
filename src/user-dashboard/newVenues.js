@@ -14,6 +14,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+//show more info on desktop, add book button, info hide on mobile.
+//show venues that are not under maintenance as well.
 const intervals = [
     { start: '08:00', end: '08:45' },
     { start: '09:00', end: '09:45' },
@@ -51,17 +53,15 @@ function getNextSlot() {
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
     
-    // Find the next available time slot after the current time
     for (const interval of intervals) {
         const [startHour, startMinute] = interval.start.split(':').map(Number);
         
-        // Check if the current time is before the start of the next interval
         if (currentHour < startHour || (currentHour === startHour && currentMinute < startMinute)) {
             return interval;
         }
     }
     
-    return null; // No more slots available today
+    return null;
 }
 
 async function fetchAvailableVenues() {
@@ -80,7 +80,6 @@ async function fetchAvailableVenues() {
         const [nextSlotStartHour, nextSlotStartMinute] = nextSlot.start.split(':').map(Number);
         const [nextSlotEndHour, nextSlotEndMinute] = nextSlot.end.split(':').map(Number);
 
-        // Create Date objects for the start and end of the next time slot
         const nextSlotStartTime = new Date();
         nextSlotStartTime.setHours(nextSlotStartHour, nextSlotStartMinute, 0, 0);
         
@@ -128,22 +127,56 @@ async function fetchAvailableVenues() {
 
 function createVenueElement(venue) {
     const venueElement = document.createElement('div');
-    venueElement.classList.add('bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow');
+    venueElement.classList.add('venue-container', 'bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow', 'flex', 'justify-between');
+
+    const infoButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>`;
+
+    const venueDetails = `
+        <div class="venue-details">
+            <strong>Building:</strong> ${venue.Building || 'N/A'}<br>
+            <strong>Category:</strong> ${venue.Category || 'N/A'}
+        </div>`;
 
     venueElement.innerHTML = `
-        <p class="font-semibold">${venue.Name}</p>
-        <p>Capacity: ${venue.Capacity}</p>
-        <button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>
-    `;
+        <div>
+            <p class="font-semibold">${venue.Name}</p>
+            <p>Capacity: ${venue.Capacity}</p>
+            ${infoButton}
+        </div>
+        ${venueDetails}`;
 
-   
-    const infoButton = venueElement.querySelector('.info-button');
-    infoButton.addEventListener('click', () => {
-        showVenueInfo(venue); 
+    const infoButtonElement = venueElement.querySelector('.info-button');
+    infoButtonElement.addEventListener('click', () => {
+        const isMobile = window.innerWidth < 768;
+
+        if (isMobile) {
+            showVenueInfo(venue);
+        } else {
+            showVenueFeatures(venue.Features || []);
+        }
     });
 
     return venueElement;
 }
+
+function showVenueFeatures(features) {
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+
+    modalTitle.innerText = "Features";
+    
+    if (features.length > 0) {
+        modalContent.innerHTML = `<ul>${features.map(feature => `<li>${feature}</li>`).join('')}</ul>`;
+    } else {
+        modalContent.innerHTML = '<p>No features available.</p>';
+    }
+
+
+    const venueModal = document.getElementById('venueModal');
+    venueModal.classList.remove('hidden');
+}
+
+
 
 function showVenueInfo(venue) {
     const modalTitle = document.getElementById('modalTitle');
@@ -170,6 +203,8 @@ function closeModal() {
     const venueModal = document.getElementById('venueModal');
     venueModal.classList.add('hidden');
 }
+
+//add book button similar to one in the venues page.
 
 
 
