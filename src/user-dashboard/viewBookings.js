@@ -210,6 +210,19 @@ async function loadUserBookings(userEmail) {
   hideLoading();
 }
 
+
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is signed in with email:", user.email);
+    loadUserBookings(user.email); 
+  } else {
+    console.log("No user is signed in.");
+    sessionStorage.clear();
+  }
+});
+
+
 async function cancelBooking(userId, bookingId) {
   try {
     const loadingMessage = document.getElementById('loadingMessage');
@@ -254,15 +267,6 @@ async function cancelBooking(userId, bookingId) {
   }
 }
 
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("User is signed in with email:", user.email);
-    loadUserBookings(user.email); 
-  } else {
-    console.log("No user is signed in.");
-  }
-});
 
   
 
