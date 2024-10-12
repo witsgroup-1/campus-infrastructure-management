@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="icon" href="../logo.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -94,7 +95,7 @@
 
 
         <section>
-            <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Venues...</h2>
+            <a href="availVenues.html"><h2 class="text-xl font-semibold text-[#003B5C] mb-4">Venues...</h2></a>
             <div id="venue-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
                 <div class="skeleton-card"></div>
@@ -108,7 +109,7 @@
         
         
         <section class="mt-8">
-            <h2 class="text-xl font-semibold text-[#003B5C] mb-4">Your upcoming bookings...</h2>
+            <a href="../bookings/yourBookings.html"><h2 class="text-xl font-semibold text-[#003B5C] mb-4">Your upcoming bookings...</h2></a>
             <div id="no-bookings-message" class="hidden text-center">
                 <p  class="text-lg font-semibold text-[#003B5C] mt-4">No upcoming bookings</p>
             </div>
