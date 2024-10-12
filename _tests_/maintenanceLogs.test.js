@@ -1,6 +1,8 @@
 
 // Import functions to test
-import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup,  setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from './copies/maintenanceLogsCopy'; 
+//import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup,  setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from './copies/maintenanceLogsCopy'; 
+import { closePopup, saveChanges, openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop, setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from '../src/maintenance/maintenanceLogs';
+
 import '@testing-library/jest-dom';  
 
 // Mock the DOM methods and fetch
@@ -38,6 +40,12 @@ describe('Script tests', () => {
   beforeEach(() => {
     document.getElementById('scheduled-content').innerHTML = '';
     document.getElementById('mobile-scheduled-content').innerHTML = '';
+    
+    // Mock location.reload
+    delete window.location; 
+    window.location = { reload: jest.fn() };  
+   
+    
   });
 
   test('fetches maintenance requests and displays them', async () => {
@@ -46,7 +54,7 @@ describe('Script tests', () => {
       json: async () => mockData
     });
 
-    await require('./copies/maintenanceLogsCopy');
+    await require('../src/maintenance/maintenanceLogs');
 
     // Trigger the DOMContentLoaded event
     document.dispatchEvent(new Event('DOMContentLoaded'));
@@ -54,7 +62,7 @@ describe('Script tests', () => {
     // Allow some time for async operations to complete
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/maintenanceRequests', {
+    expect(fetch).toHaveBeenCalledWith('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
       method: 'GET',
       headers: {
         'x-api-key': expect.any(String),
@@ -96,7 +104,7 @@ describe('Script tests', () => {
     fetch.mockResolvedValueOnce({ ok: true });
 
     await saveChanges('1');
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/maintenanceRequests/1', {
+    expect(fetch).toHaveBeenCalledWith('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/1', {
       method: 'PUT',
       headers: {
         'x-api-key': expect.any(String),
@@ -110,6 +118,7 @@ describe('Script tests', () => {
 
     // Additional checks to ensure the popup closes and page reloads
     expect(document.getElementById('detailsModal').classList.contains('hidden')).toBe(true);
+    expect(window.location.reload).toHaveBeenCalled();
   });
 
   test('closes popup', () => {
