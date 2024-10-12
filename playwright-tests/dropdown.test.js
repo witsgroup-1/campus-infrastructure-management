@@ -19,7 +19,8 @@ test.describe('Venue Dropdown Integration Tests', () => {
     // Ensure the function exists and is accessible
     await page.evaluate((venues) => {
       if (typeof window.updateVenueDropdown === 'function') {
-        window.updateVenueDropdown(venues);
+        const venueDropdown = document.getElementById('venue-dropdown');
+        window.updateVenueDropdown(venues, venueDropdown);
       } else {
         throw new Error('updateVenueDropdown function is not available');
       }
@@ -41,7 +42,7 @@ test.describe('Venue Dropdown Integration Tests', () => {
     await page.coverage.startJSCoverage();
   
     const venues = [{ Name: 'Room 101', id: '123' }, { Name: 'Room 102', id: '124' }];
-    console.log("venues ", venues);
+    //console.log("venues ", venues);
   
     // Populate the dropdown
     await page.evaluate((venues) => {
@@ -65,7 +66,7 @@ test.describe('Venue Dropdown Integration Tests', () => {
     // Check if the input is being updated
     await page.evaluate(() => {
       const venueInput = document.querySelector('input[placeholder="Search by venue"]');
-      console.log('Current value in input:', venueInput.value);
+      //console.log('Current value in input:', venueInput.value);
     });
   
     // Assert that the input field is updated correctly
@@ -87,7 +88,8 @@ test.describe('Venue Dropdown Integration Tests', () => {
     // Populate the dropdown first
     await page.evaluate((venues) => {
       if (typeof window.updateVenueDropdown === 'function') {
-        window.updateVenueDropdown(venues);
+        const venueDropdown = document.getElementById('venue-dropdown');
+        window.updateVenueDropdown(venues, venueDropdown);
       } else {
         throw new Error('updateVenueDropdown function is not available');
       }
@@ -96,7 +98,8 @@ test.describe('Venue Dropdown Integration Tests', () => {
     // Clear the dropdown using the clearVenueDropdown function
     await page.evaluate(() => {
       if (typeof window.clearVenueDropdown === 'function') {
-        window.clearVenueDropdown();
+        const venueDropdown = document.getElementById('venue-dropdown');
+        window.clearVenueDropdown(venueDropdown);
       } else {
         throw new Error('clearVenueDropdown function is not available');
       }
