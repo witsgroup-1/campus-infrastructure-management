@@ -32,47 +32,47 @@ async function fetchData(endpoint) {
 }
 
 
-            async function fetchBookings() {
-                const data = await fetchData('/Bookings');
-                if (data) {
-                    displayBookings(data);
-                }
-            }
+//             async function fetchBookings() {
+//                 const data = await fetchData('/Bookings');
+//                 if (data) {
+//                     displayBookings(data);
+//                 }
+//             }
         
 
-        function displayBookings(bookings) {
-            const container = document.getElementById('bookings-container');
-            const noBookingsMessage = document.getElementById('no-bookings-message');
-            const seeMoreButton = document.getElementById('see-more-button');
+//         function displayBookings(bookings) {
+//             const container = document.getElementById('bookings-container');
+//             const noBookingsMessage = document.getElementById('no-bookings-message');
+//             const seeMoreButton = document.getElementById('see-more-button');
             
-            container.innerHTML = '';
+//             container.innerHTML = '';
         
-            if (bookings.length === 0) {
-                noBookingsMessage.classList.remove('hidden');
-                seeMoreButton.classList.add('hidden');
-                return;
-            } else {
-                noBookingsMessage.classList.add('hidden'); 
-                seeMoreButton.classList.remove('hidden'); 
-            }
+//             if (bookings.length === 0) {
+//                 noBookingsMessage.classList.remove('hidden');
+//                 seeMoreButton.classList.add('hidden');
+//                 return;
+//             } else {
+//                 noBookingsMessage.classList.add('hidden'); 
+//                 seeMoreButton.classList.remove('hidden'); 
+//             }
         
-            bookings.slice(0, 2).forEach((booking) => {
-                const bookingElement = document.createElement('div');
-                bookingElement.className = 'bg-custom-gold p-4 flex justify-between items-center rounded';
-                bookingElement.innerHTML = `
-                    <span class="font-inter text-[16px]">
-                        ${booking.purpose} - ${new Date(booking.start_time.seconds * 1000).toLocaleString()}
-                    </span>
-                    <div>
-                        <button onclick="handleBookingAction('accept', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-custom-blue focus:text-blue-600 focus:outline-none mr-2">Accept</button>
-                        <button onclick="handleBookingAction('reject', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-custom-blue focus:text-red-600 focus:outline-none">Reject</button>
-                    </div>
-                `;
-                container.appendChild(bookingElement);
-            });
-        }
+//             bookings.slice(0, 2).forEach((booking) => {
+//                 const bookingElement = document.createElement('div');
+//                 bookingElement.className = 'bg-custom-gold p-4 flex justify-between items-center rounded';
+//                 bookingElement.innerHTML = `
+//                     <span class="font-inter text-[16px]">
+//                         ${booking.purpose} - ${new Date(booking.start_time.seconds * 1000).toLocaleString()}
+//                     </span>
+//                     <div>
+//                         <button onclick="handleBookingAction('accept', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-custom-blue focus:text-blue-600 focus:outline-none mr-2">Accept</button>
+//                         <button onclick="handleBookingAction('reject', '${booking.id}')" class="font-inter font-normal text-[20px] text-black hover:text-custom-blue focus:text-red-600 focus:outline-none">Reject</button>
+//                     </div>
+//                 `;
+//                 container.appendChild(bookingElement);
+//             });
+//         }
        
-        fetchBookings();
+//         fetchBookings();
 
         document.addEventListener('DOMContentLoaded', () => {
             const menuIcon = document.getElementById('menu-icon');
@@ -89,8 +89,8 @@ async function fetchData(endpoint) {
                     const userEmail = user.email;
                     const userId = user.uid;
         
-                    console.log('User email:', userEmail);
-                    console.log("UserId:", userId);
+                    //console.log('User email:', userEmail);
+                    //console.log("UserId:", userId);
         
                     // Display the user email on the page
                     document.getElementById('userEmailDisplay').textContent = `Admin logged in as: ${userEmail}`;

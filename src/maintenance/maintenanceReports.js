@@ -22,6 +22,8 @@ const venueInput = document.querySelector('input[placeholder="Search by venue"]'
 
 document.addEventListener("DOMContentLoaded", () => {
 
+
+
 //Function to toggle the loading state on the submit button
 function toggleSubmitButtonLoading(show) {
   const submitBtn = document.getElementById('submitBtn');
@@ -64,10 +66,10 @@ onAuthStateChanged(auth, async (user) => {
       alert('Please select a valid venue from the dropdown.');
       venueInput.value = ''; // Clear the input field
       venueInput.dataset.venueId = '';
-      clearVenueDropdown(); // Clear and hide dropdown
-      toggleSubmitButtonLoading(false);
+      clearVenueDropdown(venueDropdown); // Clear and hide dropdown
       return;
     }
+
     const requestData = {
       assignedTo: 'none',
       createdAt: new Date().toISOString(),
@@ -77,7 +79,7 @@ onAuthStateChanged(auth, async (user) => {
       roomName: venueName,
       status: 'Scheduled',
       timestamp: new Date().toISOString(),
-      userId: '123'// Store user email
+      userId: 'user.email' // Store user email
     };
 
     try {
@@ -90,19 +92,19 @@ onAuthStateChanged(auth, async (user) => {
         body: JSON.stringify(requestData)
       });
 
-      //check if response is okay
       if (!response.ok) throw new Error('Failed to submit request');
+
+      //console.log('Maintenance request created successfully!');
       document.querySelector("form").reset();
     } catch (error) {
       alert('Something went wrong, please try again later.');
       
     }
-   finally {
-    toggleSubmitButtonLoading(false); // Hide loader
-}
+    finally {
+      toggleSubmitButtonLoading(false); // Hide loader
+  }
 
   });
-
 
  // Handle input in the venue input field
  venueInput.addEventListener('input', async (event) => {
@@ -121,20 +123,19 @@ onAuthStateChanged(auth, async (user) => {
       if (!response.ok) throw new Error('Failed to fetch venues');
 
       const venues = await response.json();
-      updateVenueDropdown(venues); // Populate the dropdown with venues
+      updateVenueDropdown(venues, venueDropdown); // Populate the dropdown with venues
     } catch (error) {
-      // console.error("Error fetching venues:", error);
-      clearVenueDropdown(); // Clear the dropdown in case of an error
+   
+      clearVenueDropdown(venueDropdown); // Clear the dropdown in case of an error
     }
   } else {
-    clearVenueDropdown(); // Clear dropdown if input is too short
+    clearVenueDropdown(venueDropdown); // Clear dropdown if input is too short
   }
 });
 
 // Function to update the dropdown with fetched venues
-function updateVenueDropdown(venues) {
-  clearVenueDropdown(); // Clear any previous entries
-
+function updateVenueDropdown(venues, venueDropdown) {
+  clearVenueDropdown(venueDropdown); // Clear any previous entries
   // Add a default option that is not selectable
   const defaultOption = document.createElement('option');
   defaultOption.textContent = 'Please select a venue...';
@@ -146,61 +147,41 @@ function updateVenueDropdown(venues) {
     venues.forEach((venue) => {
       const option = document.createElement('option');
       option.textContent = venue.Name;
-      option.dataset.id = venue.id; // Store the venue ID in the dataset
+      option.dataset.id = venue.id; 
       venueDropdown.appendChild(option);
     });
-    venueDropdown.classList.remove('hidden'); // Show the dropdown if there are venues
+    venueDropdown.classList.remove('hidden'); 
   } else {
-    clearVenueDropdown(); // Hide the dropdown if no venues are found
+    clearVenueDropdown(venueDropdown); 
   }
 }
+
 
 // Function to handle venue selection
 venueDropdown.addEventListener('change', (event) => {
   const selectedOption = event.target.options[event.target.selectedIndex];
   const venueId = selectedOption.dataset.id;
   const venueName = selectedOption.textContent;
-
-  venueInput.value = venueName; // Update input field with selected venue name
-  venueInput.dataset.venueId = venueId; // Store the venue ID
-  clearVenueDropdown(); // Clear the dropdown after selection
+  // Update input field with selected venue name
+  venueInput.value = venueName; 
+  venueInput.dataset.venueId = venueId; 
+  clearVenueDropdown(venueDropdown); // Clear the dropdown after selection
 });
 
 // Function to clear the dropdown
-function clearVenueDropdown() {
+function clearVenueDropdown(venueDropdown) {
   venueDropdown.innerHTML = ''; // Clear the dropdown content
+
   venueDropdown.classList.add('hidden'); // Hide the dropdown
 }
 
 // Ensure dropdown is hidden initially
-clearVenueDropdown();
+clearVenueDropdown(venueDropdown);
+
+window.updateVenueDropdown = updateVenueDropdown;
+window.clearVenueDropdown = clearVenueDropdown;
 
 
-
-
-
-
-
-
-
-
-
-
-  if (typeof window !== 'undefined') {
-    window.updateVenueDropdown = updateVenueDropdown;
-    window.clearVenueDropdown = clearVenueDropdown;
-  }
-
-
-
-  // document.querySelector('#venue-dropdown').addEventListener('change', (event) => {
-  //   const selectedValue = event.target.value;  // Get the selected option
-  //   const inputField = document.querySelector('input[placeholder="Venue"]');
-  //   if (inputField) {
-  //     inputField.value = selectedValue;  // Update the input field with selected value
-  //   }
-  // });
-  
 //end of auth
 });
 //end of dom

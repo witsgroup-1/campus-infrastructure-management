@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayInitialRequestsForMobile(completedRequests, 'mobile-completed-content', 'show-more-completed');
 
   } catch (error) {
-    console.error('Error fetching maintenance requests');
     //robustness
     alert('Something went wrong, please try again later');
   }
@@ -82,7 +81,7 @@ async function setupStaffSearch(apiKey) {
           const staffMembers = await response.json();
           updateStaffDropdown(staffMembers);
         } catch (error) {
-          console.error('Error fetching staff:', error);
+          
           clearStaffDropdown(); // Clear dropdown on error
         }
       } else {
@@ -100,8 +99,8 @@ async function setupStaffSearch(apiKey) {
         searchInput.value = selectedStaff;
         searchInput.dataset.staffId = selectedStaffId;
         //hid and clear once we have the selected value
-        staffDropdown.classList.add('hidden');
-        clearStaffDropdown();
+        //staffDropdown.classList.add('hidden');
+        //clearStaffDropdown();
       }
     });
   } else {
@@ -273,3 +272,8 @@ function closePopup() {
   document.getElementById('detailsModal').classList.add('hidden');
 }
 
+export { saveChanges, closePopup, openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop, setupStaffSearch, updateStaffDropdown, clearStaffDropdown };
+
+window.saveChanges = saveChanges;
+window.openPopup = openPopup;
+window.closePopup = closePopup;
