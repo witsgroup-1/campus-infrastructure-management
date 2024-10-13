@@ -188,6 +188,7 @@ function createVenueElement(venue) {
     venueElement.classList.add('venue-container', 'bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow', 'flex', 'justify-between');
 
     const infoButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>`;
+    const bookButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded book-button">Book</button>`;
 
     const venueDetails = `
         <div class="venue-details">
@@ -200,10 +201,12 @@ function createVenueElement(venue) {
             <p class="font-semibold">${venue.Name}</p>
             <p>Capacity: ${venue.Capacity}</p>
             ${infoButton}
+            ${bookButton}
         </div>
         ${venueDetails}`;
 
     const infoButtonElement = venueElement.querySelector('.info-button');
+    const bookButtonElement = venueElement.querySelector('.book-button');
     infoButtonElement.addEventListener('click', () => {
         const isMobile = window.innerWidth < 768;
 
