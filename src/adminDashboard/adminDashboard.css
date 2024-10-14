@@ -5,16 +5,13 @@
     --projectWhite: white;
     --text-color: #2c3e50;
   }
-
   #sidebar {
     position: fixed;
     top: 0;
-    left: 0; /* Move sidebar to the left */
+    left: 0;
     height: 100%;
-    width: 0;
     background-color: #003B5C;
     color: white;
-    overflow-x: hidden;
     transition: width 0.3s ease;
     z-index: 9999;
 }
@@ -26,23 +23,54 @@
 #close-btn {
     position: absolute;
     top: 0;
-    right: 1rem; /* Keep the close button on the right of the sidebar */
+    right: 1rem;
     font-size: 2rem;
     color: white;
     background: none;
     border: none;
     cursor: pointer;
 }
-
-nav {
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    height: calc(80% - 3rem);
-    padding: 1rem; 
-    gap: 1rem; 
+#sidebar nav a {
+  display: flex;
+  align-items: center; /* Vertically align the icon and text */
+  gap: 15px; /* Add more space between the icon and text */
+  padding: 12px 20px; /* Adjust padding for better spacing */
+  text-align: left; /* Ensure the text aligns properly */
+  width: 100%; /* Full width for the anchor */
+  color: white; /* Ensure the color is white */
+  border-radius: 5px; /* Add some rounding */
 }
+
+#sidebar nav a i {
+  font-size: 1.5rem; /* Size the icons consistently */
+  display: inline-block;
+  width: 30px; /* Set a fixed width for icons to ensure consistent alignment */
+}
+
+#sidebar nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+  border-radius: 5px;
+}
+
+#sidebar nav {
+  width: 100%; /* Ensure the sidebar nav takes up the full width */
+}
+
+
+i {
+    font-size: 1.5rem;
+}
+
+.flex.items-center.space-x-2 {
+    margin-left: 1rem;
+}
+
+
+nav .space-y-2 {
+    margin-bottom: 1rem; /* Reduce margin between items */
+}
+
+
 
 a {
     color: white;
