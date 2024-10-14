@@ -98,9 +98,7 @@ async function setupStaffSearch(apiKey) {
       if (selectedStaff && selectedStaffId) {
         searchInput.value = selectedStaff;
         searchInput.dataset.staffId = selectedStaffId;
-        //hid and clear once we have the selected value
-        //staffDropdown.classList.add('hidden');
-        //clearStaffDropdown();
+
       }
     });
   } else {
@@ -240,7 +238,6 @@ async function saveChanges(id) {
     assignedTo: updatedAssignedTo,
     ...(timestamp ? { timestamp } : {})
   };
- //https://campus-infrastructure-management.azurewebsites.net
  //update the requests
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
@@ -265,7 +262,6 @@ async function saveChanges(id) {
     console.error('Error updating request:', error);
   }
 }
-
 
 //if they close the popup - this function hides it for us
 function closePopup() {

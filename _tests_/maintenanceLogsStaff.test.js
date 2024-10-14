@@ -1,9 +1,7 @@
-//import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup,  setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from './copies/maintenanceLogsCopy'; 
-import { closePopup, saveChanges, openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop, setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from '../src/maintenance/maintenanceLogs';
 
+import { closePopup, saveChanges, openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop, setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from '../src/maintenance/maintenanceLogs';
 import { fireEvent, waitFor } from '@testing-library/dom';  
 import '@testing-library/jest-dom';  
-//const fetch = require('node-fetch');
 
 document.body.innerHTML = `
   <input id="assigned-to" />
@@ -93,7 +91,7 @@ describe('setupStaffSearch', () => {
     });
 
     setupStaffSearch(apiKey);
-    // console.log("search");
+  
     const searchInput = document.getElementById('assigned-to');
     searchInput.value = 'Jo';
     searchInput.dispatchEvent(inputEvent);
@@ -115,7 +113,7 @@ test('handles staff selection from dropdown', () => {
 
   dropdown.innerHTML = '';
 
-  // Create and append a default "choose" option (if needed)
+  // Create and append a default "choose" option
   const defaultOption = document.createElement('option');
   defaultOption.textContent = 'Choose staff...';
   defaultOption.value = ''; 

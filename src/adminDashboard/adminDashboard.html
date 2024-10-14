@@ -193,7 +193,7 @@
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2); // Subtract 2 days (48 hours)
 
         return requests.filter(request => {
-            const createdAt = new Date(request.createdAt.seconds * 1000); // Assuming createdAt is a Firestore timestamp
+            const createdAt = new Date(request.createdAt.seconds * 1000); 
             return createdAt >= twoDaysAgo;
         });
     }
