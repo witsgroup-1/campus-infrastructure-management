@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayInitialRequestsForMobile(completedRequests, 'mobile-completed-content', 'show-more-completed');
 
   } catch (error) {
-    console.error('Error fetching maintenance requests');
     //robustness
     alert('Something went wrong, please try again later');
   }
@@ -82,7 +81,7 @@ async function setupStaffSearch(apiKey) {
           const staffMembers = await response.json();
           updateStaffDropdown(staffMembers);
         } catch (error) {
-          console.error('Error fetching staff:', error);
+          
           clearStaffDropdown(); // Clear dropdown on error
         }
       } else {
@@ -99,9 +98,7 @@ async function setupStaffSearch(apiKey) {
       if (selectedStaff && selectedStaffId) {
         searchInput.value = selectedStaff;
         searchInput.dataset.staffId = selectedStaffId;
-        //hid and clear once we have the selected value
-        staffDropdown.classList.add('hidden');
-        clearStaffDropdown();
+
       }
     });
   } else {
@@ -241,7 +238,6 @@ async function saveChanges(id) {
     assignedTo: updatedAssignedTo,
     ...(timestamp ? { timestamp } : {})
   };
- //https://campus-infrastructure-management.azurewebsites.net
  //update the requests
   try {
     const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
@@ -267,9 +263,13 @@ async function saveChanges(id) {
   }
 }
 
-
 //if they close the popup - this function hides it for us
 function closePopup() {
   document.getElementById('detailsModal').classList.add('hidden');
 }
 
+export { saveChanges, closePopup, openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop, setupStaffSearch, updateStaffDropdown, clearStaffDropdown };
+
+window.saveChanges = saveChanges;
+window.openPopup = openPopup;
+window.closePopup = closePopup;

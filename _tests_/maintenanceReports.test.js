@@ -1,5 +1,5 @@
 // //get the file
-require('./copies/maintenanceReportsCopy');
+require('../src/maintenance/maintenanceReports');
 /**
  * @jest-environment jsdom
  */
@@ -18,8 +18,8 @@ describe('Form submission', () => {
       <option value="Issue 2">Issue 2</option>
     </select>
     <textarea id="description" placeholder="Enter description"></textarea>
-    <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
-    <button type="submit">Submit</button>
+    <input id="venueInput" placeholder="Search by venue" data-venue-id="" value="Room 101" />
+    <button type="submit" id="submitBtn">Submit</button>
     <div id="venue-dropdown" class="hidden"></div>
   </form>
 `;
@@ -53,7 +53,7 @@ describe('Form submission', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      await fetch('http://localhost:3000/api/maintenanceRequests', {
+      await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ describe('Form submission', () => {
     // Verify fetch was called
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:3000/api/maintenanceRequests',
+        'https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests',
         expect.any(Object) 
       );
     });
@@ -91,8 +91,8 @@ test('Displays an alert if venue is not selected correctly', async () => {
         <option value="Issue 2">Issue 2</option>
       </select>
       <textarea id="description" placeholder="Enter description"></textarea>
-      <input id="venueInput" placeholder="Venue" data-venue-id="" value="Room 101" />
-      <button type="submit">Submit</button>
+      <input id="venueInput" placeholder="Search by venue" data-venue-id="" value="Room 101" />
+      <button type="submit" id="submitBtn">Submit</button>
       <div id="venue-dropdown" class="hidden"></div>
     </form>
   `;
@@ -129,9 +129,10 @@ describe('Venue Dropdown Functionality', () => {
   let venueDropdown, venueInput;
 
   beforeEach(() => {
-    require('./copies/maintenanceReportsCopy');
+    require('../src/maintenance/maintenanceReports');
+    
     document.body.innerHTML = `
-    <input type="text" id="venue-input" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md" required>
+    <input type="text" id="venue-input" placeholder="Search by venue" class="block w-full mt-1 p-2 border rounded-md" required>
     <select id="venue-dropdown" class="hidden w-full mt-1 p-2 border rounded-md" innerHTML=""></select>
   `;
   
