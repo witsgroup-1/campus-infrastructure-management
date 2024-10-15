@@ -73,6 +73,10 @@ function renderBookings() {
             const bookingBox = document.createElement('div');
             bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
+            const infoWrapper = document.createElement('div');
+            infoWrapper.className = 'flex items-center justify-between w-full flex-wrap';
+
+
             const bookingInfo = document.createElement('div');
             bookingInfo.className = 'flex-shrink-0';
             bookingInfo.innerHTML = `
@@ -84,7 +88,7 @@ function renderBookings() {
             const actionButtons = document.createElement('div');
             actionButtons.className = 'flex flex-row space-x-2';
 
-            // Status button
+           
             const bookButton = document.createElement('button');
             bookButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
             bookButton.textContent = 'Status';
@@ -170,7 +174,9 @@ function renderBookings() {
             };
             actionButtons.appendChild(editButton);
 
-            bookingBox.appendChild(actionButtons);
+            infoWrapper.appendChild(bookingInfo);
+            infoWrapper.appendChild(actionButtons);
+            bookingBox.appendChild(infoWrapper);
             container.appendChild(bookingBox);
         });
 
