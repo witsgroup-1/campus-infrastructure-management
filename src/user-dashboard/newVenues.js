@@ -333,6 +333,8 @@ document.getElementById('nextPage').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('loader');
+    loader.style.display = "block";
     onAuthStateChanged(auth, async (user) => {
         if (user) {
            
@@ -344,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('User is signed out');
             //window.location.href = '../login/login.html'
         }
+        loader.style.display = "none";
     });
     const closeButton = document.getElementById('closeButton');
     closeButton.onclick = closeModal;
