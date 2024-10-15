@@ -1,5 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getFirestore,collection, getDocs} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, collection, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -12,6 +14,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
 //show more info on desktop, add book button, info hide on mobile.
@@ -44,6 +47,7 @@ function getCurrentDate() {
 
 
 
+
 const venuesPerPage = 10; 
 let currentPage = 1; 
 let availableVenues = [];
@@ -64,14 +68,61 @@ function getNextSlot() {
     return null;
 }
 
-async function fetchAvailableVenues() {
+function getAllowedCategories(userData) {
+    const role = userData.role || '';
+    const isTutor = userData.isTutor || false;
+    const isLecturer = userData.isLecturer || false;
+
+    const categoryMapping = {
+        'Student': {
+            default: ['Study Room'],
+            isTutor: ['Study Room', 'Tutorial Room'],
+            isLecturer: ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+        },
+        'Staff': {
+            isLecturer: ['Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+            default: ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+        }
+    };
+
+    if (role in categoryMapping) {
+        if (isTutor) return categoryMapping[role].isTutor || categoryMapping[role].default;
+        if (isLecturer) return categoryMapping[role].isLecturer || categoryMapping[role].default;
+        return categoryMapping[role].default;
+    }
+
+    return [];
+}
+
+async function fetchUserData(uid) {
+    const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${uid}`; // Include uid in the URL
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY 
+            }
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+    return null; // Return null if there was an error or not found
+}
+
+async function fetchAvailableVenues(userData) {
     try {
         const venuesCollectionRef = collection(db, 'venues');
         const venuesSnapshot = await getDocs(venuesCollectionRef);
         const availableVenues = [];
         const currentDate = getCurrentDate();
         const nextSlot = getNextSlot();
-        
+
         if (!nextSlot) {
             console.log('No more slots available for today.');
             return availableVenues;
@@ -86,6 +137,9 @@ async function fetchAvailableVenues() {
         const nextSlotEndTime = new Date();
         nextSlotEndTime.setHours(nextSlotEndHour, nextSlotEndMinute, 0, 0);
         
+       
+        const allowedCategories = getAllowedCategories(userData);
+
         const venuePromises = venuesSnapshot.docs.map(async (venueDoc) => {
             const venueData = venueDoc.data();
             const bookingsCollectionRef = collection(db, 'venues', venueDoc.id, currentDate);
@@ -96,14 +150,19 @@ async function fetchAvailableVenues() {
                 const bookingStartTime = new Date(booking.startTime.seconds * 1000);
                 const bookingEndTime = new Date(booking.endTime.seconds * 1000);
 
-                // Only consider bookings that overlap with or are after the nextSlot
+               
                 const isOverlap = (bookingStartTime < nextSlotEndTime && bookingEndTime > nextSlotStartTime);
                 
                 return isOverlap; 
             });
 
-            if (!isBooked) {
+           
+            const isAllowedCategory = allowedCategories.includes(venueData.Category);
+            
+            
+            if (!isBooked && isAllowedCategory) {
                 availableVenues.push({
+                    id: venueDoc.id, 
                     Name: venueData.Name,
                     Capacity: venueData.Capacity,
                     Features: venueData.Features || [],
@@ -129,7 +188,11 @@ function createVenueElement(venue) {
     const venueElement = document.createElement('div');
     venueElement.classList.add('venue-container', 'bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow', 'flex', 'justify-between');
 
+   
+    venueElement.setAttribute('data-venue-id', venue.id); 
+
     const infoButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>`;
+    const bookButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded book-button">Book</button>`;
 
     const venueDetails = `
         <div class="venue-details">
@@ -142,10 +205,14 @@ function createVenueElement(venue) {
             <p class="font-semibold">${venue.Name}</p>
             <p>Capacity: ${venue.Capacity}</p>
             ${infoButton}
+            ${bookButton}
         </div>
         ${venueDetails}`;
 
     const infoButtonElement = venueElement.querySelector('.info-button');
+    const bookButtonElement = venueElement.querySelector('.book-button');
+
+  
     infoButtonElement.addEventListener('click', () => {
         const isMobile = window.innerWidth < 768;
 
@@ -156,8 +223,15 @@ function createVenueElement(venue) {
         }
     });
 
+    bookButtonElement.addEventListener('click', () => {
+        const venueId = venueElement.getAttribute('data-venue-id');
+        window.location.href = `../make-booking/booking-details.html?bookingId=${venueId}`;
+    });
+
     return venueElement;
 }
+
+
 
 function showVenueFeatures(features) {
     const modalTitle = document.getElementById('modalTitle');
@@ -231,17 +305,17 @@ function displayVenues(page) {
     document.getElementById('nextPage').disabled = end >= availableVenues.length;
 }
 
-async function populateVenues() {
+async function populateVenues(userData) {
     const loader = document.getElementById('loader');
     loader.style.display = "block";
 
-    availableVenues = await fetchAvailableVenues();
+    availableVenues = await fetchAvailableVenues(userData); // Pass userData here
     loader.style.display = "none";
 
-  
     currentPage = 1;
     displayVenues(currentPage);
 }
+
 
 
 document.getElementById('prevPage').addEventListener('click', () => {
@@ -259,7 +333,23 @@ document.getElementById('nextPage').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    populateVenues();
+    const loader = document.getElementById('loader');
+    loader.style.display = "block";
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+           
+            const userData = await fetchUserData(user.uid); 
+    
+            await populateVenues(userData);
+        } else {
+            // User is signed out
+            console.log('User is signed out');
+            //window.location.href = '../login/login.html'
+        }
+        loader.style.display = "none";
+    });
     const closeButton = document.getElementById('closeButton');
     closeButton.onclick = closeModal;
 });
+
+const API_KEY = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";
