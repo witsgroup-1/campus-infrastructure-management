@@ -137,7 +137,7 @@ async function fetchAvailableVenues(userData) {
         const nextSlotEndTime = new Date();
         nextSlotEndTime.setHours(nextSlotEndHour, nextSlotEndMinute, 0, 0);
         
-        // Get allowed categories based on user data
+       
         const allowedCategories = getAllowedCategories(userData);
 
         const venuePromises = venuesSnapshot.docs.map(async (venueDoc) => {
@@ -150,18 +150,19 @@ async function fetchAvailableVenues(userData) {
                 const bookingStartTime = new Date(booking.startTime.seconds * 1000);
                 const bookingEndTime = new Date(booking.endTime.seconds * 1000);
 
-                // Only consider bookings that overlap with or are after the nextSlot
+               
                 const isOverlap = (bookingStartTime < nextSlotEndTime && bookingEndTime > nextSlotStartTime);
                 
                 return isOverlap; 
             });
 
-            // Check if the venue's category is allowed
+           
             const isAllowedCategory = allowedCategories.includes(venueData.Category);
             
-            // Only add venue if it is not booked and is in allowed categories
+            
             if (!isBooked && isAllowedCategory) {
                 availableVenues.push({
+                    id: venueDoc.id, 
                     Name: venueData.Name,
                     Capacity: venueData.Capacity,
                     Features: venueData.Features || [],
@@ -187,6 +188,9 @@ function createVenueElement(venue) {
     const venueElement = document.createElement('div');
     venueElement.classList.add('venue-container', 'bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow', 'flex', 'justify-between');
 
+   
+    venueElement.setAttribute('data-venue-id', venue.id); 
+
     const infoButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>`;
     const bookButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded book-button">Book</button>`;
 
@@ -207,6 +211,8 @@ function createVenueElement(venue) {
 
     const infoButtonElement = venueElement.querySelector('.info-button');
     const bookButtonElement = venueElement.querySelector('.book-button');
+
+  
     infoButtonElement.addEventListener('click', () => {
         const isMobile = window.innerWidth < 768;
 
@@ -217,8 +223,15 @@ function createVenueElement(venue) {
         }
     });
 
+    bookButtonElement.addEventListener('click', () => {
+        const venueId = venueElement.getAttribute('data-venue-id');
+        window.location.href = `../make-booking/booking-details.html?bookingId=${venueId}`;
+    });
+
     return venueElement;
 }
+
+
 
 function showVenueFeatures(features) {
     const modalTitle = document.getElementById('modalTitle');
