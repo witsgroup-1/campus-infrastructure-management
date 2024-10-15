@@ -6,10 +6,10 @@
     --text-color: #2c3e50;
   }
 
-  #sidebar {
+#sidebar {
     position: fixed;
     top: 0;
-    left: 0; /* Move sidebar to the left */
+    right: 0;
     height: 100%;
     width: 0;
     background-color: #003B5C;
@@ -20,17 +20,20 @@
 }
 
 #sidebar.open {
-    width: 30%;
+    width: 30%; 
 }
 
+
 #close-btn {
-    position: absolute;
+    position: absolute; 
     top: 0;
-    right: 1rem; /* Keep the close button on the right of the sidebar */
-    font-size: 2rem;
-    color: white;
-    background: none;
-    border: none;
+    left: 50%;
+    transform: translateX(-50%); 
+    margin-top: 1rem; 
+    font-size: 2rem; 
+    color: white; 
+    background: none; 
+    border: none; 
     cursor: pointer;
 }
 
@@ -180,8 +183,5 @@ h2:hover {
     color: white; /* Change text color on hover */
 }
 
-.flex.items-center.space-x-2 {
-  margin-left: 1rem; /* Optional: Adjusts the margin from the left edge */
-}
 
   
