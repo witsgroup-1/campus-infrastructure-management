@@ -105,7 +105,13 @@
     <section id="bookingsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
        
     </section>
-    <div id="loadingIndicator" class="hidden absolute inset-0 flex justify-center items-center bg-gray-100 bg-opacity-70">
+    <div id="paginationControls" class="flex justify-center mt-4">
+        <button id="prevPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" disabled>Previous</button>
+        <span id="pageInfo" class="mx-2">Page 1</span>
+        <button id="nextPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Next</button>
+    </div>
+
+    <div id="loadingIndicator" class="hidden absolute inset-0 flex justify-center items-center bg-gray-100 bg-opacity-100">
         <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#917248]"></div>
     </div>
 
