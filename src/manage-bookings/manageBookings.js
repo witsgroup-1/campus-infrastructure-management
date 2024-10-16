@@ -1,10 +1,56 @@
 
-
 let bookings=[];
 let venues=[];
 // API URLs
 const bookingsUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/bookings';  
 const venuesUrl = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';  
+
+function formatDateString(dateString) {
+    // Split the input string to get month, day, and year
+    const [month, day, year] = dateString.split('/').map(Number);
+    
+    // Create a Date object (note: months are 0-indexed in JS)
+    const date = new Date(year, month - 1, day);
+    
+    // Define an array of month names
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    
+    // Format the date into the desired output
+    return `${day} ${monthNames[month - 1]} ${year}`;
+}
+
+function convertToLocalTimeString(timestamp) {
+    let date;
+
+    if (timestamp && typeof timestamp === 'object' && timestamp.seconds !== undefined) {
+        // Firestore timestamp format
+        date = new Date(timestamp.seconds * 1000);
+    } else if (typeof timestamp === 'string' || timestamp instanceof Date) {
+        // Convert ISO string or Date object to Date
+        date = new Date(timestamp);
+    } else {
+        console.error('Invalid timestamp format:', timestamp);
+        return null; // or throw an error
+    }
+
+    // Specify options for formatting
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Set to true for 12-hour format
+    };
+
+    // Return the local time string formatted according to the specified options
+    return date.toLocaleString(undefined, options); // 'undefined' uses the default locale
+}
+
 
 // Fetch venues from the API
 function fetchVenues() {
@@ -95,61 +141,86 @@ function renderBookings() {
 
   // Create booking boxes
   filteredBookings.forEach(booking => {
-      const roomInfo = getRoomInfo(booking.venueId); // Get room info
-      if (roomInfo) {
-          const bookingBox = document.createElement('div');
-          bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
+    const roomInfo = getRoomInfo(booking.venueId); // Get room info
+    if (roomInfo) {
+        const bookingBox = document.createElement('div');
+        bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
-          // Room Info
-          const roomDetails = document.createElement('div');
-          roomDetails.className = 'flex-shrink-0';
-          roomDetails.innerHTML = `
-              <h2 class="text-lg font-semibold">${roomInfo.Name}</h2>
-              <p class="text-sm text-gray-600">Type: ${roomInfo.Category}</p>
-              <p class="text-sm text-gray-600">Date: ${booking.date}</p>
-              <p class="text-sm text-gray-600">Time: ${booking.start_time} - ${booking.end_time}</p>
-              <p class="text-sm text-gray-600">Purpose: ${booking.purpose}</p>
-              <p class="text-sm text-gray-600 font-semibold">Status: ${booking.status}</p>
-          `;
-          bookingBox.appendChild(roomDetails);
+        // Use the convertToLocalTimeString function to get formatted times
+        const start_time_string = convertToLocalTimeString(booking.start_time);
+        const end_time_string = convertToLocalTimeString(booking.end_time);
+        const date_time_string =convertToLocalTimeString(booking.date)
 
-          const actionButtons = document.createElement('div');
-          actionButtons.className = 'flex flex-row space-x-2';
+        // Debugging log
+        console.log('Start Time:', start_time_string);
+        console.log('End Time:', end_time_string);
+        console.log(`Date: ${date_time_string}`);
 
-          // Only add the edit button
-          if (booking.status.toLowerCase() != "pending") {
-              const editButton = document.createElement('button');
-              editButton.className = 'bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
-              editButton.textContent = 'Edit';
-              editButton.onclick = () => editBooking(booking.id);
-              actionButtons.appendChild(editButton);
-          }
+        // // Format booking date
+        // let date = new Date(booking.date);
+        // let year = date.getFullYear(); // Get the year
+        // let month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero
+        // let day = String(date.getDate()).padStart(2, '0'); // Add leading zero
 
-          // Adding cancel, accept, and reject buttons based on booking status
-          if (booking.status.toLowerCase() === 'confirmed' || booking.status.toLowerCase()==='accepted' ||booking.status.toLowerCase()==='approved') {
-              const cancelButton = document.createElement('button');
-              cancelButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
-              cancelButton.textContent = 'Cancel';
-              cancelButton.onclick = () => cancelBooking(booking.id);
-              actionButtons.appendChild(cancelButton);
-          } else if (booking.status.toLowerCase() === 'pending') {
-              const acceptButton = document.createElement('button');
-              acceptButton.className = 'bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 focus:outline-none';
-              acceptButton.textContent = 'Accept';
-              acceptButton.onclick = () => acceptBooking(booking.id);
-              actionButtons.appendChild(acceptButton);
+        // // Logging formatted date
+        // console.log(`Formatted Date: ${year}-${month}-${day}`); // Output format: YYYY-MM-DD
 
-              const rejectButton = document.createElement('button');
-              rejectButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
-              rejectButton.textContent = 'Reject';
-              rejectButton.onclick = () => rejectBooking(booking.id);
-              actionButtons.appendChild(rejectButton);
-          }
+        // Room Info
+        const roomDetails = document.createElement('div');
+        roomDetails.className = 'flex-shrink-0';
+        roomDetails.innerHTML = `
+            <h2 class="text-lg font-semibold">${roomInfo.Name}</h2>
+            <p class="text-sm text-gray-600">Type: ${roomInfo.Category}</p>
+            <p class="text-sm text-gray-600">Date: ${formatDateString(date_time_string.substring(0, 10))}</p>
+            <p class="text-sm text-gray-600">Time: ${start_time_string.substring(12,17)} - ${end_time_string.substring(12,17)}</p>
+            <p class="text-sm text-gray-600">Purpose: ${booking.purpose}</p>
+            <p class="text-sm text-gray-600 font-semibold">Status: ${booking.status}</p>
+        `;
 
-          bookingBox.appendChild(actionButtons);
-          container.appendChild(bookingBox);
-      }
-  });
+        // Append room details to booking box
+        bookingBox.appendChild(roomDetails);
+
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'flex flex-row space-x-2';
+
+        // Only add the edit button
+        if (booking.status.toLowerCase() != "pending") {
+            const editButton = document.createElement('button');
+            editButton.className = 'bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
+            editButton.textContent = 'Edit';
+            editButton.setAttribute('data-action', 'edit');  // Add a data attribute for reference
+            editButton.onclick = () => editBooking(booking.id);
+            actionButtons.appendChild(editButton);
+        }
+
+        // Adding cancel, accept, and reject buttons based on booking status
+        if (booking.status.toLowerCase() === 'confirmed' || booking.status.toLowerCase() === 'accepted' || booking.status.toLowerCase() === 'approved') {
+            const cancelButton = document.createElement('button');
+            cancelButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
+            cancelButton.textContent = 'Cancel';
+            cancelButton.setAttribute('data-action', 'cancel');
+            cancelButton.onclick = () => cancelBooking(booking.id);
+            actionButtons.appendChild(cancelButton);
+        } else if (booking.status.toLowerCase() === 'pending') {
+            const acceptButton = document.createElement('button');
+            acceptButton.className = 'bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 focus:outline-none';
+            acceptButton.textContent = 'Accept';
+            acceptButton.setAttribute('data-action', 'accept');
+            acceptButton.onclick = () => acceptBooking(booking.id);
+            actionButtons.appendChild(acceptButton);
+
+            const rejectButton = document.createElement('button');
+            rejectButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 focus:outline-none';
+            rejectButton.textContent = 'Reject';
+            rejectButton.onclick = () => rejectBooking(booking.id);
+            actionButtons.appendChild(rejectButton);
+        }
+
+        bookingBox.appendChild(actionButtons);
+        container.appendChild(bookingBox);
+    }
+});
+
 }
 
 

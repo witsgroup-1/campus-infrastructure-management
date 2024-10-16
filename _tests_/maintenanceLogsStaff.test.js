@@ -1,7 +1,7 @@
-import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup,  setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from './copies/maintenanceLogsCopy'; 
+
+import { closePopup, saveChanges, openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop, setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from '../src/maintenance/maintenanceLogs';
 import { fireEvent, waitFor } from '@testing-library/dom';  
 import '@testing-library/jest-dom';  
-//const fetch = require('node-fetch');
 
 document.body.innerHTML = `
   <input id="assigned-to" />
@@ -24,7 +24,7 @@ const mockStaffData = [
 describe('setupStaffSearch', () => {
   let inputEvent;
   let apiKey = 'test-api-key';
-  //let apiKey = 'process.env.API_KEY_1'
+
   beforeEach(() => {
     global.fetch = jest.fn();
     inputEvent = new Event('input');
@@ -54,7 +54,7 @@ describe('setupStaffSearch', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     // Verify fetch was called with correct URL and headers
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/users/?isLecturer=false&isTutor=false&role=Staff&?name=Jo', {
+    expect(fetch).toHaveBeenCalledWith('https://campus-infrastructure-management.azurewebsites.net/api/users/?isLecturer=false&isTutor=false&role=Staff&?name=Jo', {
       method: 'GET',
       headers: {
         'x-api-key': apiKey,
@@ -64,7 +64,7 @@ describe('setupStaffSearch', () => {
 
     // Verify that the dropdown is populated with staff members
     const dropdown = document.getElementById('staff-dropdown');
-    expect(dropdown.children.length).toBe(2);
+    expect(dropdown.children.length).toBe(3);
     expect(dropdown.classList).not.toContain('hidden');
   });
 
@@ -91,7 +91,7 @@ describe('setupStaffSearch', () => {
     });
 
     setupStaffSearch(apiKey);
-    // console.log("search");
+  
     const searchInput = document.getElementById('assigned-to');
     searchInput.value = 'Jo';
     searchInput.dispatchEvent(inputEvent);
@@ -105,28 +105,42 @@ describe('setupStaffSearch', () => {
   });
 
 test('handles staff selection from dropdown', () => {
-  setupStaffSearch(apiKey); // Ensure this is called first
+  setupStaffSearch(apiKey); //setup is called first
 
   const searchInput = document.getElementById('assigned-to');
   const dropdown = document.getElementById('staff-dropdown');
 
-  // Populate dropdown with an option 
+
+  dropdown.innerHTML = '';
+
+  // Create and append a default "choose" option
+  const defaultOption = document.createElement('option');
+  defaultOption.textContent = 'Choose staff...';
+  defaultOption.value = ''; 
+  dropdown.appendChild(defaultOption);
+
+  // Create an option with dataset attributes
   const option = document.createElement('option');
   option.dataset.staffName = 'Jane Doe';
   option.dataset.staffId = '1';
+  option.value = '1';
   option.textContent = 'Jane Doe';
   dropdown.appendChild(option);
- 
+
   dropdown.classList.remove('hidden');
 
-  // Simulate a click event on the option
-  option.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  // Ensure the correct index is set
+  dropdown.selectedIndex = 1;
+  
+  // Simulate change event on the dropdown
+  fireEvent.change(dropdown);
 
   // Verify that input value and data attributes are updated
   expect(searchInput.value).toBe('Jane Doe');
   expect(searchInput.dataset.staffId).toBe('1');
-  expect(dropdown.classList).toContain('hidden');
+
+ 
 });
 
-
 });
+

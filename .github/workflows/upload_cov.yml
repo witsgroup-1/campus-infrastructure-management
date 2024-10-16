@@ -20,9 +20,18 @@ jobs:
       - name: Install dependencies
         run: npm install
         
-        #maybe better to type npm run test npx jest --coverage
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      
+      - name: Create coverage directory
+        run: mkdir -p .nyc_output
+
       - name: Run tests
         run: npm run test --if-present
+
+      - name: Run Playwright tests
+        run: npm run test:playwright
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4

@@ -125,3 +125,8 @@ label {
     background-color:var(--witsGold);
 }
 
+p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+

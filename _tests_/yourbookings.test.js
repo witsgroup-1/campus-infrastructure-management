@@ -154,7 +154,6 @@ describe('renderDesktopBookings', () => {
       renderPaginationControls(bookings, 1, 5, document.getElementById('scheduled-content'), 'desktop', 'upcoming');
       const container = document.getElementById('scheduled-content');
       
-      // Check that 'Previous' and 'Next' buttons are in the DOM
       expect(container.innerHTML).toContain('<div class=\"pagination-controls mt-4 flex justify-between\"><button class=\"bg-gray-400 text-white px-4 py-2 rounded\" disabled=\"\"></button><button class=\"bg-gray-400 text-white px-4 py-2 rounded\"></button></div>');
       expect(container.innerHTML).toContain('<div class=\"pagination-controls mt-4 flex justify-between\"><button class=\"bg-gray-400 text-white px-4 py-2 rounded\" disabled=\"\"></button><button class=\"bg-gray-400 text-white px-4 py-2 rounded\"></button></div>');
     });
@@ -165,7 +164,6 @@ describe('renderDesktopBookings', () => {
       const prevButton = document.querySelector('button:first-of-type');
       
       // Ensure the 'Previous' button is disabled
-      //expect(prevButton).toBeTruthy();
       expect(prevButton.disabled).toBe(true);
       expect(prevButton.innerText).toBe('Previous');
     });
@@ -176,7 +174,7 @@ describe('renderDesktopBookings', () => {
       const nextButton = document.querySelector('button:last-of-type');
       
       // Ensure the 'Next' button is disabled
-      //expect(nextButton).toBeTruthy();
+    
       //expect(nextButton.disabled).toBe(true);
       //expect(nextButton.innerText).toBe('Next');
     });

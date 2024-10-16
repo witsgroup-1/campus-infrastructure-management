@@ -1,87 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="origin">
-    <title>Login Page</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Custom styles for background image */
-        .background-image {
-            background-image: url('wss.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            width: 100vw;
-        }
-    </style>
+  <!-- Your existing head content -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="origin">
+  <title>Login Page</title>
+  <link rel="icon" href="../logo.png" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Custom styles for background image */
+
+    :root {
+    --witsBlue: #003B5C;
+    --witsGold: #917248;
+    --projectGrey: #D9D9D9;
+    --projectWhite: white;
+    --text-color: #2c3e50;
+}
+    .background-image {
+      background-image: url('wss.jpg');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #checkHere {
+    color: var(--witsGold) !important;
+    text-decoration: none !important;
+}
+
+#statuscheck {
+  text-align: center;
+    font-size: 14px !important;
+    color: var(--witsBlue) !important;
+}
+
+
+  </style>
 </head>
 <body class="background-image">
 
-    <button class="absolute top-4 left-4 bg-white rounded-full shadow-md p-3 hover:bg-gray-200" onclick="window.location.href='../landingPage/landingPage.html'">
-        <i class="fa-solid fa-chevron-left fa-2x"></i>
-    </button>
+  <button class="absolute top-4 left-4 bg-white rounded-full shadow-md p-3 hover:bg-gray-200" onclick="window.location.href='../landingPage/landingPage.html'">
+    <i class="fa-solid fa-chevron-left fa-2x"></i>
+  </button>
 
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-white p-10 rounded-lg shadow-lg max-w-md w-full bg-opacity-90">
-            <h1 class="text-2xl font-extrabold text-[#003B5C] mb-6 text-center tracking-wide">
-                Campus Infrastructure Management
-            </h1>
-            
-            <img src="wits_logo.png" alt="Wits Logo" class="mx-auto mb-8 h-20 w-15">
-            
-            <form id="login-form" class="space-y-4">
-                <!-- Note to the user -->
-                <div class="text-sm text-gray-600 bg-yellow-100 p-3 rounded-md">
-                    <p>If you're using a whitelisted non-Wits email, proceed with the form to sign in. If you have a Wits email, please sign in using Google below.</p>
-                </div>
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full bg-opacity-90">
+      <h1 class="text-2xl font-extrabold text-[#003B5C] mb-4 text-center tracking-wide">
+        Campus Infrastructure Management
+      </h1>
+      
+      <img src="wits_logo.png" alt="Wits Logo" class="mx-auto mb-4 h-20 w-15">
 
-                <div class="space-y-2">
-                    <label for="email" class="block text-left font-semibold text-gray-700">Email</label>
-                    <input type="email" id="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+      <!-- Tabs -->
+      <div class="mb-6">
+        <div class="flex">
+          <button id="witsTab" class="flex-1 text-center py-2 px-4 font-semibold text-gray-700 border-b-2 border-blue-500">
+            Wits Email Users
+          </button>
+          <button id="nonWitsTab" class="flex-1 text-center py-2 px-4 font-semibold text-gray-700 border-b-2 border-transparent hover:border-gray-300">
+            Approved Non-Wits Users
+          </button>
+        </div>
+      </div>
 
-                <div class="space-y-2 relative">
-                    <label for="password" class="block text-left font-semibold text-gray-700">Password</label>
-                    <input type="password" id="password" name="password" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10">
-                    <i class="fa fa-eye toggle-password absolute right-3 top-9 cursor-pointer text-gray-600" id="togglePassword"></i>
-                </div>
-                
-                <!-- Button with custom colors -->
-                <button id="login" type="submit" class="w-full bg-[#917248] text-white font-bold py-3 rounded-lg hover:bg-[#7d6239]">Sign in</button>
-            </form>
-            <div id="status-message" class="status-message"></div> 
-          
-            <div class="flex justify-center mt-4">
-                <img src="google_logo.png" alt="Google Login" class="w-8 cursor-pointer" id="googleLogin">
+      <!-- Content -->
+      <div id="tabContent">
+        <!-- Wits Email Users Content -->
+        <div id="witsContent">
+          <!-- Note to the user -->
+          <div class="text-sm text-gray-600 bg-yellow-100 p-3 rounded-md mb-4">
+            <p class="text-center font-semibold">Sign in using your Wits email account.</p>
+          </div>
+
+          <!-- Google Sign-In Button -->
+          <div class="flex justify-center">
+            <button id="googleLogin" class="w-full bg-white border border-gray-300 rounded-lg flex items-center justify-center p-3 hover:bg-gray-100">
+              <div class="mr-3">
+                <!-- Google SVG Icon -->
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59L2.56 13.22C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91L2.56 34.78C6.51 42.62 14.62 48 24 48z"/>
+                  <path fill="none" d="M0 0h48v48H0z"/>
+                </svg>
+              </div>
+              <span class="text-gray-700 font-medium">Sign in with Google</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Whitelisted Non-Wits Users Content -->
+        <div id="nonWitsContent" class="hidden">
+          <!-- Note to the user -->
+          <div class="text-sm text-gray-600 bg-yellow-100 p-3 rounded-md mb-4">
+            <p class="text-center font-semibold">Sign in using your registered email and password.</p>
+          </div>
+         
+          <form id="login-form" class="space-y-4">
+            <div class="space-y-2">
+              <label for="email" class="block text-left font-semibold text-gray-700">Email</label>
+              <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div class="space-y-2 relative">
+              <label for="password" class="block text-left font-semibold text-gray-700">Password</label>
+              <input type="password" id="password" name="password" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10">
+              <i class="fa fa-eye toggle-password absolute right-3 top-9 cursor-pointer text-gray-600" id="togglePassword"></i>
             </div>
             
-   
-
+            <!-- Sign-in Button -->
+            <button id="login" type="submit" class="w-full bg-[#917248] text-white font-bold py-2 rounded-lg hover:bg-[#7d6239]">Sign in</button>
+          <!-- Request to be Whitelisted Button -->
+<div class="flex justify-center mt-4">
+    <button id = "requestWhitelist" class="w-full bg-white border border-gray-300 rounded-lg p-3 hover:bg-gray-100 text-gray-700 font-medium text-center" 
+      onclick="window.location.href='../requestWhitelist/requestWhitelist.html'">
+      Request Approval
+    </button>
+  </div>
+  <p id="statuscheck">Sent in a request? <a id ="checkHere" href="../requestWhitelist/statusCheck.html">Check status here.</a></p>
+</form>
         </div>
+      </div>
+
+      <div id="status-message" class="status-message mt-4 text-center text-red-600"></div> 
     </div>
+  </div>
 
-    <script>
-      const togglePassword = document.querySelector('#togglePassword');
-      const passwordInput = document.querySelector('#password');
+  <!-- Your existing scripts -->
+  <script>
+    // Tab functionality
+    const witsTab = document.getElementById('witsTab');
+    const nonWitsTab = document.getElementById('nonWitsTab');
+    const witsContent = document.getElementById('witsContent');
+    const nonWitsContent = document.getElementById('nonWitsContent');
 
-      togglePassword.addEventListener('click', function () {
-          // Toggle the type attribute
-          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-          passwordInput.setAttribute('type', type);
-          
-          // Toggle the eye / eye-slash icon
-          this.classList.toggle('fa-eye-slash');
-      });
-    </script>
-    <script type="module" src="login.js"></script>
+    witsTab.addEventListener('click', () => {
+      witsTab.classList.add('border-blue-500');
+      nonWitsTab.classList.remove('border-blue-500');
+      witsContent.classList.remove('hidden');
+      nonWitsContent.classList.add('hidden');
+    });
 
-    <!-- Include Firebase SDK script before using Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    nonWitsTab.addEventListener('click', () => {
+      nonWitsTab.classList.add('border-blue-500');
+      witsTab.classList.remove('border-blue-500');
+      nonWitsContent.classList.remove('hidden');
+      witsContent.classList.add('hidden');
+    });
+
+    // Toggle password visibility
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordInput = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+  </script>
+  <script type="module" src="login.js"></script>
+
+  <!-- Include Firebase SDK script before using Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
 
 </body>
 </html>

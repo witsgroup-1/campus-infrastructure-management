@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link rel="icon" href="../logo.png" type="image/png">
     <link rel="stylesheet" href="adminDashboard.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -192,7 +193,7 @@
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2); // Subtract 2 days (48 hours)
 
         return requests.filter(request => {
-            const createdAt = new Date(request.createdAt.seconds * 1000); // Assuming createdAt is a Firestore timestamp
+            const createdAt = new Date(request.createdAt.seconds * 1000); 
             return createdAt >= twoDaysAgo;
         });
     }

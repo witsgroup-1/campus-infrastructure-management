@@ -1,10 +1,10 @@
-// Array to hold venues data (mock or fetched)
+
 let bookings = [];
 
-// API URL
-const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';  // Replace with your actual API URL
 
-// Fetch venues from the API with API key in headers
+const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';
+
+
 fetch(url, {
     method: 'GET',
     headers: {
@@ -19,23 +19,23 @@ fetch(url, {
     return response.json();
   })
   .then(data => {
-    bookings = data;  // Store fetched venues in the bookings array
+    bookings = data; 
     console.log(bookings);
-    renderBookings();  // Render bookings after fetching data
+    renderBookings();  
   })
   .catch(error => {
     console.error('Error fetching venues:', error);
   });
 
-// Function to render bookings (i.e., venues) based on current filters
+
 export function renderBookings() {
     const container = document.getElementById('bookingsContainer');
-    container.innerHTML = ''; // Clear existing bookings
+    container.innerHTML = ''; 
 
     const categoryFilter = document.getElementById('roomFilter').value;
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
-    // Filter bookings based on selected filters and search query
+   
     const filteredBookings = bookings.filter(booking => {
         const matchesCategory = categoryFilter ? booking.Category === categoryFilter : true;
         const matchesSearch = booking.Name && booking.Name.toLowerCase().includes(searchQuery);
@@ -48,12 +48,12 @@ export function renderBookings() {
         return;
     }
 
-    // Create booking boxes
+   
     filteredBookings.forEach(booking => {
         const bookingBox = document.createElement('div');
         bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
-        // Booking Info
+        
         const bookingInfo = document.createElement('div');
         bookingInfo.className = 'flex-shrink-0';
         bookingInfo.innerHTML = `
@@ -62,7 +62,7 @@ export function renderBookings() {
         `;
         bookingBox.appendChild(bookingInfo);
 
-        // Action Buttons
+       
         const actionButtons = document.createElement('div');
         actionButtons.className = 'flex flex-row space-x-2';
 
@@ -90,7 +90,6 @@ export function renderBookings() {
     });
 }
 
-// Attach event listeners outside of the renderBookings function
 document.addEventListener('DOMContentLoaded', () => {
     const roomFilter = document.getElementById('roomFilter');
     const searchInput = document.getElementById('searchInput');
@@ -107,4 +106,3 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBookings();
 });
 
-//module.exports = { renderBookings };

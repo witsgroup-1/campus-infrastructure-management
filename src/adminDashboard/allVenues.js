@@ -6,6 +6,10 @@ let bookings = [];
 const db = new FirebaseConfig().getFirestoreInstance();
 const url = 'https://campus-infrastructure-management.azurewebsites.net/api/venues';
 
+
+
+toggleLoading(true);
+
 fetch(url, {
     method: 'GET',
     headers: {
@@ -20,42 +24,52 @@ fetch(url, {
     return response.json();
   })
   .then(data => {
-    bookings = data;  // Store fetched venues in the bookings array
-    console.log(bookings);
-    renderBookings();  // Render bookings after fetching data
+    bookings = data; 
+    renderBookings();
   })
   .catch(error => {
     console.error('Error fetching venues:', error);
-  });
-
-
-  function renderBookings() {
     const container = document.getElementById('bookingsContainer');
-    const loader = document.getElementById('loader');
+    container.innerHTML = '<p class="text-center text-red-500">Error fetching venues. Please try again.</p>';
+});
 
-   
-    loader.style.display = "block";
-    container.innerHTML = ''; 
+const venuesPerPage = 10; 
+let currentPage = 1
 
+function renderBookings() {
+    const container = document.getElementById('bookingsContainer');
     const categoryFilter = document.getElementById('roomFilter').value;
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
-    
     const filteredBookings = bookings.filter(booking => {
         const matchesCategory = categoryFilter ? booking.Category === categoryFilter : true;
         const matchesSearch = booking.Name && booking.Name.toLowerCase().includes(searchQuery);
         return matchesCategory && matchesSearch;
     });
 
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(filteredBookings.length / venuesPerPage);
+
+    // Ensure currentPage is within bounds
+    if (currentPage > totalPages) {
+        currentPage = totalPages;
+    } else if (currentPage < 1) {
+        currentPage = 1;
+    }
+
+    const paginatedBookings = filteredBookings.slice(
+        (currentPage - 1) * venuesPerPage, 
+        currentPage * venuesPerPage
+    );
+
     setTimeout(() => {
-        loader.style.display = "none";
-        
-        if (filteredBookings.length === 0) {
-            container.innerHTML = '<p class="text-center text-gray-500">No venues found.</p>';
-            return;
+        container.innerHTML = '';
+        if (paginatedBookings.length === 0) {
+            toggleLoading(false);
+            return; 
         }
 
-        filteredBookings.forEach(booking => {
+        paginatedBookings.forEach(booking => {
             const bookingBox = document.createElement('div');
             bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
@@ -70,44 +84,102 @@ fetch(url, {
             const actionButtons = document.createElement('div');
             actionButtons.className = 'flex flex-row space-x-2';
 
+            // Status button
             const bookButton = document.createElement('button');
             bookButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
             bookButton.textContent = 'Status';
-            
+
             bookButton.onclick = async function() {
                 const bookingId = booking.id;
                 const maintenanceRequestsRef = collection(db, 'maintenanceRequests');
-            
                 try {
                     const q = query(maintenanceRequestsRef, where('roomId', '==', bookingId));
                     const querySnapshot = await getDocs(q);
+                    let statusMessage = 'Status: Available (No Maintenance Scheduled)'; 
+                    let issueType = '';
 
-                    let statusMessage;
-                    let issueType;
                     if (!querySnapshot.empty) {
+                        let hasActiveMaintenance = false;
                         querySnapshot.forEach((doc) => {
                             const data = doc.data();
-                            statusMessage = `Status: ${data.status}`;
-                            issueType = `Issue: ${data.issueType}`;
+                            if (data.status === 'In Progress' || data.status === 'Scheduled') {
+                                statusMessage = `Status: Under Maintenance`;
+                                issueType = `Issue: ${data.issueType}`;
+                                hasActiveMaintenance = true; 
+                            }
                         });
-                    } else {
-                        statusMessage = 'Status: Available (No Maintenance Scheduled)';
-                        issueType = '';
                     }
-
                     showModal(statusMessage, issueType);
-
                 } catch (error) {
                     console.error('Error fetching maintenance status:', error);
                 }
             };
-
             actionButtons.appendChild(bookButton);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 focus:outline-none';
+            deleteButton.textContent = 'Delete';
+            
+            deleteButton.onclick = async function() {
+                const bookingId = booking.id;
+                const confirmed = confirm(`Are you sure you want to delete this venue: ${booking.Name}?`);
+                if (confirmed) {
+                    try {
+                        await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues/${bookingId}`, { method: 'DELETE', headers: {'x-api-key': API_KEY }});
+                        alert('Venue deleted successfully.');
+                        renderBookings(); 
+                    } catch (error) {
+                        console.error('Error deleting the venue:', error);
+                        alert('Failed to delete the venue.');
+                    }
+                }
+            };
+            actionButtons.appendChild(deleteButton);
+
+            
+            const editButton = document.createElement('button');
+            editButton.className = 'bg-[#003B5C] text-white px-3 py-1 rounded hover:bg-blue-700 focus:outline-none';
+            editButton.textContent = 'Edit';
+
+            editButton.onclick = async function() {
+                const bookingId = booking.id;
+                const newName = prompt('Enter the new venue name:', booking.Name);
+
+                if (newName) {
+                    try {
+                        const updatedBooking = {
+                            Name: newName,
+                        };
+
+                        await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues/${bookingId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'x-api-key': API_KEY
+                            },
+                            body: JSON.stringify(updatedBooking),
+                        });
+
+                        alert('Venue updated successfully.');
+                        renderBookings();
+                    } catch (error) {
+                        console.error('Error updating the venue:', error);
+                        alert('Failed to update the venue.');
+                    }
+                }
+            };
+            actionButtons.appendChild(editButton);
+
             bookingBox.appendChild(actionButtons);
             container.appendChild(bookingBox);
         });
+
+        updatePaginationControls(totalPages);
+
+        toggleLoading(false); 
     }, 1000);
 }
+
 
 
 function showModal(statusMessage, issueType) {
@@ -139,10 +211,70 @@ function showModal(statusMessage, issueType) {
   document.body.appendChild(modal);
 }
 
+function toggleLoading(show) {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        if (show) {
+            loadingIndicator.classList.remove('hidden');
+        } else {
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+    const roomFilter = document.getElementById('roomFilter');
+    const searchInput = document.getElementById('searchInput');
+    if (roomFilter) roomFilter.disabled = show;
+    if (searchInput) searchInput.disabled = show;
+}
 
-// Attach event listeners to filters and search input
-document.getElementById('roomFilter').addEventListener('change', renderBookings);
-document.getElementById('searchInput').addEventListener('input', renderBookings);
+function updatePaginationControls(totalPages) {
+    const prevButton = document.getElementById('prevPage');
+    const nextButton = document.getElementById('nextPage');
+    const paginationInfo = document.getElementById('pageInfo');
 
-// Initial render after DOM content loads
-document.addEventListener('DOMContentLoaded', renderBookings);
+    prevButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage === totalPages;
+
+    paginationInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+}
+
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderBookings();
+    }
+});
+
+document.getElementById('nextPage').addEventListener('click', () => {
+    const totalFilteredBookings = bookings.filter(booking => {
+        const categoryFilter = document.getElementById('roomFilter').value;
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        const matchesCategory = categoryFilter ? booking.Category === categoryFilter : true;
+        const matchesSearch = booking.Name && booking.Name.toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSearch;
+    });
+
+    const totalPages = Math.ceil(totalFilteredBookings.length / venuesPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderBookings();
+    }
+});
+
+
+document.getElementById('roomFilter').addEventListener('change', () => {
+    currentPage = 1; 
+    renderBookings();
+});
+
+document.getElementById('searchInput').addEventListener('input', () => {
+    currentPage = 1;
+    renderBookings();
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    toggleLoading(true);
+    renderBookings();
+});
+
+const API_KEY = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";

@@ -30,6 +30,7 @@
             display: none; 
             margin: auto;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -48,6 +49,32 @@
           font-size: 20px;
           cursor: pointer;
         }
+
+        /* On desktop (screens wider than 768px) */
+@media (min-width: 768px) {
+    .info-button {
+        display: inline-block;
+        content: "Features"; /* Change the text for desktop */
+    }
+
+    .venue-details {
+        display: block; /* Venue details appear on desktop */
+        text-align: right;
+    }
+}
+
+/* On mobile (screens smaller than 768px) */
+@media (max-width: 767px) {
+    .info-button {
+        display: inline-block;
+        content: "Info"; /* Button text for mobile */
+    }
+
+    .venue-details {
+        display: none; /* Hide details in mobile */
+    }
+}
+
         
     </style>
 </head>
@@ -64,17 +91,18 @@
 
 
     <div class="loader" id="loader"></div>
-
+    
     <!-- Box with venue info -->
     <section id="bookingsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <!-- Booking boxes will be updated dynamically here -->
     </section>
 
     <div id="paginationControls" class="flex justify-center mt-4">
-        <button id="prevPage" class="px-4 py-2 text-[#003B5C] rounded-lg" disabled>Previous</button>
+        <button id="prevPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" disabled>Previous</button>
         <span id="pageInfo" class="mx-2">Page 1</span>
-        <button id="nextPage" class="px-4 py-2  text-[#003B5C] rounded-lg">Next</button>
+        <button id="nextPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Next</button>
     </div>
+
 </main>
 
 <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center">
@@ -94,6 +122,7 @@
   </div>
   
 <script type="module" src="newVenues.js"></script>
+<!--<script type="module" src="viewAllVenues.js"></script>-->
 <script>
     function scrollToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });

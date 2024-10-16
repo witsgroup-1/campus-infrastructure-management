@@ -1,10 +1,9 @@
 let schedules = [];
 
-// Fetch schedules from API with API key
 fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules', {
     method: 'GET',
     headers: {
-        'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+        'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
         'Content-Type': 'application/json'
     }
 })
@@ -43,27 +42,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Close the modal
-    closeModal.addEventListener('click', function () {
-        modal.classList.add('hidden');  // Hide the modal
-    });
-
-    // Handle modal form submission (Edit functionality)
-    document.getElementById('update').addEventListener('click', function () {
-        const id = document.getElementById('data-id').value;  // Assuming schedule ID is stored in a hidden field
-        const updatedSchedule = {
-            roomId: document.getElementById('venue').value,
-            courseId: document.getElementById('course').value,
-            startTime: document.getElementById('start-time').value,
-            endTime: document.getElementById('end-time').value,
-            daysOfWeek: document.getElementById('day').value,
-            startDate: document.getElementById('start-date').value,
-            endDate: document.getElementById('end-date').value,
-        };
-
-        updateSchedule(id, updatedSchedule);
-    });
+    closeModal.addEventListener('click', closeModal);
+    document.getElementById('update').addEventListener('click', onclickUpdateSchedule);
 });
+
+export function onclickUpdateSchedule(event) {
+    const id = document.getElementById('data-id').value; // Assuming schedule ID is stored in a hidden field
+    const updatedSchedule = {
+        roomId: document.getElementById('venue').value,
+        courseId: document.getElementById('course').value,
+        startTime: document.getElementById('start-time').value,
+        endTime: document.getElementById('end-time').value,
+        daysOfWeek: document.getElementById('day').value,
+        startDate: document.getElementById('start-date').value,
+        endDate: document.getElementById('end-date').value,
+    };
+
+    updateSchedule(id, updatedSchedule);
+}
+
+// Function to close the modal
+export function closeModal() {
+    modal.classList.add('hidden');  // Hide the modal
+}
+
 
 // Function to delete the schedule via API
 export async function deleteSchedule(id, deleteButton) {
@@ -71,7 +73,7 @@ export async function deleteSchedule(id, deleteButton) {
         const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
             method: 'DELETE',
             headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG',
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                 'Content-Type': 'application/json',
             },
         });
@@ -82,11 +84,11 @@ export async function deleteSchedule(id, deleteButton) {
 
         // Remove the schedule from the UI
         const row = deleteButton.closest('tr'); // Find the closest table row
-        if (row && row.parentNode) { // Check if row exists and has a parent
+        /*if (row && row.parentNode) { // Check if row exists and has a parent
             row.remove(); // Remove the row from the table
         } else {
             console.error('Row not found for deletion.');
-        }
+        }*/
 
         alert('Schedule deleted successfully!');
     } catch (error) {
@@ -115,7 +117,7 @@ export function editSchedule(id, schedules) {
             hiddenField = document.createElement('input');
             hiddenField.type = 'hidden';
             hiddenField.id = 'data-id';
-            modal.appendChild(hiddenField); // This line might be failing if modal is null
+            modal.appendChild(hiddenField); 
         }
         hiddenField.value = id;
 
@@ -130,7 +132,7 @@ export async function updateSchedule(id, updatedSchedule) {
         const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${id}`, {
             method: 'PUT',
             headers: {
-                'x-api-key': 'kpy8PxJshr0KqzocQL2ZZuZIcNcKVLUOwuS8YVnogqSZNCvKcFHJa8kweD0sP8JlUOhWStMuKNCKf2ZZVPoGZjzNiWUodIVASAaOfcVNKb2bFapQ5L9a2WKzCTBWSfMG', 
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW', 
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(updatedSchedule),
