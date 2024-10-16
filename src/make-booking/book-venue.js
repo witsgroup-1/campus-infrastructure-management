@@ -60,7 +60,7 @@ async function fetchUserData(uid) {
 }
 
 // Function to determine allowed categories based on user role
-function getAllowedCategories(userData) {
+export function getAllowedCategories(userData) {
     const role = userData.role || '';
     const isTutor = userData.isTutor || false;
     const isLecturer = userData.isLecturer || false;
@@ -294,3 +294,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+

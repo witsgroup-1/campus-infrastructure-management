@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-import { getFirestore,collection, getDocs} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getFirestore,collection, getDocs, getDoc, doc} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+//import { getAllowedCategories } from "../make-booking/book-venue";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -12,6 +14,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
 
@@ -27,12 +30,43 @@ const categoryToImage = {
     "Study Room": ["img/libraryStudyRoom.jpg"]
 };
 
-async function fetchVenuesWithBookings(date) {
+function getAllowedCategories(userData) {
+    const role = userData.role || '';
+    const isTutor = userData.isTutor || false;
+    const isLecturer = userData.isLecturer || false;
+
+    const categoryMapping = {
+        'Student': {
+            default: ['Study Room'],
+            isTutor: ['Study Room', 'Tutorial Room'],
+            isLecturer: ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+        },
+        'Staff': {
+            isLecturer: ['Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+            default: ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+        }
+    };
+
+    if (role in categoryMapping) {
+        if (isTutor) return categoryMapping[role].isTutor || categoryMapping[role].default;
+        if (isLecturer) return categoryMapping[role].isLecturer || categoryMapping[role].default;
+        return categoryMapping[role].default;
+    }
+
+    return [];
+}
+
+
+
+async function fetchVenuesWithBookings(date, userData) {
     try {
         const venuesCollectionRef = collection(db, 'venues');
         const venuesSnapshot = await getDocs(venuesCollectionRef);
         const venues = [];
         const currentDateTime = getCurrentDateTime();
+
+        // Get allowed categories for the user
+        const allowedCategories = getAllowedCategories(userData);
 
         // Collect promises for bookings fetching
         const bookingsPromises = venuesSnapshot.docs.map(async venueDoc => {
@@ -57,13 +91,20 @@ async function fetchVenuesWithBookings(date) {
         });
 
         const venuesWithBookings = await Promise.all(bookingsPromises);
-        return venuesWithBookings;
+
+        // Filter venues based on allowed categories
+        const accessibleVenues = venuesWithBookings.filter(venue => 
+            allowedCategories.includes(venue.Category) // Check if the venue category is allowed
+        );
+
+        return accessibleVenues;
 
     } catch (error) {
         console.error('Error fetching venues with bookings:', error);
         return [];
     }
 }
+
 
 
 function createVenueElement(venue) {
@@ -94,70 +135,83 @@ function createVenueElement(venue) {
 
 
 
-
 async function populateVenues() {
-    try {
-        const venues = await fetchVenuesWithBookings(getCurrentDate());
-        const gridContainer = document.querySelector('#venue-grid');
 
-        if (!gridContainer) {
-            console.error('Element with id "venue-grid" not found.');
-            return;
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userId = user.uid; // Get the current user's ID
+
+            try {
+                const userDoc = await getDoc(doc(db, 'users', userId)); // Fetch user data
+                const userData = userDoc.exists() ? userDoc.data() : {}; // Ensure user data exists
+
+                const venues = await fetchVenuesWithBookings(getCurrentDate(), userData); // Pass user data
+
+                const gridContainer = document.querySelector('#venue-grid');
+
+                if (!gridContainer) {
+                    console.error('Element with id "venue-grid" not found.');
+                    return;
+                }
+
+                gridContainer.innerHTML = ''; 
+
+                const venuesToDisplay = getRandomVenues(venues, 3);
+                venuesToDisplay.forEach(venue => {
+                    gridContainer.appendChild(createVenueElement(venue));
+                });
+
+                const lastVenue = venues[3];
+                if (lastVenue) {
+                    const lastVenueElement = document.createElement('div');
+                    lastVenueElement.classList.add('relative');
+                    lastVenueElement.addEventListener('click', () => {
+                        window.location.href = 'availVenues.html';
+                    });
+
+                    const lastImgElement = document.createElement('img');
+                    lastImgElement.classList.add('w-full', 'h-40', 'object-cover');
+                    lastImgElement.src = getRandomImage(lastVenue.category); // Use random image from category
+                    lastImgElement.alt = lastVenue.Name;
+
+                    const lastOverlayElement = document.createElement('div');
+                    lastOverlayElement.classList.add('absolute', 'inset-0', 'bg-[#003B5C]', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'opacity-0', 'hover:opacity-100', 'transition-opacity', 'duration-300', 'cursor-pointer');
+
+                    const lastLinkElement = document.createElement('a');
+                    lastLinkElement.href = 'availVenues.html'; 
+                    lastLinkElement.classList.add('flex', 'items-center', 'justify-center');
+
+                    // SVG for the arrow
+                    const arrowSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    arrowSvg.classList.add('w-6', 'h-6', 'text-white');
+                    arrowSvg.setAttribute('fill', 'none');
+                    arrowSvg.setAttribute('stroke', 'currentColor');
+                    arrowSvg.setAttribute('viewBox', '0 0 24 24');
+                    arrowSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute('stroke-linecap', 'round');
+                    path.setAttribute('stroke-linejoin', 'round');
+                    path.setAttribute('stroke-width', '2');
+                    path.setAttribute('d', 'M12 19l7-7-7-7m-5 7h12');
+
+                    arrowSvg.appendChild(path);
+                    lastLinkElement.appendChild(arrowSvg);
+                    lastOverlayElement.appendChild(lastLinkElement);
+                    lastVenueElement.appendChild(lastImgElement);
+                    lastVenueElement.appendChild(lastOverlayElement);
+
+                    gridContainer.appendChild(lastVenueElement);
+                }
+
+            } catch (error) {
+                console.error('Error in populateVenues:', error);
+            }
+        } else {
+            console.log('No user is signed in.');
+            // Handle case when no user is signed in
         }
-
-        gridContainer.innerHTML = ''; 
-
-        const venuesToDisplay = getRandomVenues(venues, 3);
-        venuesToDisplay.forEach(venue => {
-            gridContainer.appendChild(createVenueElement(venue));
-        });
-
-        const lastVenue = venues[3];
-        if (lastVenue) {
-            const lastVenueElement = document.createElement('div');
-            lastVenueElement.classList.add('relative');
-            lastVenueElement.addEventListener('click', () => {
-                window.location.href = 'availVenues.html'
-            })
-
-            const lastImgElement = document.createElement('img');
-            lastImgElement.classList.add('w-full', 'h-40', 'object-cover');
-            lastImgElement.src = lastVenue.imgSrc;
-            lastImgElement.alt = lastVenue.Name;
-
-            const lastOverlayElement = document.createElement('div');
-            lastOverlayElement.classList.add('absolute', 'inset-0', 'bg-[#003B5C]', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'opacity-0', 'hover:opacity-100', 'transition-opacity', 'duration-300', 'cursor-pointer');
-
-            const lastLinkElement = document.createElement('a');
-            lastLinkElement.href = 'availVenues.html'; 
-            lastLinkElement.classList.add('flex', 'items-center', 'justify-center');
-
-            // SVG for the arrow
-            const arrowSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            arrowSvg.classList.add('w-6', 'h-6', 'text-white');
-            arrowSvg.setAttribute('fill', 'none');
-            arrowSvg.setAttribute('stroke', 'currentColor');
-            arrowSvg.setAttribute('viewBox', '0 0 24 24');
-            arrowSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('stroke-linejoin', 'round');
-            path.setAttribute('stroke-width', '2');
-            path.setAttribute('d', 'M12 19l7-7-7-7m-5 7h12');
-
-            arrowSvg.appendChild(path);
-            lastLinkElement.appendChild(arrowSvg);
-            lastOverlayElement.appendChild(lastLinkElement);
-            lastVenueElement.appendChild(lastImgElement);
-            lastVenueElement.appendChild(lastOverlayElement);
-
-            gridContainer.appendChild(lastVenueElement);
-        }
-
-    } catch (error) {
-        console.error('Error in populateVenues:', error);
-    }
+    });
 }
 
 function getRandomImage(category) {
@@ -214,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   
-
 
 
 
