@@ -9,7 +9,7 @@
 #sidebar {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   height: 100%;
   width: 0;
   background-color: #003B5C;
@@ -18,6 +18,7 @@
   transition: width 0.3s ease;
   z-index: 9999;
 }
+
 
 #sidebar.open {
   width: 30%; 
@@ -225,4 +226,28 @@ z-index: 9999;
 
 
 
+#sidebar nav a {
+  display: flex;
+  align-items: center; /* Vertically align the icon and text */
+  gap: 15px; /* Add more space between the icon and text */
+  padding: 12px 20px; /* Adjust padding for better spacing */
+  text-align: left; /* Ensure the text aligns properly */
+  width: 100%; /* Full width for the anchor */
+  color: white; /* Ensure the color is white */
+  border-radius: 5px; /* Add some rounding */
+}
 
+#sidebar nav a i {
+  font-size: 1.5rem; /* Size the icons consistently */
+  display: inline-block;
+  width: 30px; /* Set a fixed width for icons to ensure consistent alignment */
+}
+
+#sidebar nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+  border-radius: 5px;
+}
+
+#sidebar nav {
+  width: 100%; /* Ensure the sidebar nav takes up the full width */
+}
