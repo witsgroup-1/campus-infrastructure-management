@@ -1,6 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { setPersistence,  browserLocalPersistence, getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { FirebaseConfig } from '../FirebaseConfig.js';
+import {  getDoc, doc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+
 
 const firebaseConfig = new FirebaseConfig(); 
 const db = firebaseConfig.getFirestoreInstance();
@@ -8,6 +11,7 @@ const auth = getAuth();
 
 const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
 const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
+
 
 
 async function fetchData(endpoint) {
@@ -74,66 +78,90 @@ async function fetchData(endpoint) {
        
 //         fetchBookings();
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const menuIcon = document.getElementById('menu-icon');
-            const sidebar = document.getElementById('sidebar');
-            const closeBtn = document.getElementById('close-btn');
-        
-            // Initialize Firebase Auth
-            const auth = getAuth();
-        
-            // Check Firebase Authentication state
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is signed in, get user email and userId
-                    const userEmail = user.email;
-                    const userId = user.uid;
-        
-                    //console.log('User email:', userEmail);
-                    //console.log("UserId:", userId);
-        
-                    // Display the user email on the page
-                    document.getElementById('userEmailDisplay').textContent = `Admin logged in as: ${userEmail}`;
-                } else {
-                  
-                    console.log('No user is signed in.');
-                    window.location.href = '../login/login.html'; 
-                }
-            });
-        
-            const getSidebarWidth = () => {
-                const screenWidth = window.innerWidth;
-                if (screenWidth >= 1024) {
-                    return '20%';
-                } else if (screenWidth >= 768) {
-                    return '33%';
-                } else {
-                    return '50%';
-                }
-            };
-        
-            sidebar.style.width = '0';
-        
-            menuIcon.addEventListener('click', () => {
-                if (sidebar.style.width === '0px' || sidebar.style.width === '0') {
-                    sidebar.style.width = getSidebarWidth();
-                } else {
-                    sidebar.style.width = '0';
-                }
-            });
-        
-            closeBtn.addEventListener('click', () => {
-                sidebar.style.width = '0';
-            });
-        
-            window.addEventListener('resize', () => {
-                if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
-                    sidebar.style.width = getSidebarWidth();
-                }
-            });
- });
+const getGreetingMessage = () => {
+    const now = new Date();
+    const hour = now.getHours();
 
- setPersistence(auth, browserLocalPersistence)
+    if (hour >= 5 && hour < 12) {
+        return { message: 'Good morning', emoji: '🌅' }; // Sunrise emoji
+    } else if (hour >= 12 && hour < 17) {
+        return { message: 'Good afternoon', emoji: '☀️' }; // Sun emoji
+    } else if (hour >= 17 && hour < 21) {
+        return { message: 'Good evening', emoji: '🌇' }; // Sunset emoji
+    } else {
+        return { message: 'Goodnight', emoji: '🌙' }; // Moon emoji
+    }
+};
+
+document.addEventListener('DOMContentLoaded', async () => {  // Mark the entire function as async
+    const menuIcon = document.getElementById('menu-icon');
+    const sidebar = document.getElementById('sidebar');
+    const closeBtn = document.getElementById('close-btn');
+
+    // Initialize Firebase Auth
+    const auth = getAuth();
+
+    // Check Firebase Authentication state
+    onAuthStateChanged(auth, async (user) => {  // Mark this callback as async
+        if (user) {
+            
+            const email = user.email;
+
+            localStorage.setItem('userEmail', email);
+
+            const userDocId = user.uid;
+            if (userDocId) {
+                localStorage.setItem('userId', userDocId);
+                const userDoc = await getDoc(doc(db, 'users', userDocId)); 
+
+                // Fetch the name from the document
+                const userName = userDoc.data().name || 'User';  // Default to 'User' if name not found
+
+                // Get the appropriate greeting and emoji based on the time of day
+                const { message, emoji } = getGreetingMessage();
+                const greetingElement = document.getElementById('userGreeting');
+                greetingElement.textContent = `${emoji} ${message}, ${userName}!`;
+
+            }      
+        } else {
+            console.log('No user is signed in.');
+            window.location.href = '../login/login.html'; 
+        }
+    });
+
+    const getSidebarWidth = () => {
+        const screenWidth = window.innerWidth;
+        if (screenWidth >= 1024) {
+            return '20%';
+        } else if (screenWidth >= 768) {
+            return '33%';
+        } else {
+            return '50%';
+        }
+    };
+
+    sidebar.style.width = '0';
+
+    menuIcon.addEventListener('click', () => {
+        if (sidebar.style.width === '0px' || sidebar.style.width === '0') {
+            sidebar.style.width = getSidebarWidth();
+        } else {
+            sidebar.style.width = '0';
+        }
+    });
+
+    closeBtn.addEventListener('click', () => {
+        sidebar.style.width = '0';
+    });
+
+    window.addEventListener('resize', () => {
+        if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
+            sidebar.style.width = getSidebarWidth();
+        }
+    });
+});
+
+setPersistence(auth, browserLocalPersistence)
     .then(() => {
         console.log('Persistence set to LOCAL');
     })
