@@ -1,6 +1,5 @@
 
 // Import functions to test
-//import { displayRequestsForDesktop, displayInitialRequestsForMobile, createRequestBlock, openPopup, saveChanges, closePopup,  setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from './copies/maintenanceLogsCopy'; 
 import { closePopup, saveChanges, openPopup, createRequestBlock, displayInitialRequestsForMobile, displayRequestsForDesktop, setupStaffSearch, updateStaffDropdown, clearStaffDropdown } from '../src/maintenance/maintenanceLogs';
 
 import '@testing-library/jest-dom';  
@@ -38,6 +37,7 @@ const mockData = [
 
 describe('Script tests', () => {
   beforeEach(() => {
+    
     document.getElementById('scheduled-content').innerHTML = '';
     document.getElementById('mobile-scheduled-content').innerHTML = '';
     

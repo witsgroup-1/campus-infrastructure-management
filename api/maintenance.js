@@ -2,13 +2,13 @@ const express = require('express');
 const { app, db, auth } = require("../src/firebaseInit.js");
 const { collection, addDoc ,doc, getDoc, getDocs, setDoc, updateDoc, Timestamp, deleteDoc} = require("firebase/firestore"); 
 const maintenanceRouter = express.Router();
-//const fetch = require('node-fetch');
+
 
 
 //get the maintenance requests 
 maintenanceRouter.get('/maintenanceRequests', async(req,res)=>{
     try{
-        //const maintenanceRef = collection(db, 'maintenance');
+       
         const snapshot = await getDocs(collection(db, 'maintenanceRequests'));
 
         //array to collect the requests
@@ -69,7 +69,7 @@ maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {
 
         //Check if the document exists
         if (docSnap.exists()) {
-            //for testing
+           
             res.status(200).json({ id: docSnap.id, ...docSnap.data() });
         } else {
             res.status(404).send('Document not found');
@@ -89,6 +89,7 @@ maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {
     const {assignedTo, createdAt, description, issueType, roomId, roomName, status,timestamp, userId} = req.body;
 
     try{
+        // convert dates into the Timestamp type for firestore
         const timestampNow = Timestamp.fromDate(new Date(createdAt));
         const timestampTime = Timestamp.fromDate(new Date(timestamp));
 
@@ -104,7 +105,7 @@ maintenanceRouter.get('/maintenanceRequests/:id', async (req, res) => {
             userId
         });
 
-       // res.status(201).json({ message: "Posted", });
+       
         res.status(201).json({ id: docRef.id });
      }
      catch(error){

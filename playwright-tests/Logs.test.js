@@ -41,7 +41,7 @@ test.describe('Maintenance Requests Page Tests', () => {
     await page.waitForSelector('#mobile-scheduled-content', { visible: true });  
 
     const allRequests = await page.locator('#mobile-scheduled-content').count();
-    // if there are 1 or more - accounts for the live server not having more then 1
+    // If there are 1 or more - accounts for the live server not having more then 1
     expect(allRequests).toBeGreaterThan(0); 
     const coverage = await page.coverage.stopJSCoverage();
   });
@@ -62,7 +62,6 @@ test.describe('Maintenance Requests Page Tests', () => {
     // Wait for the staff dropdown to show results
     await page.waitForSelector('#staff-dropdown', { state: 'visible' });
 
-    // await page.waitForSelector('#staff-dropdown');
     const optionsCount = await page.locator('#staff-dropdown').count();
     
     expect(optionsCount).toBeGreaterThan(0); // Ensure staff options are displayed
