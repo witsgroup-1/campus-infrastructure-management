@@ -109,7 +109,7 @@ async function fetchVenuesWithBookings(date, userData) {
 
 function createVenueElement(venue) {
     const venueElement = document.createElement('div');
-    venueElement.classList.add('relative', 'venue-item');
+    venueElement.classList.add('relative', 'venue-item', 'cursor-pointer'); // Added cursor-pointer for click effect
 
     const imgElement = document.createElement('img');
     imgElement.classList.add('w-full', 'h-40', 'object-cover');
@@ -129,6 +129,11 @@ function createVenueElement(venue) {
     overlayElement.appendChild(infoElement);
     venueElement.appendChild(imgElement);
     venueElement.appendChild(overlayElement);
+
+    // Add click event listener to navigate to the desired page
+    venueElement.addEventListener('click', () => {
+        window.location.href = 'availVenues.html';
+    });
 
     return venueElement;
 }
@@ -175,7 +180,7 @@ async function populateVenues() {
                     lastImgElement.alt = lastVenue.Name;
 
                     const lastOverlayElement = document.createElement('div');
-                    lastOverlayElement.classList.add('absolute', 'inset-0', 'bg-[#003B5C]', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'opacity-0', 'hover:opacity-100', 'transition-opacity', 'duration-300', 'cursor-pointer');
+                    lastOverlayElement.classList.add('absolute', 'inset-0', 'bg-[#003B5C]', 'bg-opacity-50', 'flex', 'items-center', 'justify-center', 'opacity-100', 'transition-opacity', 'duration-300', 'cursor-pointer');
 
                     const lastLinkElement = document.createElement('a');
                     lastLinkElement.href = 'availVenues.html'; 
