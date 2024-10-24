@@ -132,7 +132,7 @@ function createVenueElement(venue) {
 
     // Add click event listener to navigate to the desired page
     venueElement.addEventListener('click', () => {
-        window.location.href = 'availVenues.hmtl';
+        window.location.href = 'availVenues.html';
     });
 
     return venueElement;
