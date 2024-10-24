@@ -49,6 +49,25 @@
           font-size: 20px;
           cursor: pointer;
         }
+        /* Default desktop styles */
+        .flex {
+            display: flex;
+        }
+        .space-x-2 > * + * {
+            margin-left: 0.5rem;
+        }
+
+
+        @media (max-width: 768px) {
+            .flex-wrap {
+                flex-direction: column;
+            }
+            .space-x-2 > * {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
+
     </style>
 </head>
 <body class="bg-white text-gray-800">
@@ -118,11 +137,25 @@
 
     <!--<img src="../images/undraw_online_organizer_re_156n.svg" alt="Image" class="hidden lg:block lg:w-full lg:max-w-lg rounded-md  absolute bottom-0 right-0 mb-1 mr-16">-->
 </main>
-
+<button id="back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 20px; right: 20px; background-color: #003B5C; color: white; border: none; border-radius: 5px; padding: 10px 15px;">Back to Top</button>
 <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center">
     <p>&copy; 2024 Group -1. All rights reserved.</p>
 </footer>
 
 <script type ="module" src="allVenues.js"></script>
+<script>
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.onscroll = function() {
+        var backToTopButton = document.getElementById("back-to-top");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none";
+        }
+    };
+</script>
 </body>
 </html>
