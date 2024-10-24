@@ -3,7 +3,7 @@ import { getFirestore, collection, getDocs, getDoc, doc } from "https://www.gsta
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
   authDomain: "campusinfrastructuremanagement.firebaseapp.com",
   projectId: "campusinfrastructuremanagement",
@@ -13,13 +13,13 @@ const firebaseConfig = {
   measurementId: "G-Y95YE5ZDRY"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 //show more info on desktop, add book button, info hide on mobile.
 //show venues that are not under maintenance as well.
-const intervals = [
+export const intervals = [
     { start: '08:00', end: '08:45' },
     { start: '09:00', end: '09:45' },
     { start: '10:15', end: '11:00' },
@@ -94,7 +94,7 @@ function getAllowedCategories(userData) {
     return [];
 }
 
-async function fetchUserData(uid) {
+export async function fetchUserData(uid) {
     const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${uid}`; // Include uid in the URL
 
     try {
@@ -193,6 +193,8 @@ function createVenueElement(venue) {
 
     const infoButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>`;
     const bookButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded book-button">Book</button>`;
+    const calendarButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded calendar-button">Calendar</button>`;
+
 
     const venueDetails = `
         <div class="venue-details">
@@ -205,12 +207,14 @@ function createVenueElement(venue) {
             <p class="font-semibold">${venue.Name}</p>
             <p>Capacity: ${venue.Capacity}</p>
             ${infoButton}
+            ${calendarButton}
             ${bookButton}
         </div>
         ${venueDetails}`;
 
     const infoButtonElement = venueElement.querySelector('.info-button');
     const bookButtonElement = venueElement.querySelector('.book-button');
+    const calendarButtonElement = venueElement.querySelector('.calendar-button');
 
   
     infoButtonElement.addEventListener('click', () => {
@@ -226,6 +230,10 @@ function createVenueElement(venue) {
     bookButtonElement.addEventListener('click', () => {
         const venueId = venueElement.getAttribute('data-venue-id');
         window.location.href = `../make-booking/booking-details.html?bookingId=${venueId}`;
+    });
+
+    calendarButtonElement.addEventListener('click', () => {
+        showCalendarModal(venue.id); // Show the calendar modal
     });
 
     return venueElement;
@@ -274,8 +282,8 @@ function showVenueInfo(venue) {
 
 
 function closeModal() {
-    const venueModal = document.getElementById('venueModal');
-    venueModal.classList.add('hidden');
+    
+    document.getElementById('venueModal').style.display = 'none';
 }
 
 //add book button similar to one in the venues page.
@@ -315,6 +323,92 @@ async function populateVenues(userData) {
     currentPage = 1;
     displayVenues(currentPage);
 }
+
+
+async function showCalendarModal(venueId) {
+    try {
+       
+        const currentDate = getCurrentDate(); 
+        const calendarContent = await generateCalendarContent(venueId, currentDate);
+
+       
+        const modalTitle = document.getElementById('modalTitle');
+        modalTitle.textContent = `Availability Calendar ${currentDate}`;
+
+       
+        document.getElementById('modalContent').innerHTML = calendarContent;
+
+        document.getElementById('venueModal').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error showing calendar modal:', error);
+    }
+}
+
+
+
+
+async function generateCalendarContent(venueId, currentDate = getCurrentDate()) {
+    try {
+        
+
+        const bookingsCollectionRef = collection(db, 'venues', venueId, currentDate);
+        const bookingsSnapshot = await getDocs(bookingsCollectionRef);
+
+
+        const calendarContent = intervals.map((slot) => ({
+            ...slot,
+            isBooked: false,  // Initially, all slots are assumed to be available
+        }));
+
+        bookingsSnapshot.docs.forEach((bookingDoc) => {
+            const bookingData = bookingDoc.data();
+            const bookingStartTime = new Date(bookingData.startTime.seconds * 1000);
+            const bookingEndTime = new Date(bookingData.endTime.seconds * 1000);
+
+            calendarContent.forEach((slot) => {
+                const [slotStartHour, slotStartMinute] = slot.start.split(':').map(Number);
+                const [slotEndHour, slotEndMinute] = slot.end.split(':').map(Number);
+
+                const slotStartTime = new Date(currentDate);
+                slotStartTime.setHours(slotStartHour, slotStartMinute, 0, 0);
+
+                const slotEndTime = new Date(currentDate);
+                slotEndTime.setHours(slotEndHour, slotEndMinute, 0, 0);
+
+               
+                if (bookingStartTime < slotEndTime && bookingEndTime > slotStartTime) {
+                    slot.isBooked = true;
+                }
+            });
+        });
+
+        const calendarHtml = `
+            <div class="calendar-grid">
+                ${calendarContent.map((slot) => {
+                    const status = slot.isBooked ? 'Booked' : 'Available';
+                    const statusClass = slot.isBooked ? 'booked-slot' : 'available-slot';
+
+                    return `
+                        <div class="time-slot ${statusClass}">
+                            <span class="slot-time">${slot.start} - ${slot.end}</span>
+                            <span class="slot-status">${status}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        return calendarHtml;
+
+    } catch (error) {
+        console.error('Error generating calendar content:', error);
+        return '<div class="error">Error loading calendar data.</div>';
+    }
+}
+
+
+
 
 
 

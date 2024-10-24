@@ -140,6 +140,14 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.style.width = '0';
     });
 
+
+    // Close sidebar when clicking outside of it
+    document.addEventListener('click', (event) => {
+        if (sidebar.style.width !== '0px' && !sidebar.contains(event.target) && !menuIcon.contains(event.target)) {
+            sidebar.style.width = '0';
+        }
+    });
+
     window.addEventListener('resize', () => {
         if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
             sidebar.style.width = getSidebarWidth();
