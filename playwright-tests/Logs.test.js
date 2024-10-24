@@ -69,5 +69,3 @@ test.describe('Maintenance Requests Page Tests', () => {
     const coverage = await page.coverage.stopJSCoverage();
   });
 });
-
-
