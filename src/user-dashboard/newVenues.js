@@ -183,49 +183,39 @@ async function fetchAvailableVenues(userData) {
 
 
 
-
 function createVenueElement(venue) {
     const venueElement = document.createElement('div');
     venueElement.classList.add('venue-container', 'bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow', 'flex', 'justify-between');
 
-   
     venueElement.setAttribute('data-venue-id', venue.id); 
 
-    const infoButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>`;
     const bookButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded book-button">Book</button>`;
     const calendarButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded calendar-button">Calendar</button>`;
 
+    // Join the features array into a comma-separated string
+    const venueFeatures = venue.Features && venue.Features.length > 0
+        ? venue.Features.join(', ')  // Join the array elements with commas
+        : 'No features available';
 
     const venueDetails = `
         <div class="venue-details">
             <strong>Building:</strong> ${venue.Building || 'N/A'}<br>
-            <strong>Category:</strong> ${venue.Category || 'N/A'}
+            <strong>Category:</strong> ${venue.Category || 'N/A'}<br>
+            <strong>Features:</strong> ${venueFeatures}
         </div>`;
 
     venueElement.innerHTML = `
         <div>
             <p class="font-semibold">${venue.Name}</p>
-            <p>Capacity: ${venue.Capacity}</p>
-            ${infoButton}
+
             ${calendarButton}
             ${bookButton}
         </div>
         ${venueDetails}`;
 
-    const infoButtonElement = venueElement.querySelector('.info-button');
+    
     const bookButtonElement = venueElement.querySelector('.book-button');
     const calendarButtonElement = venueElement.querySelector('.calendar-button');
-
-  
-    infoButtonElement.addEventListener('click', () => {
-        const isMobile = window.innerWidth < 768;
-
-        if (isMobile) {
-            showVenueInfo(venue);
-        } else {
-            showVenueFeatures(venue.Features || []);
-        }
-    });
 
     bookButtonElement.addEventListener('click', () => {
         const venueId = venueElement.getAttribute('data-venue-id');
@@ -238,6 +228,7 @@ function createVenueElement(venue) {
 
     return venueElement;
 }
+
 
 
 
@@ -282,8 +273,9 @@ function showVenueInfo(venue) {
 
 
 function closeModal() {
+    const venueModal = document.getElementById('venueModal');
+    venueModal.style.display = 'none';
     
-    document.getElementById('venueModal').style.display = 'none';
 }
 
 //add book button similar to one in the venues page.

@@ -91,10 +91,10 @@
         }
 
         @media (max-width: 768px) {
-            .calendar-grid {
-                grid-template-columns: repeat(2, 1fr); /* Two columns on mobile */
-            }
+        .calendar-grid {
+            grid-template-columns: 1fr; /* One column on mobile */
         }
+    }
 
         /* On desktop (screens wider than 768px) */
 @media (min-width: 768px) {
@@ -115,9 +115,9 @@
         display: inline-block;
         content: "Info"; /* Button text for mobile */
     }
-
     .venue-details {
-        display: none; /* Hide details in mobile */
+        display: block; /* Venue details appear on desktop */
+        text-align: right;
     }
 }
 
