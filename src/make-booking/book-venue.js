@@ -202,6 +202,7 @@ async function renderVenues(venues, userData) {
             venueBox.innerHTML = `
                 <div class="flex-shrink-0">
                     <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
+                    <p class="text-sm text-gray-600">Building: ${venue.Building || 'Unknown Building'}</p>
                     <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
                     <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
                      <p class="text-sm text-gray-600">Features: ${venue.Features || 'Unknown Features'}</p>
