@@ -138,14 +138,19 @@ async function checkMaintenanceStatus(venueId) {
 
         if (response.ok) {
             const maintenanceRequests = await response.json();
-            return maintenanceRequests.length > 0; // Return true if there are requests
+
+            // Check if there is a request with status "In Progress" or "Scheduled"
+            return maintenanceRequests.some(request => 
+                request.status === "In Progress" || request.status === "Scheduled"
+            );
         }
     } catch (error) {
         console.error('Error checking maintenance status:', error);
     }
     
-    return false; // Return false if there was an error or no requests found
+    return false; // Return false if there was an error or no relevant requests found
 }
+
 async function renderVenues(venues, userData) {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing venues
