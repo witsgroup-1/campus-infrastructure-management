@@ -88,7 +88,6 @@ function renderBookings() {
             const actionButtons = document.createElement('div');
             actionButtons.className = 'flex flex-row space-x-2';
 
-           
             const bookButton = document.createElement('button');
             bookButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
             bookButton.textContent = 'Status';
@@ -250,6 +249,7 @@ document.getElementById('prevPage').addEventListener('click', () => {
     }
 });
 
+
 document.getElementById('nextPage').addEventListener('click', () => {
     const totalFilteredBookings = bookings.filter(booking => {
         const categoryFilter = document.getElementById('roomFilter').value;
@@ -276,6 +276,7 @@ document.getElementById('searchInput').addEventListener('input', () => {
     currentPage = 1;
     renderBookings();
 });
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
