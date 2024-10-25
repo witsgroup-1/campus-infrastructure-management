@@ -224,17 +224,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isExpanded = false;
 
-    mainButton.addEventListener('click', () => {
-        if (!isExpanded) {
-            reportButton.classList.remove('hidden');
-            bookButton.classList.remove('hidden');
-            isExpanded = true;
-        } else {
-            reportButton.classList.add('hidden');
-            bookButton.classList.add('hidden');
-            isExpanded = false;
-        }
-    });
+mainButton.addEventListener('click', () => {
+    if (!isExpanded) {
+        reportButton.classList.remove('hidden');
+        bookButton.classList.remove('hidden');
+        mainButton.textContent = '×';  // Change the plus button to an X symbol
+        isExpanded = true;
+    } else {
+        reportButton.classList.add('hidden');
+        bookButton.classList.add('hidden');
+        mainButton.textContent = '+';  // Change the X button back to a plus symbol
+        isExpanded = false;
+    }
+});
 
     reportButton.addEventListener('click', () => {
         window.location.href = '../maintenance/maintenanceReports.html';
