@@ -66,7 +66,7 @@ function displayRequestsForDesktop(requests, containerId) {
     return acc;
   }, {});
 
-  // Display only the first request in each venue group
+  // display only the first request in each venue group
   Object.keys(venueGroups).forEach(roomName => {
     const roomRequests = venueGroups[roomName];
     const firstRequest = roomRequests[0];
@@ -83,19 +83,18 @@ function displayRequestsForDesktop(requests, containerId) {
     // Append the block to the container
     container.appendChild(block);
 
-    // If there are additional requests for this room, add a "Show More" button
+    // if there are additional requests for this room, add a "Show More" button
   
     if (roomRequests.length > 1) {
       
       const showMoreButton = document.createElement('button');
       showMoreButton.textContent = 'Show More for this Venue';
       showMoreButton.classList.add('bg-gray-400', 'text-white', 'p-2', 'rounded' );
-//
-      // Create a container for additional blocks to be inserted after the first request block
-      const additionalContainer = document.createElement('div');
-      additionalContainer.classList.add('additional-requests', 'hidden'); // Hidden by default
 
-      // Event listener to display remaining requests for this room only
+      const additionalContainer = document.createElement('div');
+      additionalContainer.classList.add('additional-requests', 'hidden'); 
+
+      // event listener to display remaining requests for this room only
       showMoreButton.addEventListener('click', () => {
         roomRequests.slice(1).forEach(request => {
           const additionalBlock = createRequestBlock(
@@ -106,7 +105,7 @@ function displayRequestsForDesktop(requests, containerId) {
             request.id,
             request
           );
-          additionalContainer.appendChild(additionalBlock); // Add to additional container
+          additionalContainer.appendChild(additionalBlock); 
         });
         // Show the additional requests and hide the button
         additionalContainer.classList.remove('hidden');
@@ -233,10 +232,10 @@ function clearStaffDropdown() {
 function displayInitialRequestsForMobile(requests, containerId, mainButtonId) {
   const container = document.getElementById(containerId);
 
-  // Sort requests alphabetically by roomName
+  // sorting requests alphabetically by room name
   requests.sort((a, b) => a.roomName.localeCompare(b.roomName));
 
-  // Group requests by venueId
+  // group the requests by roomId
   const venueGroups = requests.reduce((acc, request) => {
     const venueId = request.roomId || 'unknown';
     if (!acc[venueId]) acc[venueId] = [];
@@ -268,7 +267,7 @@ function displayInitialRequestsForMobile(requests, containerId, mainButtonId) {
     }
   }
 
-  // Main "Show More" button for additional venues
+  // the main "Show More" button for additional venues
   document.getElementById(mainButtonId).addEventListener('click', () => {
     venueIds.slice(1).forEach(venueId => {
       const venueRequests = venueGroups[venueId];
@@ -291,20 +290,20 @@ function displayInitialRequestsForMobile(requests, containerId, mainButtonId) {
       }
     });
 
-    // Hide the main "Show More" button after revealing all venues
+    
     document.getElementById(mainButtonId).style.display = 'none';
   });
 }
 
 
-// Helper function to create a sub-level "Show More" button
+// helper function to create a sub-level "Show More" button for mobile view
 function createSubShowMoreButton(additionalRequests, container, venueRequests) {
   const subShowMoreButton = document.createElement('button');
   subShowMoreButton.textContent = 'Show More for this Venue';
   subShowMoreButton.classList.add('bg-gray-400', 'text-white', 'p-2', 'rounded', 'mt-2', 'text-sm');
 
   subShowMoreButton.addEventListener('click', () => {
-    // Insert additional requests right after the first request block for this venue
+    // insert additional requests right after the first request block for this venue
     additionalRequests.forEach(request => {
       const additionalBlock = createRequestBlock(
         request.roomName,
@@ -314,11 +313,11 @@ function createSubShowMoreButton(additionalRequests, container, venueRequests) {
         request.id,
         request
       );
-      // Insert the additional block after the first block for this venue
-      const firstBlock = container.lastElementChild; // This should be the last block added
+      // insert the additional blocks after the first block for this venue
+      const firstBlock = container.lastElementChild; 
       container.insertBefore(additionalBlock, subShowMoreButton); // Insert before the show more button
     });
-    subShowMoreButton.style.display = 'none'; // Hide the sub show more button after clicking
+    subShowMoreButton.style.display = 'none'; 
   });
 
   return subShowMoreButton;
