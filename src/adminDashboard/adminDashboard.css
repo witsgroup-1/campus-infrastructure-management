@@ -21,14 +21,15 @@
 }
 
 #close-btn {
-    position: absolute;
-    top: 0;
-    right: 1rem;
-    font-size: 2rem;
-    color: white;
-    background: none;
-    border: none;
-    cursor: pointer;
+  position: absolute; 
+  top: 1rem; /* Position it at the top */
+  right: 1rem; /* Adjust its position to the right */
+  font-size: 2rem; 
+  color: white; 
+  background: none; 
+  border: none; 
+  cursor: pointer;
+  z-index: 10; /* Ensure it's above all other content */
 }
 #sidebar nav a {
   display: flex;

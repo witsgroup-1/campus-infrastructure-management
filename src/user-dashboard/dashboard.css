@@ -27,17 +27,15 @@
 
 #close-btn {
   position: absolute; 
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%); 
-  margin-top: 1rem; 
+  top: 1rem; /* Position it at the top */
+  right: 1rem; /* Adjust its position to the right */
   font-size: 2rem; 
   color: white; 
   background: none; 
   border: none; 
   cursor: pointer;
+  z-index: 10; /* Ensure it's above all other content */
 }
-
 nav {
   display: flex;
   flex-direction: column; 
@@ -226,6 +224,7 @@ z-index: 9999;
 
 
 #sidebar nav {
+  margin-top: 3rem; /* Push the navigation down */
   width: 100%;
   display: flex;
   flex-direction: column;
