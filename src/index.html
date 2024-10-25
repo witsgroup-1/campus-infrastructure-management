@@ -9,6 +9,7 @@
   <link rel="icon" href="./login/logo.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" href="../logo.png" type="image/png">
   <style>
     /* Custom styles for background image */
 
@@ -102,16 +103,19 @@
           </div>
          
           <form id="login-form" class="space-y-4">
-            <div class="space-y-2">
-              <label for="email" class="block text-left font-semibold text-gray-700">Email</label>
-              <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-
             <div class="space-y-2 relative">
+              <label for="email" class="block text-left font-semibold text-gray-700">Email</label>
+              <input type="email" id="email" name="email" required class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <i class="fa fa-envelope absolute left-3 top-9 text-gray-600"></i> <!-- Email icon -->
+          </div>
+          
+          <div class="space-y-2 relative">
               <label for="password" class="block text-left font-semibold text-gray-700">Password</label>
-              <input type="password" id="password" name="password" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10">
+              <input type="password" id="password" name="password" required class="w-full p-2 pl-10 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <i class="fa fa-lock absolute left-3 top-9 text-gray-600"></i> <!-- Password icon -->
               <i class="fa fa-eye toggle-password absolute right-3 top-9 cursor-pointer text-gray-600" id="togglePassword"></i>
-            </div>
+          </div>
+          
             
             <!-- Sign-in Button -->
             <button id="login" type="submit" class="w-full bg-[#917248] text-white font-bold py-2 rounded-lg hover:bg-[#7d6239]">Sign in</button>
