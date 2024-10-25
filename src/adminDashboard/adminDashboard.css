@@ -31,6 +31,8 @@
   cursor: pointer;
   z-index: 10; /* Ensure it's above all other content */
 }
+
+
 #sidebar nav a {
   display: flex;
   align-items: center; /* Vertically align the icon and text */
