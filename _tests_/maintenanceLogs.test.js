@@ -22,6 +22,18 @@ document.body.innerHTML = `
 `;
 
 // Mock data with roomName instead of roomId
+// const mockData = [
+//   {
+//     roomName: 'Room 1',
+//     createdAt: { seconds: 1609459200 },
+//     timestamp: { seconds: 1609545600 },
+//     status: 'Scheduled',
+//     id: '1',
+//     description: 'Test Description',
+//     issueType: 'Test Issue',
+//     assignedTo: 'John Doe'
+//   }
+// ];
 const mockData = [
   {
     roomName: 'Room 1',
@@ -32,9 +44,39 @@ const mockData = [
     description: 'Test Description',
     issueType: 'Test Issue',
     assignedTo: 'John Doe'
+  },
+  {
+    roomName: 'Room 1',
+    createdAt: { seconds: 1609545600 },
+    timestamp: { seconds: 1609632000 },
+    status: 'In Progress',
+    id: '2',
+    description: 'Another Test Description',
+    issueType: 'Another Test Issue',
+    assignedTo: 'Jane Doe'
+  },
+  {
+    roomName: 'Room 2',
+    createdAt: { seconds: 1609632000 },
+    timestamp: { seconds: 1609718400 },
+    status: 'Completed',
+    id: '3',
+    description: 'Completed Description',
+    issueType: 'Completion Issue',
+    assignedTo: 'John Smith'
   }
 ];
 
+// helper function to count visible children to improve tests
+function countVisibleChildren(container) {
+  return Array.from(container.children).filter(child => {
+    return getComputedStyle(child).display !== 'none' && getComputedStyle(child).visibility !== 'hidden';
+  }).length;
+}
+
+
+
+// unit tests for maintenance logs
 describe('Script tests', () => {
   beforeEach(() => {
     
@@ -75,18 +117,43 @@ describe('Script tests', () => {
     expect(document.getElementById('mobile-scheduled-content').children.length).toBe(1);
   });
 
-  test('displays requests for desktop', () => {
+  test('displays requests for desktop with show more functionality', () => {
     displayRequestsForDesktop(mockData, 'scheduled-content');
-    expect(document.getElementById('scheduled-content').children.length).toBe(1);
+    
+    const scheduledContent = document.getElementById('scheduled-content');
+    const visibleCount = countVisibleChildren(scheduledContent); // using the helper function to count the children
+    console.log("visible count",visibleCount);
+    expect(visibleCount).toBe(4); // the way we store the data so show more venue button, 2 requests same name and 1 extra request
+  
+    // check if "Show More" button is present for Room 1
+    expect(scheduledContent.querySelector('button').textContent).toBe('Show More for this Venue');
+  
+    // simulate clicking the Show More button
+    scheduledContent.querySelector('button').click();
+  
+    // check that all displayed
+    const newVisibleCount = countVisibleChildren(scheduledContent);
+    expect(newVisibleCount).toBe(3); // Expecting 3 children to be visible now - no show more
   });
+  
+
 
   test('displays initial request for mobile and handles Show More button', () => {
     displayInitialRequestsForMobile(mockData, 'mobile-scheduled-content', 'show-more-scheduled');
-    expect(document.getElementById('mobile-scheduled-content').children.length).toBe(1);
+    
+    const mobileScheduledContent = document.getElementById('mobile-scheduled-content');
+    expect(mobileScheduledContent.children.length).toBe(2); // Should show first request and button to show more
+
+    // Check if the Show More button is created
+    const showMoreButton = mobileScheduledContent.querySelector('button');
+    expect(showMoreButton).toBeTruthy();
+    expect(showMoreButton.textContent).toBe('Show More for this Venue');
 
     // Simulate button click to show more requests
-    document.getElementById('show-more-scheduled').click();
-    expect(document.getElementById('mobile-scheduled-content').children.length).toBe(mockData.length);
+    showMoreButton.click();
+
+    // Verify if additional requests are shown
+    expect(mobileScheduledContent.children.length).toBe(4); //buttons plus blocks
   });
 
   test('creates request block', () => {

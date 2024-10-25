@@ -183,49 +183,39 @@ async function fetchAvailableVenues(userData) {
 
 
 
-
 function createVenueElement(venue) {
     const venueElement = document.createElement('div');
     venueElement.classList.add('venue-container', 'bg-white', 'border', 'border-gray-300', 'rounded-lg', 'p-4', 'shadow', 'flex', 'justify-between');
 
-   
     venueElement.setAttribute('data-venue-id', venue.id); 
 
-    const infoButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded info-button">Info</button>`;
     const bookButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded book-button">Book</button>`;
     const calendarButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded calendar-button">Calendar</button>`;
 
+    // Join the features array into a comma-separated string
+    const venueFeatures = venue.Features && venue.Features.length > 0
+        ? venue.Features.join(', ')  // Join the array elements with commas
+        : 'No features available';
 
     const venueDetails = `
         <div class="venue-details">
             <strong>Building:</strong> ${venue.Building || 'N/A'}<br>
-            <strong>Category:</strong> ${venue.Category || 'N/A'}
+            <strong>Category:</strong> ${venue.Category || 'N/A'}<br>
+            <strong>Features:</strong> ${venueFeatures}
         </div>`;
 
     venueElement.innerHTML = `
         <div>
             <p class="font-semibold">${venue.Name}</p>
-            <p>Capacity: ${venue.Capacity}</p>
-            ${infoButton}
+
             ${calendarButton}
             ${bookButton}
         </div>
         ${venueDetails}`;
 
-    const infoButtonElement = venueElement.querySelector('.info-button');
+    
     const bookButtonElement = venueElement.querySelector('.book-button');
     const calendarButtonElement = venueElement.querySelector('.calendar-button');
-
-  
-    infoButtonElement.addEventListener('click', () => {
-        const isMobile = window.innerWidth < 768;
-
-        if (isMobile) {
-            showVenueInfo(venue);
-        } else {
-            showVenueFeatures(venue.Features || []);
-        }
-    });
 
     bookButtonElement.addEventListener('click', () => {
         const venueId = venueElement.getAttribute('data-venue-id');
@@ -240,50 +230,10 @@ function createVenueElement(venue) {
 }
 
 
-
-function showVenueFeatures(features) {
-    const modalTitle = document.getElementById('modalTitle');
-    const modalContent = document.getElementById('modalContent');
-
-    modalTitle.innerText = "Features";
-    
-    if (features.length > 0) {
-        modalContent.innerHTML = `<ul>${features.map(feature => `<li>${feature}</li>`).join('')}</ul>`;
-    } else {
-        modalContent.innerHTML = '<p>No features available.</p>';
-    }
-
-
-    const venueModal = document.getElementById('venueModal');
-    venueModal.classList.remove('hidden');
-}
-
-
-
-function showVenueInfo(venue) {
-    const modalTitle = document.getElementById('modalTitle');
-    const modalContent = document.getElementById('modalContent');
-
-    modalTitle.innerText = venue.Name;
-
-    let content = `<strong>Building:</strong> ${venue.Building || 'N/A'}`;
-    content += `<br><strong>Category:</strong> ${venue.Category || 'N/A'}`;
-
-    if (venue.Features && venue.Features.length > 0) {
-        content += `<br><strong>Features:</strong> <ul>${venue.Features.map(feature => `<li>${feature}</li>`).join('')}</ul>`;
-    }
-
-    modalContent.innerHTML = content;
-
-    // Show the modal
-    const venueModal = document.getElementById('venueModal');
-    venueModal.classList.remove('hidden');
-}
-
-
 function closeModal() {
+    const venueModal = document.getElementById('venueModal');
+    venueModal.style.display = 'none';
     
-    document.getElementById('venueModal').style.display = 'none';
 }
 
 //add book button similar to one in the venues page.
@@ -327,23 +277,40 @@ async function populateVenues(userData) {
 
 async function showCalendarModal(venueId) {
     try {
-       
-        const currentDate = getCurrentDate(); 
-        const calendarContent = await generateCalendarContent(venueId, currentDate);
-
-       
+        // Create a date input element for selecting a future date
+        const modalContent = document.getElementById('modalContent');
         const modalTitle = document.getElementById('modalTitle');
-        modalTitle.textContent = `Availability Calendar ${currentDate}`;
-
-       
-        document.getElementById('modalContent').innerHTML = calendarContent;
-
-        document.getElementById('venueModal').style.display = 'block';
+        const venueModal = document.getElementById('venueModal');
         
+        modalTitle.textContent = 'Availability Calendar';
+
+        // Add a date picker input
+        modalContent.innerHTML = `
+            <label for="calendar-date">Choose a date:</label>
+            <input type="date" id="calendar-date" min="${getCurrentDate()}" class="calendar-date-picker">
+            <div id="calendar-results"></div>
+        `;
+
+        const dateInput = document.getElementById('calendar-date');
+        const calendarResults = document.getElementById('calendar-results');
+
+        // Listen for changes to the date input
+        dateInput.addEventListener('change', async (event) => {
+            const selectedDate = event.target.value; // Get the selected date
+            if (selectedDate) {
+                // Fetch the calendar content for the selected date
+                const calendarContent = await generateCalendarContent(venueId, selectedDate);
+                calendarResults.innerHTML = calendarContent;
+            }
+        });
+
+        venueModal.style.display = 'block'; // Show the modal
+
     } catch (error) {
         console.error('Error showing calendar modal:', error);
     }
 }
+
 
 
 

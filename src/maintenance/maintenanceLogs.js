@@ -47,13 +47,78 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // Function to handle desktop view, loading all requests at once
+// function displayRequestsForDesktop(requests, containerId) {
+//   const container = document.getElementById(containerId);
+//   requests.forEach(request => {
+//     const block = createRequestBlock(request.roomName, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
+//     container.appendChild(block);
+//   });
+// }
+
 function displayRequestsForDesktop(requests, containerId) {
   const container = document.getElementById(containerId);
-  requests.forEach(request => {
-    const block = createRequestBlock(request.roomName, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
+
+  // Group requests by roomName
+  const venueGroups = requests.reduce((acc, request) => {
+    const roomName = request.roomName || 'Unknown Venue';
+    if (!acc[roomName]) acc[roomName] = [];
+    acc[roomName].push(request);
+    return acc;
+  }, {});
+
+  // display only the first request in each venue group
+  Object.keys(venueGroups).forEach(roomName => {
+    const roomRequests = venueGroups[roomName];
+    const firstRequest = roomRequests[0];
+
+    // Create a block for the first request
+    const block = createRequestBlock(
+      firstRequest.roomName,
+      new Date(firstRequest.createdAt.seconds * 1000).toLocaleString(),
+      new Date(firstRequest.timestamp.seconds * 1000).toLocaleString(),
+      firstRequest.status,
+      firstRequest.id,
+      firstRequest
+    );
+    // Append the block to the container
     container.appendChild(block);
+
+    // if there are additional requests for this room, add a "Show More" button
+  
+    if (roomRequests.length > 1) {
+      
+      const showMoreButton = document.createElement('button');
+      showMoreButton.textContent = 'Show More for this Venue';
+      showMoreButton.classList.add('bg-gray-400', 'text-white', 'p-2', 'rounded' );
+
+      const additionalContainer = document.createElement('div');
+      additionalContainer.classList.add('additional-requests', 'hidden'); 
+
+      // event listener to display remaining requests for this room only
+      showMoreButton.addEventListener('click', () => {
+        roomRequests.slice(1).forEach(request => {
+          const additionalBlock = createRequestBlock(
+            request.roomName,
+            new Date(request.createdAt.seconds * 1000).toLocaleString(),
+            new Date(request.timestamp.seconds * 1000).toLocaleString(),
+            request.status,
+            request.id,
+            request
+          );
+          additionalContainer.appendChild(additionalBlock); 
+        });
+        // Show the additional requests and hide the button
+        additionalContainer.classList.remove('hidden');
+        showMoreButton.style.display = 'none';
+      });
+
+      // Append the show more button and the additional container to the main container
+      container.appendChild(showMoreButton);
+      container.appendChild(additionalContainer);
+    }
   });
 }
+
 //function to set up the data for the staff drop down
 async function setupStaffSearch(apiKey) {
   const searchInput = document.getElementById('assigned-to');
@@ -143,24 +208,119 @@ function clearStaffDropdown() {
 }
 
 // Function to display one request initially for mobile
-function displayInitialRequestsForMobile(requests, containerId, buttonId) {
+// function displayInitialRequestsForMobile(requests, containerId, buttonId) {
+//   const container = document.getElementById(containerId);
+//   if (requests.length > 0) {
+//     // Display only the first item initially
+//     const firstRequest = requests[0];
+//     const block = createRequestBlock(firstRequest.roomName, new Date(firstRequest.createdAt.seconds * 1000).toLocaleString(), new Date(firstRequest.timestamp.seconds * 1000).toLocaleString(), firstRequest.status, firstRequest.id, firstRequest);
+//     container.appendChild(block);
+
+//     // Add event listener for the Show More button
+//     document.getElementById(buttonId).addEventListener('click', () => {
+//       requests.slice(1).forEach(request => {
+//         const block = createRequestBlock(request.roomName, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
+//         container.appendChild(block);
+//       });
+//       // Hide the button after expanding
+//       document.getElementById(buttonId).style.display = 'none';
+//     });
+//   }
+// }
+
+
+function displayInitialRequestsForMobile(requests, containerId, mainButtonId) {
   const container = document.getElementById(containerId);
-  if (requests.length > 0) {
-    // Display only the first item initially
-    const firstRequest = requests[0];
-    const block = createRequestBlock(firstRequest.roomName, new Date(firstRequest.createdAt.seconds * 1000).toLocaleString(), new Date(firstRequest.timestamp.seconds * 1000).toLocaleString(), firstRequest.status, firstRequest.id, firstRequest);
+
+  // sorting requests alphabetically by room name
+  requests.sort((a, b) => a.roomName.localeCompare(b.roomName));
+
+  // group the requests by roomId
+  const venueGroups = requests.reduce((acc, request) => {
+    const venueId = request.roomId || 'unknown';
+    if (!acc[venueId]) acc[venueId] = [];
+    acc[venueId].push(request);
+    return acc;
+  }, {});
+
+  const venueIds = Object.keys(venueGroups);
+
+  // Show the first request of the first venue initially
+  if (venueIds.length > 0) {
+    const firstVenueRequests = venueGroups[venueIds[0]];
+    const firstRequest = firstVenueRequests[0];
+
+    const block = createRequestBlock(
+      firstRequest.roomName,
+      new Date(firstRequest.createdAt.seconds * 1000).toLocaleString(),
+      new Date(firstRequest.timestamp.seconds * 1000).toLocaleString(),
+      firstRequest.status,
+      firstRequest.id,
+      firstRequest
+    );
     container.appendChild(block);
 
-    // Add event listener for the Show More button
-    document.getElementById(buttonId).addEventListener('click', () => {
-      requests.slice(1).forEach(request => {
-        const block = createRequestBlock(request.roomName, new Date(request.createdAt.seconds * 1000).toLocaleString(), new Date(request.timestamp.seconds * 1000).toLocaleString(), request.status, request.id, request);
-        container.appendChild(block);
-      });
-      // Hide the button after expanding
-      document.getElementById(buttonId).style.display = 'none';
-    });
+    // Add "Show More for this Venue" for additional requests in the first venue
+    if (firstVenueRequests.length > 1) {
+      const subShowMoreButton = createSubShowMoreButton(firstVenueRequests.slice(1), container, firstVenueRequests);
+      container.appendChild(subShowMoreButton);
+    }
   }
+
+  // the main "Show More" button for additional venues
+  document.getElementById(mainButtonId).addEventListener('click', () => {
+    venueIds.slice(1).forEach(venueId => {
+      const venueRequests = venueGroups[venueId];
+      const firstRequest = venueRequests[0];
+
+      const block = createRequestBlock(
+        firstRequest.roomName,
+        new Date(firstRequest.createdAt.seconds * 1000).toLocaleString(),
+        new Date(firstRequest.timestamp.seconds * 1000).toLocaleString(),
+        firstRequest.status,
+        firstRequest.id,
+        firstRequest
+      );
+      container.appendChild(block);
+
+      // Add sub "Show More for this Venue" for additional requests in this venue
+      if (venueRequests.length > 1) {
+        const subShowMoreButton = createSubShowMoreButton(venueRequests.slice(1), container, venueRequests);
+        container.appendChild(subShowMoreButton);
+      }
+    });
+
+    
+    document.getElementById(mainButtonId).style.display = 'none';
+  });
+}
+
+
+// helper function to create a sub-level "Show More" button for mobile view
+function createSubShowMoreButton(additionalRequests, container, venueRequests) {
+  const subShowMoreButton = document.createElement('button');
+  subShowMoreButton.textContent = 'Show More for this Venue';
+  subShowMoreButton.classList.add('bg-gray-400', 'text-white', 'p-2', 'rounded', 'mt-2', 'text-sm');
+
+  subShowMoreButton.addEventListener('click', () => {
+    // insert additional requests right after the first request block for this venue
+    additionalRequests.forEach(request => {
+      const additionalBlock = createRequestBlock(
+        request.roomName,
+        new Date(request.createdAt.seconds * 1000).toLocaleString(),
+        new Date(request.timestamp.seconds * 1000).toLocaleString(),
+        request.status,
+        request.id,
+        request
+      );
+      // insert the additional blocks after the first block for this venue
+      const firstBlock = container.lastElementChild; 
+      container.insertBefore(additionalBlock, subShowMoreButton); // Insert before the show more button
+    });
+    subShowMoreButton.style.display = 'none'; 
+  });
+
+  return subShowMoreButton;
 }
 
 
