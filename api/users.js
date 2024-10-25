@@ -39,7 +39,7 @@ usersRouter.get('/users', async (req, res) => {
             q = query(q, where('isTutor', '==', isTutor === 'true')); // Convert string to boolean
         }
 
-        // Name or surname search (case-insensitive search can be implemented if required)
+        // Name or surname search 
         if (name) {
             q = query(q, where('name', '>=', name), where('name', '<=', name + '\uf8ff')); // Filters names starting with 'name'
         }

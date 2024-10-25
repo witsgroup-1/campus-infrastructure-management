@@ -32,9 +32,6 @@ jobs:
 
       - name: Run Playwright tests
         run: npm run test:playwright
-  
-      - name: Merge Coverage
-        run: npm run coverage:merge
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4

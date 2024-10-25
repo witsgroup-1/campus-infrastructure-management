@@ -28,7 +28,6 @@ const getUserDocumentByEmail = async (email) => {
         if (!querySnapshot.empty) {
             const userDoc = querySnapshot.docs[0];
             const userDocId = userDoc.id;
-            console.log('User document ID:', userDocId);
             return userDocId;
         } else {
             console.log('No user document found with the given email.');
@@ -113,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (userEmail) {
         console.log('User email:', userEmail);
-        console.log("userId:",userId);
         // Use the email (e.g., display it, use it in queries, etc.)
     }
 
@@ -140,6 +138,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeBtn.addEventListener('click', () => {
         sidebar.style.width = '0';
+    });
+
+
+    // Close sidebar when clicking outside of it
+    document.addEventListener('click', (event) => {
+        if (sidebar.style.width !== '0px' && !sidebar.contains(event.target) && !menuIcon.contains(event.target)) {
+            sidebar.style.width = '0';
+        }
     });
 
     window.addEventListener('resize', () => {

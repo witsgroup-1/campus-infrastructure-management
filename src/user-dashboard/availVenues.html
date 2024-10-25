@@ -30,6 +30,7 @@
             display: none; 
             margin: auto;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -48,6 +49,78 @@
           font-size: 20px;
           cursor: pointer;
         }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Three columns for a grid-like calendar */
+            gap: 10px; /* Space between the grid items */
+            margin-top: 20px;
+        }
+
+        /* Style for each time slot */
+        .time-slot {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Booked slots have a red background */
+        .booked-slot {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Available slots have a green background */
+        .available-slot {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Style the time and status text within the time slot */
+        .slot-time {
+            display: block;
+            font-weight: bold;
+        }
+
+        .slot-status {
+            display: block;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+        .calendar-grid {
+            grid-template-columns: 1fr; /* One column on mobile */
+        }
+    }
+
+        /* On desktop (screens wider than 768px) */
+@media (min-width: 768px) {
+    .info-button {
+        display: inline-block;
+        content: "Features"; /* Change the text for desktop */
+    }
+
+    .venue-details {
+        display: block; /* Venue details appear on desktop */
+        text-align: right;
+    }
+}
+
+/* On mobile (screens smaller than 768px) */
+@media (max-width: 767px) {
+    .info-button {
+        display: inline-block;
+        content: "Info"; /* Button text for mobile */
+    }
+    .venue-details {
+        display: block; /* Venue details appear on desktop */
+        text-align: right;
+    }
+}
+
         
     </style>
 </head>
@@ -62,19 +135,21 @@
         </button>
     </header>
 
-
     <div class="loader" id="loader"></div>
-
+    
     <!-- Box with venue info -->
     <section id="bookingsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <!-- Booking boxes will be updated dynamically here -->
+         
     </section>
+    
 
     <div id="paginationControls" class="flex justify-center mt-4">
-        <button id="prevPage" class="px-4 py-2 text-[#003B5C] rounded-lg" disabled>Previous</button>
+        <button id="prevPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" disabled>Previous</button>
         <span id="pageInfo" class="mx-2">Page 1</span>
-        <button id="nextPage" class="px-4 py-2  text-[#003B5C] rounded-lg">Next</button>
+        <button id="nextPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Next</button>
     </div>
+
 </main>
 
 <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center">

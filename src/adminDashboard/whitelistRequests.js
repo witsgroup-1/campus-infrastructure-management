@@ -73,8 +73,11 @@ async function displayWhitelistRequests() {
                 listItem.className = 'bg-gray-100 p-4 rounded-lg shadow-md text-[#003B5C]';
 
                 listItem.innerHTML = `
-                    <p><strong>Name:</strong> ${request.name} ${request.surname}</p>
-                    <p><strong>Email:</strong> ${request.emailInput}</p>
+                    <a href = "allWhitelistRequests.html" style="text-decoration: none; color: inherit;">
+
+                            <p><strong>Name:</strong> ${request.name} ${request.surname}</p>
+                            <p><strong>Email:</strong> ${request.emailInput}</p>
+                    </a>
                 `;
                 requestsList.appendChild(listItem);
             });

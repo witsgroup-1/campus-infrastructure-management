@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link rel="icon" href="../logo.png" type="image/png">
     <link rel="stylesheet" href="adminDashboard.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -23,12 +24,22 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    
 </head>
 
 <body class="bg-gray-100"></body>
     <div class="w-full h-2 bg-[#003B5C]"></div>
     <header class="bg-white shadow-md p-2 flex justify-between items-center">
+       <!-- Group the menu icon and logo -->
+       <div class="flex items-center space-x-2">
+        <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#003B5C" class="w-8 h-8 cursor-pointer">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+        </svg>
         <img class="w-10" src="img/wits_logo.png" alt="Wits Logo">
+    </div>
+    
         <h1 class="text-2xl font-semibold text-blue-950">Infrastructure Management</h1>
         <div class="flex items-center space-x-4">
                <!-- Notifications and Requests Icons -->
@@ -73,24 +84,43 @@
         
 
            
-              <svg id = "menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#003B5C" class="size-6 cursor-pointer" >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
+              
               
         </div>
     </header>
 
-    <div id="sidebar" class="fixed top-0 right-0 h-full bg-[#003B5C] text-white w-0 overflow-hidden transition-all duration-300 lg:w-1/4 md:w-1/3 sm:w-1/2">
+
+   
+
+    
+    
+    <div id="sidebar" class="fixed top-0 left-0 h-full bg-[#003B5C] text-white w-0 overflow-hidden transition-all duration-300 lg:w-1/4 md:w-1/3 sm:w-1/2">
         <button id="close-btn" class="absolute top-4 left-1/2 transform -translate-x-1/2 text-2xl cursor-pointer mt-4" aria-label="Close Sidebar">&times;</button>
-        <nav class="flex flex-col items-center justify-center h-full p-4 space-y-4">
-            <a href='./allWhitelistRequests.html' >Manage Requests</a>
-            <a href="./allWhitelistMembers.html">Manage Whitelist</a>
-            <a href="../user-dashboard/dashboard.html">User Dashboard</a>
-            <a href="../login/login.html" id = "logout">Log out</a>
+        
+        <nav class="flex flex-col items-start justify-center h-full p-4 space-y-4">
+
+            <a href='./allWhitelistRequests.html' class="flex items-center space-x-2">
+                <i class="fas fa-tasks"></i> <!-- Manage Requests Icon -->
+                <span>Manage Requests</span>
+            </a>
+            <a href="./allWhitelistMembers.html" class="flex items-center space-x-2">
+                <i class="fas fa-user-shield"></i> <!-- Manage Whitelist Icon -->
+                <span>Manage Whitelist</span>
+            </a>
+            <a href="../user-dashboard/dashboard.html" class="flex items-center space-x-2">
+                <i class="fas fa-tachometer-alt"></i> <!-- User Dashboard Icon -->
+                <span>User Dashboard</span>
+            </a>
+            
+            <a href="../login/login.html" id="logout" class="flex items-center space-x-2">
+                <i class="fas fa-sign-out-alt"></i> <!-- Logout Icon -->
+                <span>Log out</span>
+            </a>
         </nav>
     </div>
     
-<p id="userEmailDisplay"></p>
+    
+    <p id="userGreeting" class="text-xl font-semibold text-blue-950 m-4"></p>
 
 <main class="min-h-screen p-8 flex flex-wrap">
     <section id="image-section" class="w-full md:w-1/2 flex justify-center items-center hidden md:flex">
@@ -131,7 +161,7 @@
     </footer>
     <script>
 
-        const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
+const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';
         const apiBaseUrl = 'https://campus-infrastructure-management.azurewebsites.net/api';
 
         
@@ -192,7 +222,7 @@
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2); // Subtract 2 days (48 hours)
 
         return requests.filter(request => {
-            const createdAt = new Date(request.createdAt.seconds * 1000); // Assuming createdAt is a Firestore timestamp
+            const createdAt = new Date(request.createdAt.seconds * 1000); 
             return createdAt >= twoDaysAgo;
         });
     }

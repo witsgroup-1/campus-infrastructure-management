@@ -295,44 +295,53 @@ async function displayPastBookings(pastBookings, userId) {
   
 
   window.cancelBooking = async function(userId, bookingId) {
-    try {
-      const cancelButton = document.querySelector(`button[onclick="cancelBooking('${userId}', '${bookingId}')"]`);
-      if (cancelButton) {
-        cancelButton.disabled = true;
-        cancelButton.innerHTML = 'Cancelling...'; 
-      }
-  
-      const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingId}`;
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'x-api-key': api_key,
-          'Content-Type': 'application/json'
-        }
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to delete booking, please try again.');
-      }
-  
-      alert(`Booking cancelled successfully.`);
-  
-      const updatedBookings = await fetchUserBookings(userId);
-      displayUpcomingBookings(updatedBookings.filter(booking => {
-        const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
-        return startTime && startTime > new Date();
-      }), userId);
-  
-    } catch (error) {
-      console.error('Error cancelling booking:', error);
-      alert('Error cancelling booking: ' + error.message);
-    } finally {
-      if (cancelButton) {
-        cancelButton.disabled = false;
-        cancelButton.innerHTML = 'Cancel'; 
-      }
+    // Show a confirmation popup before proceeding with the cancellation
+    const confirmation = window.confirm("Are you sure you want to cancel this booking?");
+    
+    if (!confirmation) {
+        // If the user cancels the confirmation, exit the function
+        return;
     }
-  }
+
+    try {
+        const cancelButton = document.querySelector(`button[onclick="cancelBooking('${userId}', '${bookingId}')"]`);
+        if (cancelButton) {
+            cancelButton.disabled = true;
+            cancelButton.innerHTML = 'Cancelling...'; 
+        }
+
+        const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingId}`;
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'x-api-key': api_key,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete booking, please try again.');
+        }
+
+        alert('Booking cancelled successfully.');
+
+        const updatedBookings = await fetchUserBookings(userId);
+        displayUpcomingBookings(updatedBookings.filter(booking => {
+            const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
+            return startTime && startTime > new Date();
+        }), userId);
+
+    } catch (error) {
+        console.error('Error cancelling booking:', error);
+        alert('Error cancelling booking: ' + error.message);
+    } finally {
+        if (cancelButton) {
+            cancelButton.disabled = false;
+            cancelButton.innerHTML = 'Cancel';
+        }
+    }
+}
+
 
   window.bookAgain = function(venueId, venueName) {
     try {

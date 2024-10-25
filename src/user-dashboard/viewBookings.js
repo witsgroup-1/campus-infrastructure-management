@@ -102,7 +102,6 @@ async function fetchUserBookings(userId) {
 }
 
 async function displayBookings(bookings) {
-  console.log(bookings)
   const bookingsContainer = document.getElementById('bookings-container');
   const noBookingsMessage = document.getElementById('no-bookings-message');
   const seeMoreButton = document.getElementById('see-more-button');
@@ -141,7 +140,7 @@ async function displayBookings(bookings) {
       const venueName = venueDoc.exists() ? venueDoc.data().Name : 'Venue not found';
 
       bookingElement.innerHTML = `
-        <div class="booking-container flex items-center">
+        <div class="booking-container flex items-center cursor-pointer">
           <div class="booking-info flex-1">
             <div><strong>Venue:</strong> ${venueName}</div>
             <div><strong>Purpose:</strong> ${booking.purpose}</div> <!-- Use purpose directly -->
@@ -153,6 +152,38 @@ async function displayBookings(bookings) {
           </div>
         </div>
       `;
+
+      const cancelModal = document.getElementById('cancelModal');
+      const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      
+
+  bookingElement.addEventListener('click', () => {
+  cancelModal.classList.remove('hidden');
+  
+  
+  getFirestoreUserIdByEmail(localStorage.getItem('userEmail'))
+  .then(firestoreUserId => {
+    cancelModal.dataset.userId = firestoreUserId; 
+    
+  })
+  .catch(error => {
+    console.error("Error fetching Firestore userId:", error);
+  });
+
+  cancelModal.dataset.bookingId = booking.id;
+});
+
+closeModalBtn.addEventListener('click', () => {
+  cancelModal.classList.add('hidden');
+});
+
+confirmCancelBtn.addEventListener('click', () => {
+  const userId = cancelModal.dataset.userId;
+  const bookingId = cancelModal.dataset.bookingId;
+  cancelBooking(userId, bookingId);
+});
+      
 
       bookingsContainer.appendChild(bookingElement);
     }
@@ -170,8 +201,6 @@ async function loadUserBookings(userEmail) {
   showLoading();
 
   const firestoreUserId = await getFirestoreUserIdByEmail(userEmail);
-  console.log(firestoreUserId);
-
   if (firestoreUserId) {
     const bookings = await fetchUserBookings(firestoreUserId);
     displayBookings(bookings);
@@ -181,17 +210,66 @@ async function loadUserBookings(userEmail) {
   hideLoading();
 }
 
+
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("User is signed in with email:", user.email);
     loadUserBookings(user.email); 
   } else {
     console.log("No user is signed in.");
+    sessionStorage.clear();
   }
 });
+
+
+async function cancelBooking(userId, bookingId) {
+  try {
+    const loadingMessage = document.getElementById('loadingMessage');
+    loadingMessage.classList.remove('hidden');
+    
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    confirmCancelBtn.classList.add('hidden'); 
+
+    const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${userId}/bookings/${bookingId}`;
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'x-api-key': api_key,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete booking, please try again.');
+    }
+
+    // Only alert and reload UI once
+    alert("Booking cancelled successfully!");
+    const updatedBookings = await fetchUserBookings(userId);
+    const upcomingBookings = updatedBookings.filter(booking => {
+      const startTime = booking.start_time ? new Date(booking.start_time.seconds * 1000) : null;
+      return startTime && startTime > new Date();
+    });
+
+    displayBookings(upcomingBookings);
+    const cancelModal = document.getElementById('cancelModal');
+    cancelModal.classList.add('hidden');
+  } catch (error) {
+    console.error('Error cancelling booking:', error);
+    alert('Error cancelling booking: ' + error.message);
+  } finally {
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    confirmCancelBtn.classList.remove('hidden');
+
+    const loadingMessage = document.getElementById('loadingMessage');
+    loadingMessage.classList.add('hidden');
+  }
+}
+
 
   
 
 
-
+ const api_key = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW'
 

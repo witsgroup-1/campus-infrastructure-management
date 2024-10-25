@@ -1,8 +1,8 @@
 // book-venue.js
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js"; // Updated to match system prompt version
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -19,30 +19,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+let venues = []; // Declare venues as a global variable
+
+const API_KEY = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";
 
 // Function to toggle loading indicator
 function toggleLoading(show) {
     const loadingIndicator = document.getElementById('loadingIndicator');
     if (loadingIndicator) {
-        if (show) {
-            loadingIndicator.classList.remove('hidden');
-        } else {
-            loadingIndicator.classList.add('hidden');
-        }
+        loadingIndicator.classList.toggle('hidden', !show);
     }
 
-   //disable/enable UI elements during loading
-    const roomFilter = document.getElementById('roomFilter');
-    const searchInput = document.getElementById('searchInput');
-    if (roomFilter) roomFilter.disabled = show;
-    if (searchInput) searchInput.disabled = show;
+    // Disable/enable UI elements during loading
+    document.getElementById('roomFilter').disabled = show;
+    document.getElementById('searchInput').disabled = show;
 }
 
 toggleLoading(true); // Show loader at the start
 
 // Function to fetch user data using the API
 async function fetchUserData(uid) {
-    const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW"; 
     const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${uid}`; // Include uid in the URL
 
     try {
@@ -50,43 +46,58 @@ async function fetchUserData(uid) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey 
+                'x-api-key': API_KEY 
             }
         });
 
         if (response.ok) {
-            const userData = await response.json();
-            return userData;
-        } else if (response.status === 404) {
-            return null;
-        } else {
-            return null;
+            return await response.json();
         }
     } catch (error) {
         console.error('Error fetching user data:', error);
-        return null;
     }
+    return null; // Return null if there was an error or not found
 }
 
-async function fetchAndRenderBookings(userData) {
-   
+// Function to determine allowed categories based on user role
+export function getAllowedCategories(userData) {
+    const role = userData.role || '';
+    const isTutor = userData.isTutor || false;
+    const isLecturer = userData.isLecturer || false;
 
-    const roomFilterElement = document.getElementById('roomFilter');
-    
-    // Check if the roomFilterElement exists before accessing its value
-    if (!roomFilterElement) {
-        toggleLoading(false); // Hide loader if element is missing
-        return; // Exit the function if the element is missing
+    const categoryMapping = {
+        'Student': {
+            default: ['Study Room'],
+            isTutor: ['Study Room', 'Tutorial Room'],
+            isLecturer: ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+        },
+        'Staff': {
+            isLecturer: ['Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+            default: ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'],
+        }
+    };
+
+    if (role in categoryMapping) {
+        if (isTutor) return categoryMapping[role].isTutor || categoryMapping[role].default;
+        if (isLecturer) return categoryMapping[role].isLecturer || categoryMapping[role].default;
+        return categoryMapping[role].default;
     }
 
-    const categoryFilter = roomFilterElement.value; // Safely access the value now
-    const apiKey = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";   
+    return [];
+}
 
-    let apiUrl;
+// Pagination variables
+let currentPage = 1;
+const PAGE_SIZE = 10; // Number of venues to display per page
+
+
+async function fetchAndRenderBookings(userData) {
+    toggleLoading(true); // Show loader at the start
+
+    const categoryFilter = document.getElementById('roomFilter').value || '';
+    let apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues`;
     if (categoryFilter) {
-        apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues?category=${encodeURIComponent(categoryFilter)}`;
-    } else {
-        apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/venues`;
+        apiUrl += `?category=${encodeURIComponent(categoryFilter)}`;
     }
 
     try {
@@ -94,13 +105,13 @@ async function fetchAndRenderBookings(userData) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey 
+                'x-api-key': API_KEY 
             }
         });
 
         if (response.ok) {
-            const venues = await response.json();
-            renderVenues(venues, userData);  // Render fetched venues with user-specific filters
+            venues = await response.json(); // Assign fetched venues to the global variable
+            await renderVenues(venues, userData); // Wait for rendering to finish
         } else {
             console.error('Failed to fetch venues:', response.statusText);
             document.getElementById('bookingsContainer').innerHTML = '<p class="text-center text-red-500">Failed to load venues. Please try again later.</p>';
@@ -109,107 +120,150 @@ async function fetchAndRenderBookings(userData) {
         console.error('Error fetching venues:', error);
         document.getElementById('bookingsContainer').innerHTML = '<p class="text-center text-red-500">An error occurred while loading venues.</p>';
     } finally {
-        toggleLoading(false); // Hide loader after fetching and rendering
+        toggleLoading(false); // Hide loader after fetching venues
     }
 }
 
-function renderVenues(venues, userData) {
+async function checkMaintenanceStatus(venueId) {
+    const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/venue/${venueId}`;
+    
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY 
+            }
+        });
+
+        if (response.ok) {
+            const maintenanceRequests = await response.json();
+            return maintenanceRequests.length > 0; // Return true if there are requests
+        }
+    } catch (error) {
+        console.error('Error checking maintenance status:', error);
+    }
+    
+    return false; // Return false if there was an error or no requests found
+}
+async function renderVenues(venues, userData) {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing venues
 
     const categoryFilterElement = document.getElementById('roomFilter');
     const searchInputElement = document.getElementById('searchInput');
-
-    // Add checks before accessing value
-    const categoryFilter = categoryFilterElement ? categoryFilterElement.value : '';
-    const searchQuery = searchInputElement ? searchInputElement.value.toLowerCase() : '';
-
-    const allowedCategories = getAllowedCategories(userData);
-
-    // Check if the user is filtering by a category they don't have access to
-    if (categoryFilter && !allowedCategories.includes(categoryFilter)) {
-        container.innerHTML = `<p class="text-center text-red-500">You don't have the privilege to book ${categoryFilter}s.</p>`;
-        return; // Stop further rendering
-    }
+    const searchQuery = searchInputElement.value.toLowerCase();
 
     // Filter venues based on user access, category filter, and search query
     const filteredVenues = venues.filter(venue => {
-        const matchesCategory = categoryFilter ? venue.Category === categoryFilter : true;
+        const matchesCategory = categoryFilterElement.value ? venue.Category === categoryFilterElement.value : true;
         const matchesSearch = venue.Name && venue.Name.toLowerCase().includes(searchQuery);
-        const matchesAccess = allowedCategories.includes(venue.Category);
-
-        // Ensure that all conditions (category, search, and access) are met
+        const matchesAccess = getAllowedCategories(userData).includes(venue.Category);
         return matchesCategory && matchesSearch && matchesAccess;
     });
 
-    if (filteredVenues.length === 0) {
+    // Handle pagination
+    const totalPages = Math.ceil(filteredVenues.length / PAGE_SIZE);
+    const paginatedVenues = filteredVenues.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    if (paginatedVenues.length === 0) {
         container.innerHTML = '<p class="text-center text-gray-500">No venues found.</p>';
         return;
     }
 
-    // Loop through the filtered venues and create venue boxes
-    filteredVenues.forEach(venue => {
+    // Create an array of promises to check maintenance status for all venues
+    const maintenanceChecks = paginatedVenues.map(async (venue) => {
+        const isUnderMaintenance = await checkMaintenanceStatus(venue.id);
+        return { venue, isUnderMaintenance }; // Return venue and its maintenance status
+    });
+
+    // Wait for all maintenance checks to complete
+    const venuesWithMaintenanceStatus = await Promise.all(maintenanceChecks);
+
+    // Render the venues based on their maintenance status
+    venuesWithMaintenanceStatus.forEach(({ venue, isUnderMaintenance }) => {
         const venueBox = document.createElement('div');
         venueBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
-        const venueInfo = document.createElement('div');
-        venueInfo.className = 'flex-shrink-0';
-        venueInfo.innerHTML = `
-            <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
-            <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
-            <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
-        `;
+        if (isUnderMaintenance) {
+            venueBox.innerHTML = `
+                <div class="flex-shrink-0">
+                    <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
+                    <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
+                    <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
+                    <p class="text-red-500">This venue is currently under maintenance.</p>
+                </div>
+            `;
+        } else {
+            venueBox.innerHTML = `
+                <div class="flex-shrink-0">
+                    <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
+                    <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
+                    <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
+                </div>
+                <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none" onclick="window.location.href='booking-details.html?bookingId=${venue.id}'">Book</button>
+            `;
+        }
 
-        const bookButton = document.createElement('button');
-        bookButton.className = 'bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
-        bookButton.textContent = 'Book';
-
-        // Add a click event to redirect the user to the booking details page
-        bookButton.onclick = function() {
-            window.location.href = `booking-details.html?bookingId=${venue.id}`;
-        };
-
-        const actionButtons = document.createElement('div');
-        actionButtons.className = 'flex flex-row space-x-2';
-        actionButtons.appendChild(bookButton);
-
-        // Append venue info and action buttons to the venue box
-        venueBox.appendChild(venueInfo);
-        venueBox.appendChild(actionButtons);
-
-        // Append the venue box to the container
         container.appendChild(venueBox);
+    });
+
+    setupPagination(totalPages, userData); // Pass userData to setupPagination
+}
+
+function setupPagination(totalPages, userData) {
+    const paginationContainer = document.getElementById('paginationControls');
+    paginationContainer.innerHTML = `
+        <button id="prevPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+        <span>Page ${currentPage} of ${totalPages}</span>
+        <button id="nextPage" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+    `;
+
+    // Previous Page Button
+    document.getElementById('prevPage').onclick = async () => {
+        if (currentPage > 1) {
+            currentPage--;
+            toggleLoading(true); // Show loader when changing pages
+            await renderVenues(venues, userData); // Wait for rendering to finish
+            toggleLoading(false); // Hide loader after rendering
+        }
+    };
+
+    // Next Page Button
+    document.getElementById('nextPage').onclick = async () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            toggleLoading(true); // Show loader when changing pages
+            await renderVenues(venues, userData); // Wait for rendering to finish
+            toggleLoading(false); // Hide loader after rendering
+        }
+    };
+}
+
+// Function to populate category dropdown based on user permissions
+function populateCategoryDropdown(userData) {
+    const roomFilterElement = document.getElementById('roomFilter');
+    const allowedCategories = getAllowedCategories(userData); // Get allowed categories for the user
+
+    // Clear existing options
+    roomFilterElement.innerHTML = '<option value="">Room type</option>';
+
+    // Add allowed categories to the dropdown
+    allowedCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        roomFilterElement.appendChild(option);
     });
 }
 
-// Function to determine allowed categories based on user role, isTutor, and isLecturer
-function getAllowedCategories(userData) {
-    // Provide default values in case fields are missing
-    const role = userData.role || '';
-    const isTutor = userData.isTutor || false;
-    const isLecturer = userData.isLecturer || false;
-
-    if (role === 'Student' && !isTutor && !isLecturer) {
-        return ['Study Room'];
-    } else if (role === 'Student' && isTutor && !isLecturer) {
-        return ['Study Room', 'Tutorial Room'];
-    } else if (role === 'Student' && !isTutor && isLecturer) {
-        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
-    } else if (role === 'Staff' && isLecturer) {
-        return ['Tutorial Room', 'Exam Venue', 'Boardroom','Lecture Hall'];
-    } else if (role === 'Staff' && !isLecturer && !isTutor) {
-        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
-    } else if ((role === 'Student' || role === "Staff") && isLecturer && isTutor) {
-        return ['Study Room', 'Tutorial Room', 'Exam Venue', 'Boardroom', 'Lecture Hall'];
-    }
-    return [];
-}
-
-// Handle authentication and render venues
+// Update onAuthStateChanged to populate categories after fetching user data
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userData = await fetchUserData(user.uid);
-        fetchAndRenderBookings(userData);  // Fetch venues once user is authenticated and user data is fetched
+        populateCategoryDropdown(userData); // Populate categories based on user permissions
+        fetchAndRenderBookings(userData);
+        currentPage = 1; // Reset to first page when user logs in
     } else {
         window.location.href = "../index.html";  // Redirect to login page
     }
@@ -222,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         roomFilterElement.addEventListener('change', async () => {
             const user = auth.currentUser;
             if (user) {
+                toggleLoading(true); // Show loader at the start
                 const userData = await fetchUserData(user.uid);
                 fetchAndRenderBookings(userData); // Fetch venues after changing filter
             }
@@ -239,3 +294,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
