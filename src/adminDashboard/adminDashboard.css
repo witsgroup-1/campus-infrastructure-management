@@ -212,4 +212,15 @@ h2:hover {
   margin-left: 1rem; /* Optional: Adjusts the margin from the left edge */
 }
 
-  
+.square {
+  background-color: #003B5C; /* Existing background color */
+  text-white; /* Existing text color */
+  border-radius: 8px; /* Smooth rounded corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for scaling and shadow */
+}
+
+.square:hover {
+  transform: scale(1.05); /* Slightly increase the size on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add a larger shadow for depth */
+  cursor: pointer; /* Change the cursor to pointer to indicate interactivity */
+}
