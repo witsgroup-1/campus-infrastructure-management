@@ -10,7 +10,7 @@
 <body class="bg-gray-50 flex flex-col min-h-screen">
      <!-- Page Header -->
   <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-    <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.location.href='timetable.html'">
+    <button class="absolute top-1/2 transform -translate-y-1/2 left-4 z-10" onclick="window.location.href='timetable.html'">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
@@ -21,12 +21,6 @@
   <!--Main Content -->
   <main class="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8 items-start relative px-8">
     <form id="schedule_form" class="space-y-6 lg:w-3/4">
-      
-      <!--Name and Surname -->
-      <label class="block text-lg text-[#003B5C] font-medium">
-        Name and Surname:
-        <input type="text" id="name" placeholder="Name and Surname" class="block w-full mt-1 p-2 border rounded-md"  required>
-      </label>
 
       <!--Course -->
       <label class="block text-lg text-[#003B5C] font-medium">
@@ -39,21 +33,6 @@
         Venue
         <input type="text" id="venue" placeholder="Venue" class="block w-full mt-1 p-2 border rounded-md"  required>
         <select id="venue-dropdown" class="hidden w-full mt-1 p-2 border rounded-md"></select>
-      </label>
-
-        <!--Day of the week-->
-      <label class="block text-lg text-[#003B5C] font-medium">
-        Day of the Week:
-        <select id="day" class="block w-full mt-1 p-2 border rounded-md" required>
-          <option value="">Select Day</option>
-          <option value="Sunday">Sunday</option>
-          <option value="Monday">Monday</option>
-          <option value="Tuesday">Tuesday</option>
-          <option value="Wednesday">Wednesday</option>
-          <option value="Thursday">Thursday</option>
-          <option value="Friday">Friday</option>
-          <option value="Saturday">Saturday</option>
-        </select>
       </label>
 
         <!-- Time Slot -->
@@ -76,6 +55,12 @@
             <input type="date" id="date" class="block w-full mt-2 p-2 border rounded-md">
           </label>
         </div>
+
+        <!--Day of the week-->
+      <label class="block text-lg text-[#003B5C] font-medium">
+        Day of the Week:
+        <input type="text" id="day" placeholder="Day" class="block w-full mt-1 p-2 border rounded-md"  required readonly>
+      </label>
 
         <!-- Recurring -->
         <label class="block text-lg text-[#003B5C] font-medium">
