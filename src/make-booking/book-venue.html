@@ -24,6 +24,53 @@
     display: none;
 }
 
+.calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Three columns for a grid-like calendar */
+            gap: 10px; /* Space between the grid items */
+            margin-top: 20px;
+        }
+
+        /* Style for each time slot */
+        .time-slot {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Booked slots have a red background */
+        .booked-slot {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Available slots have a green background */
+        .available-slot {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Style the time and status text within the time slot */
+        .slot-time {
+            display: block;
+            font-weight: bold;
+        }
+
+        .slot-status {
+            display: block;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+        .calendar-grid {
+            grid-template-columns: 1fr; /* One column on mobile */
+        }
+    }
+
+
     </style>
 </head>
 <body class="bg-white text-gray-800">
@@ -92,6 +139,15 @@
     <section id="bookingsContainer" class="p-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <!-- Booking boxes will be updated dynamically here -->
     </section>
+    <div id="venueModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
+            <h2 id="modalTitle" class="text-xl font-semibold mb-4">Venue Info</h2>
+            <p id="modalContent"></p>
+            <button id = "closeButton" onclick="closeModal()" class="mt-4 px-4 py-2 bg-[#917248] text-white rounded">Close</button>
+          </div>
+        </div>
+      </div>
 
 
  
