@@ -64,11 +64,7 @@
             font-size: 0.9em;
         }
 
-        @media (max-width: 768px) {
-        .calendar-grid {
-            grid-template-columns: 1fr; /* One column on mobile */
-        }
-    }
+      
 
 
     </style>
@@ -140,14 +136,14 @@
         <!-- Booking boxes will be updated dynamically here -->
     </section>
     <div id="venueModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen">
-          <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
+        <div id="square" class="flex items-center justify-center min-h-screen">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-full sm:w-1/2">
             <h2 id="modalTitle" class="text-xl font-semibold mb-4">Venue Info</h2>
             <p id="modalContent"></p>
-            <button id = "closeButton" onclick="closeModal()" class="mt-4 px-4 py-2 bg-[#917248] text-white rounded">Close</button>
+            <button id="closeButton" onclick="closeModal()" class="mt-4 px-4 py-2 bg-[#917248] text-white rounded">Close</button>
           </div>
         </div>
-      </div>
+    </div>
 
 
  

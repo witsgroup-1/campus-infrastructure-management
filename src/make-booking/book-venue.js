@@ -18,6 +18,9 @@ const firebaseConfig = {
     measurementId: "G-Y95YE5ZDRY"
 };
 
+
+
+
 const intervals = [
     { start: '08:00', end: '08:45' },
     { start: '09:00', end: '09:45' },
@@ -46,6 +49,7 @@ window.closeModal = function() {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 let venues = []; // Declare venues as a global variable
 
 const API_KEY = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";
