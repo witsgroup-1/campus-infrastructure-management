@@ -1,5 +1,5 @@
-import './copies/timetable.Copy.js';
-import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule } from './copies/timetable.Copy.js';
+//import './copies/timetable.Copy.js';
+import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule } from '../src/schedule/timetable.js';
 
 // Mocking the fetch API
 global.fetch = jest.fn(() =>
@@ -47,6 +47,7 @@ describe('editSchedule', () => {
         expect(document.getElementById('end-date').value).toBe('2024-12-01');
     });
 });
+
 
 describe('close the modal', () => {
     let modal;

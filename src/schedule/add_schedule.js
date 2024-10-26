@@ -2,10 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const scheduleForm = document.getElementById('schedule_form');
     const recurringSelect = document.getElementById('recurring-select');
     const lastDate = document.getElementById('last-date'); 
-    //const venue = document.getElementById('venue');
-    const venueInput = document.querySelector('input[placeholder="Venue"]');
-    const venueDropdown = document.getElementById('venue-dropdown'); 
+    const venueDropdown = document.getElementById('venue-dropdown');
+    const venueInput = document.querySelector('input[placeholder="Venue"]')
 
+    
     // Event listener to show/hide the last date field based on 'Recurring' selection
     recurringSelect.addEventListener('change', function () {
         if (this.value === 'true') {
@@ -15,13 +15,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    venueInput.addEventListener('input', async function () {
-        const query = this.value;
-    
-        if (query.length > 0) {
-            venueDropdown.classList.remove('hidden');
-            venueDropdown.innerHTML = ''; 
-    
+    //input in the venue input field
+    venueInput.addEventListener('input', async (event) => {
+        const query = event.target.value;
+
+        if (query.length >= 2) {
             try {
                 const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues?name=${query}`, {
                     method: 'GET',
@@ -30,57 +28,81 @@ document.addEventListener('DOMContentLoaded', function () {
                         'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
                     },
                 });
-    
-                if (!response.ok) throw new Error('Failed to fetch venues');
-    
-                const venues = await response.json();
-                console.log('Fetched venues:', venues);
 
-                venues.forEach(venue => {
-                    const option = document.createElement('option');
-                    option.value = venue.id;
-                    option.textContent = venue.Name; 
-                    venueDropdown.appendChild(option);
-                });
-    
-                if (venues.length === 0) {
-                    venueDropdown.classList.add('hidden');
-                }
+                if (!response.ok) throw new Error('Failed to fetch venues');
+
+                const venues = await response.json();
+                updateVenueDropdown(venues, venueDropdown);
             } catch (error) {
-                console.error('Error fetching venues:', error);
+                clearVenueDropdown(venueDropdown);
+                console.error(error); 
             }
         } else {
-            venueDropdown.classList.add('hidden');
+            clearVenueDropdown(venueDropdown);
         }
     });
     
     venueDropdown.addEventListener('change', function () {
         const selectedVenue = this.options[this.selectedIndex];
         venueInput.value = selectedVenue.text; 
-        venueDropdown.classList.add('hidden'); 
         venueInput.dataset.venueId = selectedVenue.value; 
+        clearVenueDropdown(venueDropdown); 
     });
-    
+
+    const dateInput = document.getElementById('date'); 
+    const dayInput = document.getElementById('day'); 
+
+    dateInput.addEventListener('change', function () {
+        const selectedDate = new Date(this.value); 
+        const options = { weekday: 'long' }; 
+        const dayName = selectedDate.toLocaleDateString('en-US', options);
+        dayInput.value = dayName; 
+    });
+
+    // Schedule form submission handler
     scheduleForm.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        const userId = document.getElementById('name').value.trim();
+        const userId = localStorage.getItem("userEmail");
         const courseId = document.getElementById('course').value.trim();
-        const roomId = document.getElementById('venue').value.trim();
-        const daysOfWeek = document.getElementById('day').value;
+        const roomId = venueInput.dataset.venueId; // Get venue ID from the input'
+        const venue = venueInput.value;
+        const daysOfWeek = dayInput.value; 
         const startTime = document.getElementById('time_from').value;
         const endTime = document.getElementById('time_to').value;
-        const startDate = document.getElementById('date').value;
+        let startDate = document.getElementById('date').value;
         const recurring = recurringSelect.value.trim();
         let endDate = document.getElementById('end-date').value;
+
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+        const today = new Date();
 
         // Set endDate to empty if not recurring
         if (!endDate && recurring === 'false') {
             endDate = '';
         }
+    
+        // Check if the start date is after today
+        if (startDateObj <= today) {
+            alert('Start date must be after today.');
+            return;
+        }
+    
+        // Check if the end date is after the start date
+        if (endDateObj && endDateObj <= startDateObj) {
+            alert('End date must be after start date.');
+            return;
+        }
+
+        // Check if end date is provided and has the same day of the week as start date
+        if (endDate.trim() !== '' && endDateObj.getDay() !== startDateObj.getDay()) {
+            alert('End date must be on the same day of the week as the start date.');
+            return;
+        }
 
         // Check if any required field is empty
-        if (!userId || !courseId || !roomId || !daysOfWeek || !startTime || !endTime || !startDate || (recurring === 'true' && !endDate)) {
+        if (!userId || !courseId || !venue || !daysOfWeek || !startTime || !endTime || !startDate || (recurring === 'true' && !endDate)) {
             alert('Please fill in all required fields!');
             return;
         }
@@ -88,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             // Use Promise.all to handle both POST requests simultaneously
             await Promise.all([
-                createSchedule(userId, courseId, roomId, daysOfWeek, startDate, endDate, startTime, recurring, endTime),
+                createSchedule(userId, courseId, venue, daysOfWeek, startDate, endDate, startTime, recurring, endTime),
                 createBookingsForRecurring(userId, roomId, startDate, startTime, endTime, courseId, recurring, endDate)
             ]);
 
@@ -99,7 +121,40 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    function clearVenueDropdown(venueDropdown) {
+        venueDropdown.innerHTML = ''; 
+        venueDropdown.classList.add('hidden'); 
+    }
+
+    // Ensure dropdown is hidden initially
+    clearVenueDropdown(venueDropdown);
+
+    window.updateVenueDropdown = (venues, venueDropdown) => {
+        clearVenueDropdown(venueDropdown);
+        const defaultOption = document.createElement('option');
+        defaultOption.textContent = 'Please select a venue...';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        venueDropdown.appendChild(defaultOption);
+    
+        if (venues.length > 0) {
+            venues.forEach((venue) => {
+                const option = document.createElement('option');
+                option.textContent = venue.Name; // Ensure this is correct
+                option.value = venue.id;         // Ensure this is correct
+                venueDropdown.appendChild(option);
+            });
+            venueDropdown.classList.remove('hidden'); 
+        } else {
+            clearVenueDropdown(venueDropdown); 
+        }
+    };
+    
+
+    
 });
+
+
 
 function generateId() {
     return 'id-' + Date.now(); // Generates a simple unique ID based on timestamp
@@ -200,4 +255,3 @@ async function createBooking(userId, roomId, date, start_time, end_time, purpose
         console.error('Error occurred during booking creation:', error);
     }
 }
-
