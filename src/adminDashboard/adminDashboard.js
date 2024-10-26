@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', async () => {  // Mark the entire 
         }
     });
 
+   
+
     const getSidebarWidth = () => {
         const screenWidth = window.innerWidth;
         if (screenWidth >= 1024) {
@@ -139,31 +141,37 @@ document.addEventListener('DOMContentLoaded', async () => {  // Mark the entire 
             return '50%';
         }
     };
+      // Initialize the sidebar to be closed
+      sidebar.style.width = '0'; // Keep the sidebar closed by default
 
-    sidebar.style.width = '0';
+  
 
     menuIcon.addEventListener('click', () => {
         if (sidebar.style.width === '0px' || sidebar.style.width === '0') {
-            sidebar.style.width = getSidebarWidth();
+            sidebar.style.width = getSidebarWidth(); // Open the sidebar
+            localStorage.setItem('sidebarState', 'open'); // Store the state as open
         } else {
-            sidebar.style.width = '0';
+            sidebar.style.width = '0'; // Close the sidebar
+            localStorage.setItem('sidebarState', 'closed'); // Store the state as closed
         }
     });
 
     closeBtn.addEventListener('click', () => {
-        sidebar.style.width = '0';
+        sidebar.style.width = '0'; // Close the sidebar
+        localStorage.setItem('sidebarState', 'closed'); // Store the state as closed
     });
 
     // Close sidebar when clicking outside of it
     document.addEventListener('click', (event) => {
         if (sidebar.style.width !== '0px' && !sidebar.contains(event.target) && !menuIcon.contains(event.target)) {
             sidebar.style.width = '0';
+            localStorage.setItem('sidebarState', 'closed'); // Store the state as closed
         }
     });
 
     window.addEventListener('resize', () => {
         if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
-            sidebar.style.width = getSidebarWidth();
+            sidebar.style.width = getSidebarWidth(); // Adjust sidebar width on window resize
         }
     });
 

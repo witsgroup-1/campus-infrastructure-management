@@ -2,7 +2,6 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -18,7 +17,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 let venues = []; // Declare venues as a global variable
 
 const API_KEY = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";
@@ -138,14 +136,19 @@ async function checkMaintenanceStatus(venueId) {
 
         if (response.ok) {
             const maintenanceRequests = await response.json();
-            return maintenanceRequests.length > 0; // Return true if there are requests
+
+            // Check if there is a request with status "In Progress" or "Scheduled"
+            return maintenanceRequests.some(request => 
+                request.status === "In Progress" || request.status === "Scheduled"
+            );
         }
     } catch (error) {
         console.error('Error checking maintenance status:', error);
     }
     
-    return false; // Return false if there was an error or no requests found
+    return false; // Return false if there was an error or no relevant requests found
 }
+
 async function renderVenues(venues, userData) {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing venues
@@ -191,6 +194,7 @@ async function renderVenues(venues, userData) {
                     <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
                     <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
                     <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
+                     <p class="text-sm text-gray-600">Features: ${venue.Features || 'Unknown Features'}</p>
                     <p class="text-red-500">This venue is currently under maintenance.</p>
                 </div>
             `;
@@ -198,8 +202,10 @@ async function renderVenues(venues, userData) {
             venueBox.innerHTML = `
                 <div class="flex-shrink-0">
                     <h2 class="text-lg font-semibold">${venue.Name || 'Unknown Name'}</h2>
+                    <p class="text-sm text-gray-600">Building: ${venue.Building || 'Unknown Building'}</p>
                     <p class="text-sm text-gray-600">Category: ${venue.Category || 'Unknown Category'}</p>
                     <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
+                     <p class="text-sm text-gray-600">Features: ${venue.Features || 'Unknown Features'}</p>
                 </div>
                 <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none" onclick="window.location.href='booking-details.html?bookingId=${venue.id}'">Book</button>
             `;
