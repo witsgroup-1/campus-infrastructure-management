@@ -3,7 +3,7 @@ const {
     fetchAndRenderBookings,
     getAllowedCategories,
     renderVenues
-  } = require('./copies/bookVenueCopy');
+  } = require('../src/make-booking/book-venue.js');
   
   // Mock Firebase
   jest.mock('firebase/app', () => ({
@@ -70,24 +70,26 @@ const {
   
     // Test fetchAndRenderBookings
     test('fetchAndRenderBookings should fetch and render venues', async () => {
-        // Mocking the DOM elements required by the function
-        document.body.innerHTML = `
-            <select id="roomFilter">
-                <option value="Lecture Hall">Lecture Hall</option>
-            </select>
-            <div id="bookingsContainer"></div>
-        `;
-    
-        const mockUserData = { role: 'Student' };
-    
-        await fetchAndRenderBookings(mockUserData);
-    
-        // Ensure the fetch API was called with the correct URL
-        expect(fetch).toHaveBeenCalledWith(
-            'https://campus-infrastructure-management.azurewebsites.net/api/venues?category=Lecture%20Hall',
-            expect.any(Object)
-        );
-    });
+      // Mocking the DOM elements required by the function
+      document.body.innerHTML = `
+          <select id="roomFilter">
+              <option value="Lecture Hall">Lecture Hall</option>
+          </select>
+          <input id="searchInput" value="" />
+          <div id="bookingsContainer"></div>
+      `;
+  
+      const mockUserData = { role: 'Student' };
+  
+      await fetchAndRenderBookings(mockUserData);
+  
+      // Ensure the fetch API was called with the correct URL
+      expect(fetch).toHaveBeenCalledWith(
+          'https://campus-infrastructure-management.azurewebsites.net/api/venues?category=Lecture%20Hall',
+          expect.any(Object)
+      );
+  });
+  
     
     // Test getAllowedCategories
     test('getAllowedCategories should return correct categories for students', () => {

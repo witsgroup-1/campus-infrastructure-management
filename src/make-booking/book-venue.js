@@ -1,7 +1,7 @@
 // book-venue.js
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -23,15 +23,13 @@ const API_KEY = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd0
 
 // Function to toggle loading indicator
 function toggleLoading(show) {
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    if (loadingIndicator) {
-        loadingIndicator.classList.toggle('hidden', !show);
-    }
+    const roomFilter = document.getElementById('roomFilter');
+    const searchInput = document.getElementById('searchInput');
 
-    // Disable/enable UI elements during loading
-    document.getElementById('roomFilter').disabled = show;
-    document.getElementById('searchInput').disabled = show;
+    if (roomFilter) roomFilter.disabled = show;
+    if (searchInput) searchInput.disabled = show;
 }
+
 
 toggleLoading(true); // Show loader at the start
 
@@ -301,3 +299,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Export all functions for testing
+module.exports = {
+    fetchUserData,
+    fetchAndRenderBookings,
+    renderVenues,
+    getAllowedCategories,
+    auth,
+};
