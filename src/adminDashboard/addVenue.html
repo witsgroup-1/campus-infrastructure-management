@@ -29,6 +29,23 @@
     .venue-label::before {
       display: none;
     }
+    .leaflet-popup-content {
+      margin: 0;
+      width: 300px !important;
+    }
+    .leaflet-popup-content-wrapper {
+      padding: 0;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    .popup-content {
+      padding: 10px;
+    }
+    .venue-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body class="bg-gray-100">
@@ -135,16 +152,25 @@
               })
             }).addTo(map);
 
-            // Add popup with more details
-            marker.bindPopup(`
-              <div class="text-center">
-                <b>${venue.name}</b>
-                <br>
-                Latitude: ${venue.latitude}
-                <br>
-                Longitude: ${venue.longitude}
+            // Create popup content with image
+            const popupContent = `
+              <div>
+                <img src="${venue.image}" alt="${venue.name}" class="venue-image">
+                <div class="popup-content">
+                  <h3 class="font-bold text-lg text-[#003B5C] mb-2">${venue.name}</h3>
+                  <p class="text-sm text-gray-600">
+                    Latitude: ${venue.latitude}<br>
+                    Longitude: ${venue.longitude}
+                  </p>
+                </div>
               </div>
-            `);
+            `;
+
+            // Add popup with image and details
+            marker.bindPopup(popupContent, {
+              maxWidth: 300,
+              className: 'venue-popup'
+            });
           });
         } catch (error) {
           console.error('Error fetching venues:', error);
