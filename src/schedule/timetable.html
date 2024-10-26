@@ -29,7 +29,7 @@
 
     <!--header-->
     <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
-      <button class="absolute top-1/2 transform -translate-y-1/2 left-4" onclick="window.location.href='../adminDashboard/adminDashboard.html'">
+      <button class="absolute top-1/2 transform -translate-y-1/2 left-4 z-10" onclick="window.location.href='../adminDashboard/adminDashboard.html'">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
@@ -145,6 +145,18 @@
         backToTopButton.style.display = "none";
       }
     };
+
+    const closeModalBtn = document.getElementById("close-modal")
+    const modal = document.getElementById("edit-modal")
+    closeModalBtn.onclick = function() {
+            modal.classList.add('hidden'); // Hide the modal
+        };
+
+    const closeModalBtn = document.getElementById("close-modal")
+    const modal = document.getElementById("edit-modal")
+    closeModalBtn.onclick = function() {
+            modal.classList.add('hidden'); // Hide the modal
+        };
 
 
   </script>
