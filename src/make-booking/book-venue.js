@@ -3,6 +3,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
+import { getFirestore, collection, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+
+
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCh1gI4eF7FbJ7wcFqFRzwSII-iOtNPMe0",
@@ -14,9 +18,38 @@ const firebaseConfig = {
     measurementId: "G-Y95YE5ZDRY"
 };
 
+
+
+
+const intervals = [
+    { start: '08:00', end: '08:45' },
+    { start: '09:00', end: '09:45' },
+    { start: '10:15', end: '11:00' },
+    { start: '11:15', end: '12:00' },
+    { start: '12:30', end: '13:15' },
+    { start: '14:15', end: '15:00' },
+    { start: '15:15', end: '16:00' },
+    { start: '16:15', end: '17:00' },
+    { start: '17:15', end: '18:00' },
+    { start: '18:15', end: '19:00' },
+    { start: '19:15', end: '20:00' },
+    { start: '20:15', end: '21:00' },
+    { start: '21:15', end: '22:00' },
+    { start: '22:15', end: '23:00' },
+    { start: '23:15', end: '00:00' }
+];
+
+window.closeModal = function() {
+    const venueModal = document.getElementById('venueModal');
+    venueModal.style.display = 'none';
+    
+}
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 let venues = []; // Declare venues as a global variable
 
 const API_KEY = "QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW";
@@ -149,6 +182,106 @@ async function checkMaintenanceStatus(venueId) {
     return false; // Return false if there was an error or no relevant requests found
 }
 
+window.showCalendarModal = async function (venueId) {
+    try {
+        const modalContent = document.getElementById('modalContent');
+        const modalTitle = document.getElementById('modalTitle');
+        const venueModal = document.getElementById('venueModal');
+        
+        modalTitle.textContent = 'Availability Calendar';
+
+        modalContent.innerHTML = `
+            <label for="calendar-date">Choose a date:</label>
+            <input type="date" id="calendar-date" min="${getCurrentDate()}" class="calendar-date-picker">
+            <div id="calendar-results"></div>
+        `;
+
+        const dateInput = document.getElementById('calendar-date');
+        const calendarResults = document.getElementById('calendar-results');
+
+        dateInput.addEventListener('change', async (event) => {
+            const selectedDate = event.target.value;
+            if (selectedDate) {
+                const calendarContent = await generateCalendarContent(venueId, selectedDate);
+                calendarResults.innerHTML = calendarContent;
+            }
+        });
+
+        venueModal.style.display = 'block';
+
+    } catch (error) {
+        console.error('Error showing calendar modal:', error);
+    }
+};
+
+
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+async function generateCalendarContent(venueId, currentDate = getCurrentDate()) {
+    try {
+        
+
+        const bookingsCollectionRef = collection(db, 'venues', venueId, currentDate);
+        const bookingsSnapshot = await getDocs(bookingsCollectionRef);
+
+
+        const calendarContent = intervals.map((slot) => ({
+            ...slot,
+            isBooked: false,  // Initially, all slots are assumed to be available
+        }));
+
+        bookingsSnapshot.docs.forEach((bookingDoc) => {
+            const bookingData = bookingDoc.data();
+            const bookingStartTime = new Date(bookingData.startTime.seconds * 1000);
+            const bookingEndTime = new Date(bookingData.endTime.seconds * 1000);
+
+            calendarContent.forEach((slot) => {
+                const [slotStartHour, slotStartMinute] = slot.start.split(':').map(Number);
+                const [slotEndHour, slotEndMinute] = slot.end.split(':').map(Number);
+
+                const slotStartTime = new Date(currentDate);
+                slotStartTime.setHours(slotStartHour, slotStartMinute, 0, 0);
+
+                const slotEndTime = new Date(currentDate);
+                slotEndTime.setHours(slotEndHour, slotEndMinute, 0, 0);
+
+               
+                if (bookingStartTime < slotEndTime && bookingEndTime > slotStartTime) {
+                    slot.isBooked = true;
+                }
+            });
+        });
+
+        const calendarHtml = `
+            <div class="calendar-grid">
+                ${calendarContent.map((slot) => {
+                    const status = slot.isBooked ? 'Booked' : 'Available';
+                    const statusClass = slot.isBooked ? 'booked-slot' : 'available-slot';
+
+                    return `
+                        <div class="time-slot ${statusClass}">
+                            <span class="slot-time">${slot.start} - ${slot.end}</span>
+                            <span class="slot-status">${status}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        return calendarHtml;
+
+    } catch (error) {
+        console.error('Error generating calendar content:', error);
+        return '<div class="error">Error loading calendar data.</div>';
+    }
+}
+
 async function renderVenues(venues, userData) {
     const container = document.getElementById('bookingsContainer');
     container.innerHTML = ''; // Clear existing venues
@@ -207,7 +340,10 @@ async function renderVenues(venues, userData) {
                     <p class="text-sm text-gray-600">Capacity: ${venue.Capacity || 'Unknown Capacity'}</p>
                      <p class="text-sm text-gray-600">Features: ${venue.Features || 'Unknown Features'}</p>
                 </div>
-                <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none" onclick="window.location.href='booking-details.html?bookingId=${venue.id}'">Book</button>
+                <div>
+                    <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none" onclick="window.location.href='booking-details.html?bookingId=${venue.id}'">Book</button>
+                    <button class="bg-[#917248] text-white px-3 py-1 rounded ml-2 hover:bg-gray-600 focus:outline-none" onclick="showCalendarModal('${venue.id}')">Availability</button>
+                </div>
             `;
         }
 
@@ -216,6 +352,10 @@ async function renderVenues(venues, userData) {
 
     setupPagination(totalPages, userData); // Pass userData to setupPagination
 }
+
+
+
+
 
 function setupPagination(totalPages, userData) {
     const paginationContainer = document.getElementById('paginationControls');
