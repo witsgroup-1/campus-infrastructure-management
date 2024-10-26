@@ -284,7 +284,10 @@ const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/
 const ourSecurityUrl = `https://campus-infrastructure-management.azurewebsites.net/api/securityInfo`;
 
 async function fetchSecurityContact() {
+    const loading = document.getElementById('loading');
     try {
+
+        loading.style.display = 'block';
         const response = await fetch(securityUrl, {
             method: 'GET',
            // mode: 'no-cors',
@@ -327,6 +330,9 @@ async function fetchSecurityContact() {
     } catch (err) {
         console.error('Error fetching security contact information:', err);
         fetchOurSecurityContact();
+    }
+    finally {
+        loading.style.display = 'none';
     }
 }
 
