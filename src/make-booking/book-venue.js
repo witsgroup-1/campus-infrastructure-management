@@ -342,7 +342,7 @@ async function renderVenues(venues, userData) {
                 </div>
                 <div>
                     <button class="bg-[#917248] text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none" onclick="window.location.href='booking-details.html?bookingId=${venue.id}'">Book</button>
-                    <button class="bg-[#917248] text-white px-3 py-1 rounded ml-2 hover:bg-gray-600 focus:outline-none" onclick="showCalendarModal('${venue.id}')">Calendar</button>
+                    <button class="bg-[#917248] text-white px-3 py-1 rounded ml-2 hover:bg-gray-600 focus:outline-none" onclick="showCalendarModal('${venue.id}')">Availability</button>
                 </div>
             `;
         }
