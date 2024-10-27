@@ -190,6 +190,17 @@
     </div>
 
     <script>
+
+        // Function to get query parameters
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    
+    const reservationId = getQueryParam('reservationId');
+    console.log(reservationId);
+
         async function fetchMenu() {
             const url = 'https://campus-infrastructure-management.azurewebsites.net/api/menus'; 
             const loader = document.getElementById('menuLoader');
@@ -269,6 +280,11 @@
                 resDate,
             };
 
+            const notificationMessage = `Your reservation has been confirmed! 
+                                            Venue: ${venue}
+                                            Date: ${resDate}
+                                            Time: ${resTime}`;
+
 
             try {
                 const response = await fetch('https://appreservations-appreservations-xu5p2zrq7a-uc.a.run.app/Reservations', {
@@ -280,7 +296,25 @@
                 });
                 confirmLoader.style.display='none';
                 if (response.ok) {
-                    alert('Reservation confirmed!');
+                    alert('Reservation confirmed!Check your notifications for confirmation');
+
+ 
+
+// Add the notification to the user's subcollection
+                    const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${reservationId}/notifications`;
+                    await fetch(userNotificationUrl, {
+                        method: 'POST',
+                        headers: {
+                            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: notificationMessage,
+                            type: "notification",
+                            sendAt: "09:00"
+                        })
+                    });
+
                     document.getElementById('reservationDetailsForm').reset(); 
                     toggleReservationForm(); 
                 } else {
