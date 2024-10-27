@@ -95,10 +95,13 @@ document.getElementById('login-form').addEventListener('submit', async function 
 
                         localStorage.setItem('userEmail', user.email);
                         window.location.href = "../onboarding/onboarding.html";
-                    } catch (signUpError) {
-                        console.error("Error signing up:", signUpError.message);
-                        alert("Error: " + signUpError.message);
                     }
+                    catch (error) {
+                        if (error.code === 'auth/weak-password') {
+                            alert('Your password is too weak. Please ensure it is at least 6 characters long.');
+                        }
+                    }
+                    
                 } else {
                     console.error("Error signing in:", error.message);
                     alert("Error: " + error.message);

@@ -190,7 +190,7 @@ function createVenueElement(venue) {
     venueElement.setAttribute('data-venue-id', venue.id); 
 
     const bookButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded book-button">Book</button>`;
-    const calendarButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded calendar-button">Calendar</button>`;
+    const calendarButton = `<button class="mt-2 px-4 py-2 bg-[#917248] text-white rounded calendar-button">Availability</button>`;
 
     // Join the features array into a comma-separated string
     const venueFeatures = venue.Features && venue.Features.length > 0
