@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Bookings</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -20,6 +22,34 @@
         .content {
             flex: 1;
         }
+
+    #paginationControls {
+        display: flex;
+        justify-content: center; /* Center the buttons horizontally */
+        align-items: center; /* Center vertically */
+        margin-top: 20px; /* Add some space above */
+    }
+
+    .pagination-button {
+        background-color: #003b5c; /* Button background color */
+        color: white; /* Button text color */
+        padding: 10px 15px; /* Padding for the button */
+        border: none; /* Remove default border */
+        border-radius: 5px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+        font-size: 16px; /* Font size */
+        transition: background-color 0.3s; /* Smooth background change on hover */
+    }
+
+    .pagination-button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    .pagination-button:disabled {
+        background-color: #ccc; /* Greyed out background for disabled buttons */
+        cursor: not-allowed; /* Not allowed cursor */
+    }
+
     </style>
 </head>
 <body class="bg-white text-gray-800">
@@ -48,9 +78,11 @@
     </section>
 
 
+
+
     <!-- Filter dropdown for desktop, filter buttons for mobile -->
     <section class="p-4 w-full flex justify-start  md:pl-4">
-
+<!-- 
         <div>
             <label for="statusFilter" class="block text-gray-700 text-sm font-semibold mb-2">Status</label>
             <select id="statusFilter" class="block w-full max-w-xs bg-[#003B5C] text-white border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -70,7 +102,7 @@
                 <option value="Boardroom">Boardroom</option>
                 <option value="Other">Other</option>
             </select>
-        </div>
+        </div> -->
     </section>
 
     <!-- Box with booking info-->
@@ -79,8 +111,15 @@
         <!-- Booking boxes will be updated dynamically here -->
     </section>
 
-
- 
+    <div id="bookingsContainer"></div>
+    <div id="paginationControls" class="flex justify-center items-center space-x-2 mt-4">
+        <button id="prevPage" class="pagination-button">← Previous</button>
+        <span id="currentPage">Page 1</span>
+        <button id="nextPage" class="pagination-button">Next →</button>
+    </div>
+    <div id="loadingIndicator" class="hidden absolute inset-0 flex justify-center items-center bg-gray-100 bg-opacity-70">
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#917248]"></div>
+    </div>
 
     <!--<img src="../images/undraw_online_organizer_re_156n.svg" alt="Image" class="hidden lg:block lg:w-full lg:max-w-lg rounded-md  absolute bottom-0 right-0 mb-1 mr-16">-->
 </main>
@@ -89,6 +128,6 @@
     <p>&copy; 2024 Group -1. All rights reserved.</p>
 </footer>
 
-<script src="manageBookings.js"></script>
+<script src="manageBookings.js" type="module"></script>
 </body>
 </html>
