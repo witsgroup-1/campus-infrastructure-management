@@ -163,6 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
+    const link = document.getElementById('reservationLink');
+    
+    // Construct the URL with the variable
+    link.href = `../make-reservation/makeReservation.html?reservationId=${userId}`;
+
     const fetchNotifications = async () => {
         try {
             if (!userId) {
