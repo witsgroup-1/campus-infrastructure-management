@@ -20,6 +20,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 let allBookings =[];
 
+
 let currentPage = 1;
 const PAGE_SIZE = 10;
 
@@ -64,14 +65,16 @@ function toggleLoading(show) {
 
 // Fetch bookings for a specific user
 export const fetchBookingsForUser = async (userId) => {
-    const bookingsRef = collection(db, `users/${userId}/bookings`);
-    const bookingsSnapshot = await getDocs(bookingsRef);
-    const bookingsList = bookingsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-    return bookingsList;
+  const bookingsRef = collection(db, `users/${userId}/bookings`);
+  const bookingsSnapshot = await getDocs(bookingsRef);
+  const bookingsList = bookingsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      userId, // Add the userId to each booking object
+      ...doc.data()
+  }));
+  return bookingsList;
 };
+
 
 function fetchVenues() {
     return fetch(venuesUrl, {
@@ -126,39 +129,105 @@ const displayBookings = (bookings) => {
   const bookingsContainer = document.getElementById("bookingsContainer");
   bookingsContainer.innerHTML = ""; // Clear previous bookings
 
-  // Calculate the range of bookings to display based on the current page
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
   const paginatedBookings = bookings.slice(startIndex, endIndex);
 
   paginatedBookings.forEach(booking => {
-      const startTime = formatTime(booking.start_time?.seconds);
-      const endTime = formatTime(booking.end_time?.seconds);
-      const startDate = formatDate(booking.start_time?.seconds);
-      const endDate = formatDate(booking.end_time?.seconds);
+    const cancelButton = document.createElement('button');
+    cancelButton.className = 'bg-red-500 text-white px-3 py-1 rounded hover:bg-blue-600 focus:outline-none';
+    cancelButton.textContent = 'Cancel';
 
-      const venueInfo = getRoomInfo(booking.venue_id);
-      const venueName = venueInfo ? venueInfo.Name : "Unknown Venue"; // Fallback if no venue found
+    const startTime = formatTime(booking.start_time?.seconds);
+    const endTime = formatTime(booking.end_time?.seconds);
+    const startDate = formatDate(booking.start_time?.seconds);
 
-      const bookingBox = document.createElement("div");
-      bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
 
-      const roomDetails = document.createElement('div');
-      roomDetails.className = 'flex-shrink-0';
-      roomDetails.innerHTML = `
-          <h2 class="text-lg font-semibold"> ${venueName}</h2>
-          <p><strong>Date:</strong> ${startDate}</p>
-          <p><strong>Start Time:</strong> ${startTime}</p>
-          <p><strong>End Time:</strong> ${endTime}</p>
-          <p><strong>Purpose:</strong> ${booking.purpose || "N/A"}</p>
-      `;
+    const venueInfo = getRoomInfo(booking.venue_id);
+    const venueName = venueInfo ? venueInfo.Name : "Unknown Venue";
 
-      bookingBox.appendChild(roomDetails);
-      bookingsContainer.appendChild(bookingBox);
+    cancelButton.onclick = async function() {
+      const confirmation = window.confirm("Are you sure you want to cancel this booking?");
+      if (!confirmation) return;
+
+      const cancellationReason = window.prompt("Please enter a reason for the cancellation:");
+      if (!cancellationReason) {
+        alert("Cancellation reason is required to proceed.");
+        return;
+      }
+
+      try {
+        const url = `https://campus-infrastructure-management.azurewebsites.net/api/users/${booking.userId}/bookings/${booking.id}`;
+        const response = await fetch(url, {
+          method: 'DELETE',
+          headers: {
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+            'Content-Type': 'application/json'
+          },
+          
+        });
+
+        if (!response.ok) throw new Error('Failed to delete booking, please try again.');
+
+        const notificationMessage = `Your booking for ${venueName} on ${startDate} from ${startTime} to ${endTime} for ${booking.purpose} has been cancelled by administrators. Reason: ${cancellationReason}.We apologize for the inconvenience caused.Please try to book another venue`;
+
+        const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${booking.userId}/notifications`;
+        await fetch(userNotificationUrl, {
+          method: 'POST',
+          headers: {
+            'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: notificationMessage,
+            type: "notification",
+            sendAt: "09:00"
+          })
+        });
+
+        alert("Booking successfully cancelled and user notified.")
+      } catch (error) {
+        console.error("Error cancelling booking:", error);
+      }
+    };
+
+    const bookingBox = document.createElement("div");
+    bookingBox.className = 'flex items-center justify-between bg-gray-100 p-4 border border-gray-300 rounded-lg shadow';
+
+    const roomDetails = document.createElement('div');
+    roomDetails.className = 'flex-shrink-0';
+    roomDetails.innerHTML = `
+      <h2 class="text-lg font-semibold">${venueName}</h2>
+      <p><strong>Date:</strong> ${startDate}</p>
+      <p><strong>Start Time:</strong> ${startTime}</p>
+      <p><strong>End Time:</strong> ${endTime}</p>
+      <p><strong>Purpose:</strong> ${booking.purpose || "N/A"}</p>
+    `;
+
+    bookingBox.appendChild(roomDetails);
+    bookingBox.appendChild(cancelButton);
+    bookingsContainer.appendChild(bookingBox);
   });
 
   updatePaginationControls(bookings.length); // Update controls with total bookings
 };
+
+
+
+
+document.getElementById("prevPage").addEventListener("click", () => {
+  if (currentPage > 1) goToPage(currentPage - 1);
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+  const filteredBookings = allBookings.filter(booking => {
+    const venueInfo = getRoomInfo(booking.venue_id);
+    return venueInfo?.Name.toLowerCase().includes(document.getElementById("searchInput").value.toLowerCase());
+  });
+  const totalPages = Math.ceil(filteredBookings.length / PAGE_SIZE);
+  if (currentPage < totalPages) goToPage(currentPage + 1);
+});
+
 
 
 const updatePaginationControls = (totalBookings) => {
