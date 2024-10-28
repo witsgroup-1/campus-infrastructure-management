@@ -217,6 +217,10 @@ z-index: 9999;
   cursor: pointer;
 }
 
+#map-icon:hover{
+  color: #917248;
+}
+
 .underline {
   border-bottom: 2px solid var(--witsGold); /* Adjust the color and thickness */
   text-decoration: none; /* Remove the default underline */
