@@ -6,19 +6,19 @@
     <title>Wits Braamfontein Campus Map</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="bg-gray-50 flex flex-col min-h-screen">
 
-    <!-- Back arrow for navigation -->
-    <a href="adminDashboard.html" class="absolute top-5 left-5 text-wits-blue text-3xl">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-    </a>
+     <!-- Page Header -->
+     <header class="flex items-center justify-between bg-[#003B5C] mb-8 h-16 relative">
+        <button class="absolute top-1/2 transform -translate-y-1/2 left-4 z-10" onclick="window.location.href='../user-dashboard/dashboard.html'">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10 text-[#917248]">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+      </button>
+        <h1 class="text-2xl font-semibold text-white text-center flex-grow drop-shadow-lg">Map of Braamfontein</h1>
+      </header>
 
-    <!-- Page title -->
-    <h1 class="absolute top-10 text-wits-blue text-4xl font-bold text-center">
-        Wits Braamfontein Campus Map
-    </h1>
+      <main class="flex flex-col items-center justify-center h-screen">
 
     <!-- Embedded Google Map -->
     <iframe class="border-4 border-wits-gold rounded-lg w-3/4 h-2/3"
@@ -26,6 +26,13 @@
         allowfullscreen=""
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+    </main>
+
+     <!--Footer -->
+ <footer class="mt-8 p-4 bg-[#003B5C] text-white text-center p-4">
+    <p>&copy; 2024 Group -1. All rights reserved.</p>
+  </footer>
 
     <!-- Tailwind CSS colors for Wits theme -->
     <style>
