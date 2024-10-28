@@ -42,7 +42,7 @@ describe('setupStaffSearch', () => {
       json: async () => mockStaffData,
     });
 
-    // Call the setupStaffSearch function
+    //call the setupStaffSearch function
     setupStaffSearch(apiKey);
 
     // Set input value and dispatch the input event
@@ -50,10 +50,10 @@ describe('setupStaffSearch', () => {
     searchInput.value = 'Jo'; 
     searchInput.dispatchEvent(inputEvent);
 
-    // Allow async operation to complete
+    //allow async operation to complete
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    // Verify fetch was called with correct URL and headers
+    //verify fetch was called with correct URL and headers
     expect(fetch).toHaveBeenCalledWith('https://campus-infrastructure-management.azurewebsites.net/api/users/?isLecturer=false&isTutor=false&role=Staff&?name=Jo', {
       method: 'GET',
       headers: {
@@ -62,7 +62,7 @@ describe('setupStaffSearch', () => {
       },
     });
 
-    // Verify that the dropdown is populated with staff members
+    //verify that the dropdown is populated with staff members
     const dropdown = document.getElementById('staff-dropdown');
     expect(dropdown.children.length).toBe(3);
     expect(dropdown.classList).not.toContain('hidden');
@@ -71,7 +71,7 @@ describe('setupStaffSearch', () => {
   test('clears and hides dropdown when no query is provided', async () => {
     setupStaffSearch(apiKey);
 
-    // Set empty query and dispatch the input event
+    //set empty query and dispatch the input event
     const searchInput = document.getElementById('assigned-to');
     searchInput.value = ''; 
     searchInput.dispatchEvent(inputEvent);
@@ -85,7 +85,7 @@ describe('setupStaffSearch', () => {
 
   
   test('handles API error gracefully', async () => {
-    //Mock failed fetch response
+    //mock failed fetch response
     fetch.mockResolvedValueOnce({
       ok: false,
     });
@@ -113,13 +113,13 @@ test('handles staff selection from dropdown', () => {
 
   dropdown.innerHTML = '';
 
-  // Create and append a default "choose" option
+  //create and append a default "choose" option
   const defaultOption = document.createElement('option');
   defaultOption.textContent = 'Choose staff...';
   defaultOption.value = ''; 
   dropdown.appendChild(defaultOption);
 
-  // Create an option with dataset attributes
+  //create an option with dataset attributes
   const option = document.createElement('option');
   option.dataset.staffName = 'Jane Doe';
   option.dataset.staffId = '1';
@@ -129,13 +129,13 @@ test('handles staff selection from dropdown', () => {
 
   dropdown.classList.remove('hidden');
 
-  // Ensure the correct index is set
+  //ensure the correct index is set
   dropdown.selectedIndex = 1;
   
-  // Simulate change event on the dropdown
+  //simulate change event on the dropdown
   fireEvent.change(dropdown);
 
-  // Verify that input value and data attributes are updated
+  //verify that input value and data attributes are updated
   expect(searchInput.value).toBe('Jane Doe');
   expect(searchInput.dataset.staffId).toBe('1');
 
