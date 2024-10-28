@@ -141,7 +141,7 @@ const displayBookings = (bookings) => {
     const startTime = formatTime(booking.start_time?.seconds);
     const endTime = formatTime(booking.end_time?.seconds);
     const startDate = formatDate(booking.start_time?.seconds);
-    const endDate = formatDate(booking.end_time?.seconds);
+
 
     const venueInfo = getRoomInfo(booking.venue_id);
     const venueName = venueInfo ? venueInfo.Name : "Unknown Venue";
@@ -169,7 +169,7 @@ const displayBookings = (bookings) => {
 
         if (!response.ok) throw new Error('Failed to delete booking, please try again.');
 
-        const notificationMessage = `Your booking for ${venueName} on ${startDate} for ${booking.purpose} has been cancelled by administrators. Reason: ${cancellationReason}.We apologize for the inconvenience caused.Please try to book another venue`;
+        const notificationMessage = `Your booking for ${venueName} on ${startDate} from ${startTime} to ${endTime} for ${booking.purpose} has been cancelled by administrators. Reason: ${cancellationReason}.We apologize for the inconvenience caused.Please try to book another venue`;
 
         const userNotificationUrl = `https://campus-infrastructure-management.azurewebsites.net/api/users/${booking.userId}/notifications`;
         await fetch(userNotificationUrl, {
