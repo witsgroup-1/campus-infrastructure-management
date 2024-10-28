@@ -7,6 +7,16 @@
   <title>Maintenance Logs</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+
+    /* Add hover effect to the grey blocks (request blocks) */
+.bg-gray-200:hover {
+  background-color: #f0f0f0; /* Slightly lighter background on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+  cursor: pointer; /* Change cursor to pointer */
+  transform: scale(1.02); /* Slight zoom on hover */
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for all changes */
+}
+
     /*Back to Top Button Styling */
     #back-to-top {
       display: none;

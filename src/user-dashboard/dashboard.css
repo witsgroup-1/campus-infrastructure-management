@@ -27,17 +27,15 @@
 
 #close-btn {
   position: absolute; 
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%); 
-  margin-top: 1rem; 
+  top: 1rem; /* Position it at the top */
+  right: 1rem; /* Adjust its position to the right */
   font-size: 2rem; 
   color: white; 
   background: none; 
   border: none; 
   cursor: pointer;
+  z-index: 10; /* Ensure it's above all other content */
 }
-
 nav {
   display: flex;
   flex-direction: column; 
@@ -219,35 +217,71 @@ z-index: 9999;
   cursor: pointer;
 }
 
+#map-icon:hover{
+  color: #917248;
+}
+
 .underline {
   border-bottom: 2px solid var(--witsGold); /* Adjust the color and thickness */
   text-decoration: none; /* Remove the default underline */
 }
 
 
-
-#sidebar nav a {
+#sidebar nav {
+  margin-top: 3rem; /* Push the navigation down */
+  width: 100%;
   display: flex;
-  align-items: center; /* Vertically align the icon and text */
-  gap: 15px; /* Add more space between the icon and text */
-  padding: 12px 20px; /* Adjust padding for better spacing */
-  text-align: left; /* Ensure the text aligns properly */
-  width: 100%; /* Full width for the anchor */
-  color: white; /* Ensure the color is white */
-  border-radius: 5px; /* Add some rounding */
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  padding: 4rem 1rem 1rem; /* Increased top padding to push items down */
+  gap: 0.5rem; /* Adjust the gap between the items */
 }
 
-#sidebar nav a i {
-  font-size: 1.5rem; /* Size the icons consistently */
-  display: inline-block;
-  width: 30px; /* Set a fixed width for icons to ensure consistent alignment */
+#close-btn {
+  top: 1rem; /* Keep the close button near the top */
+  right: 1rem; /* Adjust its position if necessary */
+}
+
+
+/* Adjust padding for the links */
+#sidebar nav a {
+  color: white; /* Keep text color white */
+  text-decoration: none; 
+  font-size: 1.25rem; 
+  padding: 10px 15px;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
 }
 
 #sidebar nav a:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+  background-color: rgba(255, 255, 255, 0.1); /* Retain the original hover background effect */
+  color: white; /* Ensure text color stays white on hover */
   border-radius: 5px;
 }
 
-#sidebar nav {
-  width: 100%; /* Ensure the sidebar nav takes up the full width */
+#sidebar nav a i {
+  font-size: 1.5rem;
+  width: 25px; /* Adjust width for better alignment */
+}
+
+
+
+/* Media Query for Smaller Devices */
+@media (max-width: 768px) {
+  #sidebar nav {
+    gap: 0.25rem; /* Reduce the gap further on small devices */
+    padding: 0.5rem;
+  }
+
+  #sidebar nav a {
+    padding: 8px 12px; /* Smaller padding for mobile devices */
+    font-size: 1rem; /* Adjust text size for smaller screens */
+  }
+
+  #sidebar nav a i {
+    font-size: 1.25rem; /* Slightly smaller icons on mobile */
+    width: 20px;
+  }
 }

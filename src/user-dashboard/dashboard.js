@@ -115,6 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Use the email (e.g., display it, use it in queries, etc.)
     }
 
+   
+
+
+
     const getSidebarWidth = () => {
         const screenWidth = window.innerWidth;
         if (screenWidth >= 1024) {
@@ -125,34 +129,45 @@ document.addEventListener('DOMContentLoaded', () => {
             return '50%';
         }
     };
+      // Initialize the sidebar to be closed
+      sidebar.style.width = '0'; // Keep the sidebar closed by default
 
-    sidebar.style.width = '0';
+  
 
     menuIcon.addEventListener('click', () => {
         if (sidebar.style.width === '0px' || sidebar.style.width === '0') {
-            sidebar.style.width = getSidebarWidth();
+            sidebar.style.width = getSidebarWidth(); // Open the sidebar
+            localStorage.setItem('sidebarState', 'open'); // Store the state as open
         } else {
-            sidebar.style.width = '0';
+            sidebar.style.width = '0'; // Close the sidebar
+            localStorage.setItem('sidebarState', 'closed'); // Store the state as closed
         }
     });
 
     closeBtn.addEventListener('click', () => {
-        sidebar.style.width = '0';
+        sidebar.style.width = '0'; // Close the sidebar
+        localStorage.setItem('sidebarState', 'closed'); // Store the state as closed
     });
-
 
     // Close sidebar when clicking outside of it
     document.addEventListener('click', (event) => {
         if (sidebar.style.width !== '0px' && !sidebar.contains(event.target) && !menuIcon.contains(event.target)) {
             sidebar.style.width = '0';
+            localStorage.setItem('sidebarState', 'closed'); // Store the state as closed
         }
     });
 
     window.addEventListener('resize', () => {
         if (sidebar.style.width !== '0px' && sidebar.style.width !== '0') {
-            sidebar.style.width = getSidebarWidth();
+            sidebar.style.width = getSidebarWidth(); // Adjust sidebar width on window resize
         }
     });
+
+
+    const link = document.getElementById('reservationLink');
+    
+    // Construct the URL with the variable
+    link.href = `../make-reservation/makeReservation.html?reservationId=${userId}`;
 
     const fetchNotifications = async () => {
         try {
@@ -224,17 +239,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isExpanded = false;
 
-    mainButton.addEventListener('click', () => {
-        if (!isExpanded) {
-            reportButton.classList.remove('hidden');
-            bookButton.classList.remove('hidden');
-            isExpanded = true;
-        } else {
-            reportButton.classList.add('hidden');
-            bookButton.classList.add('hidden');
-            isExpanded = false;
-        }
-    });
+mainButton.addEventListener('click', () => {
+    if (!isExpanded) {
+        reportButton.classList.remove('hidden');
+        bookButton.classList.remove('hidden');
+        mainButton.textContent = '×';  // Change the plus button to an X symbol
+        isExpanded = true;
+    } else {
+        reportButton.classList.add('hidden');
+        bookButton.classList.add('hidden');
+        mainButton.textContent = '+';  // Change the X button back to a plus symbol
+        isExpanded = false;
+    }
+});
 
     reportButton.addEventListener('click', () => {
         window.location.href = '../maintenance/maintenanceReports.html';
@@ -273,7 +290,10 @@ const securityUrl = 'https://campus-infrastructure-management.azurewebsites.net/
 const ourSecurityUrl = `https://campus-infrastructure-management.azurewebsites.net/api/securityInfo`;
 
 async function fetchSecurityContact() {
+    const loading = document.getElementById('loading');
     try {
+
+        loading.style.display = 'block';
         const response = await fetch(securityUrl, {
             method: 'GET',
            // mode: 'no-cors',
@@ -316,6 +336,9 @@ async function fetchSecurityContact() {
     } catch (err) {
         console.error('Error fetching security contact information:', err);
         fetchOurSecurityContact();
+    }
+    finally {
+        loading.style.display = 'none';
     }
 }
 

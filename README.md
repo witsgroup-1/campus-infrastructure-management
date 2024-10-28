@@ -28,7 +28,7 @@ When it comes to version control we need to define some things first:
 - Make sure your folder/file names are meaningful but also not too complex - they must refrence the features and functionality where relevant.
 - Note the branch management guidlines.
 
-## Branch Names 
+## Initial Branch Names 
 - main
 - Bugs-and-Problems
 - Chloe
@@ -37,6 +37,7 @@ When it comes to version control we need to define some things first:
 - Lunar
 - May
 - Menzi
+**These are the base names - throughout the development process branches like Lunar#2 etc can appear due to various reasons such as merge conflicts.**
 
 ## The types of Branches
 - "main" is the branch where the code is kept in a working state - this is where the release build of our app is stored with working features.

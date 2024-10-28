@@ -33,9 +33,17 @@
             <h1 class="text-xl">Edit Booking Details</h1>
         </header>
 
+
+    
+
         <!-- Booking Details -->
         <section class="p-4">
             <div class="max-w-xl mx-auto bg-gray-100 p-6 rounded-lg shadow-md border border-gray-300">
+                <div class="mb-4">
+                <section id="bookingsContainer" class="block mb-2">
+                    <!-- Booking boxes will be updated dynamically here -->
+                </section>
+            </div>
                 <!-- Venue Selector -->
                 <div class="mb-4">
                     <label for="venueSelector" class="block text-gray-700 text-sm font-semibold mb-2">Select Venue</label>
@@ -48,7 +56,7 @@
 
 
                 <!-- Status Picker -->
-                <div class="mb-4">
+                <!-- <div class="mb-4">
                     <label for="statusSelection" class="block text-gray-700 text-sm font-semibold mb-2">Select Time Slot</label>
                     <select id="statusSelection" class="block w-full bg-white border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="Pending">Pending</option>
@@ -56,8 +64,8 @@
                         <option value="Cancelled">Cancelled</option>
 
 
-                    </select>
-                </div>
+                    </select> 
+                </div> -->
 
                 <!-- Save Button -->
                 <button id="saveChangesBtn" class="w-full bg-[#917248] text-white px-3 py-2 rounded hover:bg-blue-600 focus:outline-none font-semibold">Save Changes</button>
@@ -69,6 +77,6 @@
         <p>&copy; 2024 Group -1. All rights reserved.</p>
     </footer>
 
-    <script src="editBooking.js" ></script>
+    <script src="editBooking.js" type="module" ></script>
 </body>
 </html>

@@ -33,10 +33,13 @@
     <div class="w-full h-2 bg-[#003B5C]"></div>
     <header class="bg-white shadow-md p-2 flex justify-between items-center">
        <!-- Group the menu icon and logo -->
-       <div class="flex items-center space-x-2">
+       <div class="flex items-center space-x-4">
+        <!-- Menu Icon -->
         <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#003B5C" class="w-8 h-8 cursor-pointer">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
         </svg>
+
+        <!-- Logo -->
         <img class="w-10" src="img/wits_logo.png" alt="Wits Logo">
     </div>
     
@@ -145,20 +148,17 @@
 
     
 
-    <footer class="bg-[#003B5C] text-white flex justify-around">
-        <!--Security API stub-->
-        <section class="text-center p-2">
-            <p class="text-[#917248]">Security Contact Information:</p>
-            <p class="text-xs">East Campus: (011) 717 4444 / 6666</p>
-            <p class="text-xs">West Campus (011) 717 1842.</p>
-            <p class="text-xs">Health Sciences Campus: (011) 717 2222 / 2232</p>
-            <p class="text-xs">Education Campus: (011) 717 3340</p>
-        </section>
+<footer class="bg-[#003B5C] text-white flex justify-around items-center">
+    <section class="text-center pt-2 text-[#917248]"><h2>Security Contacts</h2>
+    <section id="security_info" class="text-center p-2">
+    </section>
+    <div id="loading" class="text-gray-400">Loading security contact details..</div>
+</section>
 
-        <section class="text-center p-9">
-            <p>&copy; 2024 Infrastructure Management</p>
-        </section>
-    </footer>
+    <section class="text-center p-9">
+        <p>&copy; 2024 Infrastructure Management</p>
+    </section>
+</footer>
     <script>
 
 const apiKey = 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW';

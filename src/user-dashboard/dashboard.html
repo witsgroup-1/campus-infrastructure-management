@@ -47,7 +47,17 @@
     
         <h1 class="text-2xl font-semibold text-blue-950">Infrastructure Management</h1>
     
-        <div class = "relative">
+        <div class = "relative flex">
+            <a href="../map/wits_campus_map.html">
+            <div id="map-icon" class="pr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                  </svg>
+            </a>
+                  
+            </div>
+
             <svg id = "notif-bell" xmlns="http://www.w3.org/2000/svg" fill="#003B5C" viewBox="0 0 24 24" stroke-width="1.5" stroke="#003B5C" class="size-6 cursor-pointer hover:fill-[#917248]">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
               </svg>
@@ -65,17 +75,16 @@
                 </div>
     </header>
     
-
     <div id="sidebar" class="fixed top-0 left-0 h-full bg-[#003B5C] text-white w-0 overflow-hidden transition-all duration-300 lg:w-1/4 md:w-1/3 sm:w-1/2">
-        <!-- Sidebar content -->
+        <!-- Sidebar close button -->
         <button id="close-btn" class="absolute top-4 right-4 text-2xl cursor-pointer mt-4" aria-label="Close Sidebar">&times;</button>
-        <nav class="flex flex-col h-full p-4 space-y-4">
-
-            <!-- Book_venue-->
-<a href="../make-booking/book-venue.html" class="flex items-center space-x-2">
-    <i class="fas fa-calendar-alt"></i>
-    <span>Book Venue</span>
-</a>
+    
+        <!-- Sidebar content -->
+        <nav class="flex flex-col h-full p-4 space-y-4 mt-8"> <!-- Add mt-8 to push the menu items down -->
+            <a href="../make-booking/book-venue.html" class="flex items-center space-x-2">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Book Venue</span>
+            </a>
 
 
             <!-- Make Report -->
@@ -98,7 +107,7 @@
             </a>
         
             <!-- Make Reservation -->
-            <a href="../make-reservation/makeReservation.html" class="flex items-center space-x-2">
+            <a id="reservationLink" class="flex items-center space-x-2">
                 <i class="fas fa-utensils"></i>
                 <span>Make Reservation</span>
             </a>
@@ -181,13 +190,13 @@
 
 
     </div>
-    
-    
 
-    <footer class="bg-[#003B5C] text-white flex justify-around">
+
+    <footer class="bg-[#003B5C] text-white flex justify-around items-center">
         <section class="text-center pt-2 text-[#917248]"><h2>Security Contacts</h2>
         <section id="security_info" class="text-center p-2">
         </section>
+        <div id="loading" class="text-gray-400">Loading security contact details..</div>
     </section>
 
         <section class="text-center p-9">
