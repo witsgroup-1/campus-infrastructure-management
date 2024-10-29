@@ -171,8 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     
 
-// Add a loader element to the HTML structure (e.g., in the notificationPanel div):
-// <div id="loader" class="hidden text-[#917248]">Loading...</div>
+
 
 const fetchNotifications = async () => {
     try {
