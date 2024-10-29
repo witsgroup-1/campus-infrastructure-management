@@ -40,7 +40,20 @@
 
       <!--main-->
    <main class="px-4 flex-grow-0">
+
+    <section class="flex justify-between mt-4">
+      <button id="new_schedule" class="px-4 py-2 m-3 bg-[#917248] text-white rounded-lg hover:bg-[#806541]">
+        <a href="add_schedule.html">Add Schedule</a>
+      </button>
+
+      <button id="delete_all" class="px-4 py-2 m-3 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 ">
+        Delete All
+      </button>
+  </section>
+
+
     <!--for desktop-->
+
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-200 m-5" id="table">
           <thead>
@@ -60,21 +73,12 @@
       </div>
 
 
-      <section class="flex justify-center mt-4">
-        <button id="new_schedule" class="px-4 py-2 m-3 bg-[#917248] text-white rounded-lg hover:bg-[#806541]">
-          <a href="add_schedule.html">Add Schedule</a>
-        </button>
-    </section>
-
     <!--Popup-->
     <article id="edit-modal" class="bg-black bg-opacity-40 hidden fixed inset-0 flex pb-20 items-center justify-center p-4">
       <section class="bg-white p-4 rounded-lg shadow-lg max-w-sm w-full sm:max-w-md md:max-w-lg lg:max-w-lg">
         <!-- Flex column to stack inputs vertically -->
         <section class="flex flex-col space-y-2">
           <h3 class="text-[#003B5C] text-2xl justify-center text-center mb-3">Edit Schedule</h3>
-          <div class="flex">
-            <label class="text-[#003B5C] justify-center m-3 text-xl w-32">Venue:</label>
-            <input id="venue" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter venue" /></div>
 
           <div class="flex">
             <label class="text-[#003B5C] justify-center m-3 text-xl w-32">Course:</label>
@@ -87,18 +91,6 @@
           <div class="flex">
             <h2 class="text-[#003B5C] justify-center m-3 text-xl whitespace-nowrap w-32">End Time:</h2>
           <input id="end-time" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter end time" /></div>
-
-          <div class="flex">
-            <h2 class="text-[#003B5C] justify-center m-3 text-xl w-32">Day:</h2>
-          <input id="day" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter day" /></div>
-
-          <div class="flex">
-            <h2 class="text-[#003B5C] justify-center m-3 text-xl whitespace-nowrap w-32">Start Date:</h2>
-          <input id="start-date" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter start date" /></div>
-
-          <div class="flex">
-            <h2 class="text-[#003B5C] justify-center m-3 text-xl whitespace-nowrap w-32">End Date:</h2>
-          <input id="end-date" type="text" class="w-full mt-2 bg-gray-200 text-black p-2 rounded-md" placeholder="Enter end date" /></div>
 
         </section>
         <section class="flex justify-around mt-4">

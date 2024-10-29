@@ -319,11 +319,11 @@
                     toggleReservationForm(); 
                 } else {
                     console.error('Failed to submit reservation: ', response.status);
-                    alert('Failed to submit reservation.');
+                    alert('Failed to submit reservation due to a server issue.Please try again later');
                 }
             } catch (error) {
-                console.error('Error submitting reservation:', error);
-                alert('Error submitting reservation.');
+                console.error('Error submitting reservation due to server error, please contact campus dining directly.', error);
+                alert('Error submitting reservation due to server error, please try again later.');
             } 
         }
 

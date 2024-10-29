@@ -1,5 +1,5 @@
 //import './copies/timetable.Copy.js';
-import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule } from '../src/schedule/timetable.js';
+import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule, deleteAllSchedules } from '../src/schedule/timetable.js';
 
 // Mocking the fetch API
 global.fetch = jest.fn(() =>
@@ -20,17 +20,13 @@ describe('editSchedule', () => {
         document.body.appendChild(modal);
 
         schedules = [
-            { id: '1', roomId: '101', courseId: 'Math', startTime: '09:00', endTime: '10:00', daysOfWeek: 'Monday', startDate: '2024-10-01', endDate: '2024-12-01' },
+            { id: '1', courseId: 'Math', startTime: '09:00', endTime: '10:00'},
         ];
 
         document.body.innerHTML += `
-            <input id="venue" type="text">
             <input id="course" type="text">
             <input id="start-time" type="text">
             <input id="end-time" type="text">
-            <input id="day" type="text">
-            <input id="start-date" type="text">
-            <input id="end-date" type="text">
         `;
     });
 
@@ -38,13 +34,9 @@ describe('editSchedule', () => {
         expect(modal.classList.contains('hidden')).toBe(true); // Initial state check
         editSchedule('1', schedules);
 
-        expect(document.getElementById('venue').value).toBe('101');
         expect(document.getElementById('course').value).toBe('Math');
         expect(document.getElementById('start-time').value).toBe('09:00');
         expect(document.getElementById('end-time').value).toBe('10:00');
-        expect(document.getElementById('day').value).toBe('Monday');
-        expect(document.getElementById('start-date').value).toBe('2024-10-01');
-        expect(document.getElementById('end-date').value).toBe('2024-12-01');
     });
 });
 
@@ -340,5 +332,59 @@ describe('Schedule Management', () => {
     
 });
 
+describe('deleteAllSchedules', () => {
+    let tableBody;
 
+    beforeEach(() => {
+        // Set up the HTML structure
+        document.body.innerHTML = `
+            <table>
+                <tbody id="table-body"></tbody>
+            </table>
+        `;
+        tableBody = document.getElementById('table-body'); 
+        jest.spyOn(window, 'alert').mockImplementation(() => {});
+    });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+        fetch.mockClear(); 
+    });
+
+    test('should delete all schedules successfully', async () => {
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => [{ id: 1 }, { id: 2 }], 
+        });
+        fetch.mockResolvedValueOnce({ ok: true });
+        fetch.mockResolvedValueOnce({ ok: true });
+
+        await deleteAllSchedules();
+
+        expect(tableBody.innerHTML).toBe('');
+        expect(window.alert).toHaveBeenCalledWith('All schedules deleted successfully!'); 
+    });
+
+    test('should handle API error on GET schedules', async () => {
+        fetch.mockResolvedValueOnce({ ok: false, statusText: 'Internal Server Error' });
+
+        await deleteAllSchedules(); 
+
+        expect(tableBody.innerHTML).toBe(''); 
+        expect(window.alert).toHaveBeenCalledWith('Failed to delete all schedules.'); 
+    });
+
+    test('should handle API error on DELETE schedules', async () => {
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => [{ id: 1 }, { id: 2 }],
+        });
+        fetch.mockResolvedValueOnce({ ok: true });
+        fetch.mockResolvedValueOnce({ ok: false });
+
+        await deleteAllSchedules();
+
+        expect(tableBody.innerHTML).toBe(''); 
+        expect(window.alert).toHaveBeenCalledWith('All schedules deleted successfully!'); 
+    });
+});
