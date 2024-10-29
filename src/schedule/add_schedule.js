@@ -109,6 +109,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
+            const hasOverlap = await checkForOverlappingSchedule(roomId, startDate, startTime, endTime);
+            if (hasOverlap) {
+                alert('This time slot is already booked. Please choose a different time.');
+                return;
+            }
+
             // Use Promise.all to handle both POST requests simultaneously
             await Promise.all([
                 createSchedule(userId, courseId, venue, daysOfWeek, startDate, endDate, startTime, recurring, endTime),
@@ -154,6 +160,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
 });
+
+async function checkForOverlappingSchedule(roomId, date, startTime, endTime) {
+    try {
+        const response = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules?date=${date}&roomId=${roomId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+            },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch existing schedules');
+
+        const schedules = await response.json();
+
+        for (const schedule of schedules) {
+            const existingStartTime = new Date(`${date}T${schedule.startTime}`);
+            const existingEndTime = new Date(`${date}T${schedule.endTime}`);
+            const newStartTime = new Date(`${date}T${startTime}`);
+            const newEndTime = new Date(`${date}T${endTime}`);
+
+            if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
+                return true; // Overlap detected
+            }
+        }
+        return false; // No overlap
+    } catch (error) {
+        console.error('Error checking for overlapping schedules:', error);
+        return false; // Allow creation if there's an error in the check
+    }
+}
 
 
 // POST schedules
