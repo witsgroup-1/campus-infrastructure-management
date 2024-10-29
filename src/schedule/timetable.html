@@ -40,7 +40,20 @@
 
       <!--main-->
    <main class="px-4 flex-grow-0">
+
+    <section class="flex justify-between mt-4">
+      <button id="new_schedule" class="px-4 py-2 m-3 bg-[#917248] text-white rounded-lg hover:bg-[#806541]">
+        <a href="add_schedule.html">Add Schedule</a>
+      </button>
+
+      <button id="delete_all" class="px-4 py-2 m-3 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 ">
+        Delete All
+      </button>
+  </section>
+
+
     <!--for desktop-->
+
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-200 m-5" id="table">
           <thead>
@@ -59,12 +72,6 @@
         </table>
       </div>
 
-
-      <section class="flex justify-center mt-4">
-        <button id="new_schedule" class="px-4 py-2 m-3 bg-[#917248] text-white rounded-lg hover:bg-[#806541]">
-          <a href="add_schedule.html">Add Schedule</a>
-        </button>
-    </section>
 
     <!--Popup-->
     <article id="edit-modal" class="bg-black bg-opacity-40 hidden fixed inset-0 flex pb-20 items-center justify-center p-4">

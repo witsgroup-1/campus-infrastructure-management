@@ -24,7 +24,14 @@ fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules'
 document.addEventListener('DOMContentLoaded', function () {
     const tableBody = document.getElementById('table-body');
     const modal = document.getElementById('edit-modal');
-    const closeModal = document.getElementById('close-modal');
+    const closeModalButton = document.getElementById('close-modal');
+    const delete_all = document.getElementById('delete_all')
+
+    delete_all.addEventListener('click', function (event) {
+        if (window.confirm("Are you sure you want to delete all schedules?")) {
+            deleteAllSchedules();
+        }
+    });
 
     // Event delegation on tableBody
     tableBody.addEventListener('click', function (event) {
@@ -33,7 +40,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (deleteButton) {
             const id = deleteButton.getAttribute('data-id');
-            deleteSchedule(id, deleteButton);
+            if (window.confirm("Are you sure you want to delete this schedule?")) {
+                deleteSchedule(id, deleteButton);
+            }
         }
 
         if (editButton) {
@@ -42,9 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    closeModal.addEventListener('click', closeModal);
+    closeModalButton.addEventListener('click', closeModal);
     document.getElementById('update').addEventListener('click', onclickUpdateSchedule);
 });
+
+const tableBody = document.getElementById('table-body'); 
 
 export function onclickUpdateSchedule(event) {
     const id = document.getElementById('data-id').value; // Assuming schedule ID is stored in a hidden field
@@ -92,6 +103,46 @@ export async function deleteSchedule(id, deleteButton) {
         alert('Failed to delete the schedule.');
     }
 }
+
+// Function to delete all schedules via API
+export async function deleteAllSchedules() {
+    try {
+        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules', {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.statusText}`);
+        }
+
+        const schedules = await response.json();
+        const deletePromises = schedules.map(async (schedule) => {
+            const deleteResponse = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/schedules/${schedule.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!deleteResponse.ok) {
+                console.warn(`Failed to delete schedule with ID: ${schedule.id}`);
+            }
+        });
+
+        await Promise.all(deletePromises); // Wait for all deletions to complete
+        tableBody.innerHTML = '';
+        alert('All schedules deleted successfully!');
+    } catch (error) {
+        console.error('Error deleting all schedules:', error);
+        alert('Failed to delete all schedules.');
+    }
+}
+
 
 export function editSchedule(id, schedules) {
     const schedule = schedules.find(sch => sch.id === id);
@@ -146,7 +197,6 @@ export async function updateSchedule(id, updatedSchedule) {
 
 // Function to display schedules
 export function displaySchedules(schedules) {
-    const tableBody = document.getElementById('table-body'); 
     tableBody.innerHTML = ''; 
 
     schedules.forEach(schedule => {
