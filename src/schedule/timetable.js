@@ -24,7 +24,7 @@ fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules'
 document.addEventListener('DOMContentLoaded', function () {
     const tableBody = document.getElementById('table-body');
     const modal = document.getElementById('edit-modal');
-    const closeModalButton = document.getElementById('close-modal');
+    const closeModal = document.getElementById('close-modal');
     const delete_all = document.getElementById('delete_all')
 
     delete_all.addEventListener('click', function (event) {
@@ -51,11 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    closeModalButton.addEventListener('click', closeModal);
+    closeModal.addEventListener('click', closeModal);
     document.getElementById('update').addEventListener('click', onclickUpdateSchedule);
 });
-
-const tableBody = document.getElementById('table-body'); 
 
 export function onclickUpdateSchedule(event) {
     const id = document.getElementById('data-id').value; // Assuming schedule ID is stored in a hidden field
@@ -106,6 +104,7 @@ export async function deleteSchedule(id, deleteButton) {
 
 // Function to delete all schedules via API
 export async function deleteAllSchedules() {
+    const tableBody = document.getElementById('table-body');
     try {
         const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/schedules', {
             method: 'GET',
@@ -197,6 +196,7 @@ export async function updateSchedule(id, updatedSchedule) {
 
 // Function to display schedules
 export function displaySchedules(schedules) {
+    const tableBody = document.getElementById('table-body'); 
     tableBody.innerHTML = ''; 
 
     schedules.forEach(schedule => {

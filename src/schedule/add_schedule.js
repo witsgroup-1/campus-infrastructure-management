@@ -75,6 +75,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const recurring = recurringSelect.value.trim();
         let endDate = document.getElementById('end-date').value;
 
+        const startTimeParts = startTime.split(':');
+        const endTimeParts = endTime.split(':');
+
+        const startDateTime = new Date(1970, 0, 1, startTimeParts[0], startTimeParts[1]);
+        const endDateTime = new Date(1970, 0, 1, endTimeParts[0], endTimeParts[1]);
+    
+        // Validate that start time is before end time
+        if (startDateTime >= endDateTime) {
+            alert('Start time must be before end time.');
+            return;
+        }
+
         const startDateObj = new Date(startDate);
         const endDateObj = new Date(endDate);
         const today = new Date();
