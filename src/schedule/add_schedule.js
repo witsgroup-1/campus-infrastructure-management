@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const venueInput = document.querySelector('input[placeholder="Venue"]')
 
     
+    
     // Event listener to show/hide the last date field based on 'Recurring' selection
     recurringSelect.addEventListener('change', function () {
         if (this.value === 'true') {
@@ -155,16 +156,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-
-function generateId() {
-    return 'id-' + Date.now(); // Generates a simple unique ID based on timestamp
-}
-const sharedId = generateId();
-
 // POST schedules
 async function createSchedule(userId, courseId, roomId, daysOfWeek, startDate, endDate, startTime, recurring, endTime) {
     const scheduleData = {
-        id: sharedId, // Use sharedId for the schedule
         userId,
         courseId,
         roomId,
@@ -212,10 +206,26 @@ async function createBookingsForRecurring(userId, roomId, startDate, startTime, 
     }
 }
 
-// Create individual booking
+function convertToTimestamp(date, time = null) {
+    const dateObj = new Date(date);
+
+    if (time) {
+        const [hours, minutes] = time.split(':').map(Number);
+        dateObj.setHours(hours, minutes, 0, 0);
+    }
+
+    const seconds = Math.floor(dateObj.getTime() / 1000);
+    const nanoseconds = (dateObj.getTime() % 1000) * 1e6;
+
+    return { seconds, nanoseconds };
+}
+
 async function createBooking(userId, roomId, date, start_time, end_time, purpose) {
+    const startTimeTimestamp = convertToTimestamp(date, start_time);
+    const endTimeTimestamp = convertToTimestamp(date, end_time);
+    const createdAtTimestamp = convertToTimestamp(new Date().toISOString());
+
     const bookingData = {
-        id: sharedId, 
         userId,
         roomId,
         start_time, 
@@ -226,10 +236,11 @@ async function createBooking(userId, roomId, date, start_time, end_time, purpose
         venueId: roomId
     };
 
-    console.log(bookingData); 
-    
+    console.log("Main booking data:", bookingData);
+
     try {
-        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/bookings', {
+        // Main booking API request
+        const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/Bookings', {
             method: 'POST',
             headers: {
                 'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
@@ -239,18 +250,44 @@ async function createBooking(userId, roomId, date, start_time, end_time, purpose
         });
 
         if (!response.ok) {
-            let errorData;
-            try {
-                errorData = await response.json();
-            } catch (jsonError) {
-                errorData = await response.text();
-            }
+            const errorData = await response.json();
             console.error(`Booking creation failed with status ${response.status}:`, errorData);
             throw new Error(`Error creating booking: ${response.statusText}`);
         }
 
         const result = await response.json();
         console.log(`Booking created successfully:`, result);
+
+        // Venue subcollection booking API request
+        const venueBookingData = {
+                booker: userId,  // Assuming booker is the userId
+                startTime: startTimeTimestamp,
+                endTime: endTimeTimestamp,
+                purpose,
+                createdAt: createdAtTimestamp,  
+                bookingDate: date  
+        };
+
+        console.log("Subcollection booking data:", venueBookingData);
+
+        const venueResponse = await fetch(`https://campus-infrastructure-management.azurewebsites.net/api/venues/${roomId}/${date}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW'
+            },
+            body: JSON.stringify(venueBookingData)
+        });
+
+        if (!venueResponse.ok) {
+            const venueErrorData = await venueResponse.json();
+            console.error(`Venue booking creation failed with status ${venueResponse.status}:`, venueErrorData);
+            throw new Error(`Error creating venue booking: ${venueResponse.statusText}`);
+        }
+
+        const venueResult = await venueResponse.json();
+        console.log(`Subcollection booking created successfully:`, venueResult);
+
     } catch (error) {
         console.error('Error occurred during booking creation:', error);
     }

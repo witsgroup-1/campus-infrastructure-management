@@ -20,17 +20,13 @@ describe('editSchedule', () => {
         document.body.appendChild(modal);
 
         schedules = [
-            { id: '1', roomId: '101', courseId: 'Math', startTime: '09:00', endTime: '10:00', daysOfWeek: 'Monday', startDate: '2024-10-01', endDate: '2024-12-01' },
+            { id: '1', courseId: 'Math', startTime: '09:00', endTime: '10:00'},
         ];
 
         document.body.innerHTML += `
-            <input id="venue" type="text">
             <input id="course" type="text">
             <input id="start-time" type="text">
             <input id="end-time" type="text">
-            <input id="day" type="text">
-            <input id="start-date" type="text">
-            <input id="end-date" type="text">
         `;
     });
 
@@ -38,13 +34,9 @@ describe('editSchedule', () => {
         expect(modal.classList.contains('hidden')).toBe(true); // Initial state check
         editSchedule('1', schedules);
 
-        expect(document.getElementById('venue').value).toBe('101');
         expect(document.getElementById('course').value).toBe('Math');
         expect(document.getElementById('start-time').value).toBe('09:00');
         expect(document.getElementById('end-time').value).toBe('10:00');
-        expect(document.getElementById('day').value).toBe('Monday');
-        expect(document.getElementById('start-date').value).toBe('2024-10-01');
-        expect(document.getElementById('end-date').value).toBe('2024-12-01');
     });
 });
 

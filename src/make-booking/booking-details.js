@@ -64,7 +64,7 @@ async function fetchBookingsForDate(venueId, bookingDate) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': apiKey // Include your API key if needed
+                'x-api-key': apiKey
             }
         });
 
