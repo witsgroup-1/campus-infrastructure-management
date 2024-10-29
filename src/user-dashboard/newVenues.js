@@ -48,6 +48,8 @@ function getCurrentDate() {
 
 
 
+
+
 const venuesPerPage = 10; 
 let currentPage = 1; 
 let availableVenues = [];
@@ -115,6 +117,33 @@ export async function fetchUserData(uid) {
     return null; // Return null if there was an error or not found
 }
 
+async function checkMaintenanceStatus(venueId) {
+    const apiUrl = `https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests/venue/${venueId}`;
+    
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY 
+            }
+        });
+
+        if (response.ok) {
+            const maintenanceRequests = await response.json();
+
+            // Check if there is a request with status "In Progress" or "Scheduled"
+            return maintenanceRequests.some(request => 
+                request.status === "In Progress" || request.status === "Scheduled"
+            );
+        }
+    } catch (error) {
+        console.error('Error checking maintenance status:', error);
+    }
+    
+    return false; // Return false if there was an error or no relevant requests found
+}
+
 async function fetchAvailableVenues(userData) {
     try {
         const venuesCollectionRef = collection(db, 'venues');
@@ -137,32 +166,36 @@ async function fetchAvailableVenues(userData) {
         const nextSlotEndTime = new Date();
         nextSlotEndTime.setHours(nextSlotEndHour, nextSlotEndMinute, 0, 0);
         
-       
         const allowedCategories = getAllowedCategories(userData);
 
         const venuePromises = venuesSnapshot.docs.map(async (venueDoc) => {
             const venueData = venueDoc.data();
-            const bookingsCollectionRef = collection(db, 'venues', venueDoc.id, currentDate);
+            const venueId = venueDoc.id;
+
+            // Check maintenance status for the venue
+            const isUnderMaintenance = await checkMaintenanceStatus(venueId);
+            if (isUnderMaintenance) {
+                return; // Skip adding this venue if it's under maintenance
+            }
+
+            const bookingsCollectionRef = collection(db, 'venues', venueId, currentDate);
             const bookingsSnapshot = await getDocs(bookingsCollectionRef);
 
             const isBooked = bookingsSnapshot.docs.some(doc => {
                 const booking = doc.data();
                 const bookingStartTime = new Date(booking.startTime.seconds * 1000);
                 const bookingEndTime = new Date(booking.endTime.seconds * 1000);
-
-               
+                
                 const isOverlap = (bookingStartTime < nextSlotEndTime && bookingEndTime > nextSlotStartTime);
                 
                 return isOverlap; 
             });
 
-           
             const isAllowedCategory = allowedCategories.includes(venueData.Category);
-            
             
             if (!isBooked && isAllowedCategory) {
                 availableVenues.push({
-                    id: venueDoc.id, 
+                    id: venueId, 
                     Name: venueData.Name,
                     Capacity: venueData.Capacity,
                     Features: venueData.Features || [],
