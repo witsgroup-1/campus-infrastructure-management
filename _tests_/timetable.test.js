@@ -1,5 +1,5 @@
 //import './copies/timetable.Copy.js';
-import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule } from '../src/schedule/timetable.js';
+import { displaySchedules, deleteSchedule, editSchedule, updateSchedule, closeModal, onclickUpdateSchedule, deleteAllSchedules } from '../src/schedule/timetable.js';
 
 // Mocking the fetch API
 global.fetch = jest.fn(() =>
@@ -332,5 +332,59 @@ describe('Schedule Management', () => {
     
 });
 
+describe('deleteAllSchedules', () => {
+    let tableBody;
 
+    beforeEach(() => {
+        // Set up the HTML structure
+        document.body.innerHTML = `
+            <table>
+                <tbody id="table-body"></tbody>
+            </table>
+        `;
+        tableBody = document.getElementById('table-body'); 
+        jest.spyOn(window, 'alert').mockImplementation(() => {});
+    });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+        fetch.mockClear(); 
+    });
+
+    test('should delete all schedules successfully', async () => {
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => [{ id: 1 }, { id: 2 }], 
+        });
+        fetch.mockResolvedValueOnce({ ok: true });
+        fetch.mockResolvedValueOnce({ ok: true });
+
+        await deleteAllSchedules();
+
+        expect(tableBody.innerHTML).toBe('');
+        expect(window.alert).toHaveBeenCalledWith('All schedules deleted successfully!'); 
+    });
+
+    test('should handle API error on GET schedules', async () => {
+        fetch.mockResolvedValueOnce({ ok: false, statusText: 'Internal Server Error' });
+
+        await deleteAllSchedules(); 
+
+        expect(tableBody.innerHTML).toBe(''); 
+        expect(window.alert).toHaveBeenCalledWith('Failed to delete all schedules.'); 
+    });
+
+    test('should handle API error on DELETE schedules', async () => {
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => [{ id: 1 }, { id: 2 }],
+        });
+        fetch.mockResolvedValueOnce({ ok: true });
+        fetch.mockResolvedValueOnce({ ok: false });
+
+        await deleteAllSchedules();
+
+        expect(tableBody.innerHTML).toBe(''); 
+        expect(window.alert).toHaveBeenCalledWith('All schedules deleted successfully!'); 
+    });
+});
