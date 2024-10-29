@@ -167,60 +167,111 @@ document.addEventListener('DOMContentLoaded', () => {
     const link = document.getElementById('reservationLink');
     
     // Construct the URL with the variable
-    link.href = `../make-reservation/makeReservation.html?reservationId=${userId}`;
+    link.href = `../make-reservation/makeReservation.html?reservationId=${userId}&userEmail=${userEmail}`;
 
-    const fetchNotifications = async () => {
-        try {
-            if (!userId) {
-                console.log('No userId found');
-                return;
-            }
     
-            const response = await fetch(notificationsUrl, {
-                method: 'GET',
-                headers: {
-                    'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-          
-            if (!response.ok) {
-                const errorText = await response.text(); 
-                console.error('Error fetching notifications:', response.status, errorText);
-                return;
-            }
-    
-            const notifications = await response.json();
-    
-            // Check if there are notifications
-            const notificationList = notificationPanel.querySelector('ul');
-            notificationList.innerHTML = ''; // Clear existing notifications
-    
-            if (notifications.length === 0) {
-                notificationList.innerHTML = '<li class="text-[#917248]">No new notifications</li>';
-            } else {
-                notifications.forEach(notification => {
-                    const li = document.createElement('li');
-                    li.textContent = notification.message || 'New Notification';
-                    
-                    
-                    li.classList.add('notification-item');
 
-    // `read` status in case needed
-                    if (notification.read) {
-                        li.classList.add('read-notification'); 
-                    } else {
-                        li.classList.add('unread-notification'); 
-                    }
-    
-                    notificationList.appendChild(li);
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
+// Add a loader element to the HTML structure (e.g., in the notificationPanel div):
+// <div id="loader" class="hidden text-[#917248]">Loading...</div>
+
+const fetchNotifications = async () => {
+    try {
+        const loader = document.getElementById('loader');
+        loader.classList.remove('hidden'); // Show loader
+
+        if (!userId) {
+            console.log('No userId found');
+            loader.classList.add('hidden'); // Hide loader
+            return;
         }
-    };
+
+        const response = await fetch(notificationsUrl, {
+            method: 'GET',
+            headers: {
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); 
+            console.error('Error fetching notifications:', response.status, errorText);
+            loader.classList.add('hidden'); // Hide loader
+            return;
+        }
+
+        const notifications = await response.json();
+
+        // Check if there are notifications
+        const notificationList = notificationPanel.querySelector('ul');
+        notificationList.innerHTML = ''; // Clear existing notifications
+
+        if (notifications.length === 0) {
+            notificationList.innerHTML = '<li class="text-[#917248]">No new notifications</li>';
+        } else {
+            notifications.forEach(notification => {
+                const li = document.createElement('li');
+                li.textContent = notification.message || 'New Notification';
+                li.classList.add('notification-item');
+
+                // Apply read status styling
+                if (notification.read) {
+                    li.classList.add('read-notification'); 
+                } else {
+                    li.classList.add('unread-notification'); 
+                }
+
+                // Create delete icon
+                const deleteIcon = document.createElement('i');
+                deleteIcon.classList.add('fas', 'fa-trash-alt', 'delete-icon');
+                deleteIcon.addEventListener('click', async () => {
+                    const confirmDelete = confirm('Are you sure you want to delete this notification?');
+                    if (confirmDelete) {
+                        try {
+                            await deleteNotification(notification.id);
+                            fetchNotifications(); // Refresh notifications list
+                        } catch (error) {
+                            console.error('Error deleting notification:', error);
+                        }
+                    }
+                });
+
+                li.appendChild(deleteIcon); // Append delete icon to each notification item
+                notificationList.appendChild(li);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+    } finally {
+        const loader = document.getElementById('loader');
+        loader.classList.add('hidden'); // Hide loader
+    }
+};
+
+// Function to delete a notification
+const deleteNotification = async (notificationId) => {
+    try {
+        const deleteUrl = `${notificationsUrl}/${notificationId}`;
+        const response = await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'x-api-key': 'QGbXcci4doXiHamDEsL0cBLjXNZYGCmBUmjBpFiITsNTLqFJATBYWGxKGzpxhd00D5POPOlePixFSKkl5jXfScT0AD6EdXm6TY0mLz5gyGXCbvlC5Sv7SEWh7QO6PewW',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); 
+            console.error('Error deleting notification:', response.status, errorText);
+            return;
+        }
+
+        console.log('Notification deleted successfully');
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+    }
+};
+
     
     
     
