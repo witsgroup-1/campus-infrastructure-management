@@ -1,5 +1,5 @@
 
-
+//imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
@@ -13,7 +13,7 @@ const firebaseConfig = {
   appId: "1:981921503275:web:78ce66a89f233a5c14f26e",
   measurementId: "G-Y95YE5ZDRY"
 };
-
+//init firestore app
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -29,7 +29,7 @@ function toggleSubmitButtonLoading(show) {
   const submitBtn = document.getElementById('submitBtn');
   if (show) {
       submitBtn.disabled = true; // Disable the button
-      submitBtn.innerHTML = 'Submitting...'; // Change button text to indicate loading
+      submitBtn.innerHTML = 'Submitting...';
   } else {
       submitBtn.disabled = false; 
       submitBtn.innerHTML = 'Submit'; 
@@ -79,9 +79,9 @@ onAuthStateChanged(auth, async (user) => {
       roomName: venueName,
       status: 'Scheduled',
       timestamp: new Date().toISOString(),
-      userId: 'user.email' // Store user email
+      userId: user.email // Store user email
     };
-
+    // post maintenance requests
     try {
       const response = await fetch('https://campus-infrastructure-management.azurewebsites.net/api/maintenanceRequests', {
         method: 'POST',
