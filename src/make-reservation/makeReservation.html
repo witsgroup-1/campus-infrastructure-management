@@ -197,6 +197,7 @@
     
     const reservationId = getQueryParam('reservationId');
     console.log(reservationId);
+    const email=getQueryParam('userEmail');
 
         async function fetchMenu() {
             const url = 'https://campus-infrastructure-management.azurewebsites.net/api/menus'; 
@@ -270,11 +271,13 @@
             const resTime = document.getElementById('resTime').value;
             const resDate = document.getElementById('resDate').value;
             const venue = document.getElementById('venue').value;
+            const userID=email;
 
             const reservationData = {
                 resTime,
                 venue,
                 resDate,
+                userID,
             };
 
             const notificationMessage = `Your reservation has been confirmed! 
