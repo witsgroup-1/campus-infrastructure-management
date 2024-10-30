@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const link = document.getElementById('reservationLink');
     
     // Construct the URL with the variable
-    link.href = `../make-reservation/makeReservation.html?reservationId=${userId}`;
+    link.href = `../make-reservation/makeReservation.html?reservationId=${userId}&userEmail=${userEmail}`;
 
     const fetchNotifications = async () => {
         try {
