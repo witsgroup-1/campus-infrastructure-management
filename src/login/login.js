@@ -153,6 +153,7 @@ document.getElementById('googleLogin').addEventListener('click', async (e) => {
             }
         } else {
             alert("Only Wits University students and staff members can sign in.");
+            statusMessage.textContent = ""; // Clear the status message
         }
     } catch (error) {
         console.error("Error signing in with Google: ", error.message);
