@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (!querySnapshot.empty) {
                         alert('This email has already been requested for approval.');
-                        window.location.href = '../landingPage/landingPage.html';
+                        window.location.href = 'statusCheck.html';
                         return;
                     }
 
