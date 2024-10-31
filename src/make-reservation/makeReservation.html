@@ -170,7 +170,6 @@
                 <option value="Dining Hall 2">Dining Hall 2</option>
                 <option value="Dining Hall 3">Dining Hall 3</option>
             </select>
-            
 
             <label for="resDate">Date:</label>
             <input type="date" id="resDate" required>
@@ -272,7 +271,8 @@
             const resTime = document.getElementById('resTime').value;
             const resDate = document.getElementById('resDate').value;
             const venue = document.getElementById('venue').value;
-            const userID =email;
+            const userID=email;
+
             const reservationData = {
                 resTime,
                 venue,
